@@ -2,7 +2,7 @@
 # Copy to .env for secrets or use environment variables
 
 # Vault path (READ-ONLY)
-vault_path: "C:/Users/Thaddeus/Claude Code Test/trading-journal-system/Vaulted/!Journalit"
+vault_path: "C:/Users/Thaddeus/OneDrive/Desktop/Vaulted"
 
 # Data locations (editable via Settings page)
 data_locations:
@@ -24,7 +24,7 @@ cache_dir: "cache/llm"
 # LLM Configuration
 llm:
   provider: "groq"
-  model: "meta-llama/llama-4-scout-17b-16e-instruct"
+  model: "meta-llama/llama-3.1-70b-versatile"
   # API key from environment: GROQ_API_KEY, GOOGLE_API_KEY, OPENROUTER_API_KEY
   temperature: 0.1
   max_tokens: 4000

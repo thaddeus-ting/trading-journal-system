@@ -66,7 +66,7 @@ def load_daily_reports_for_week(monday: date, sunday: date) -> list[DailyReport]
         if current.weekday() < 5:  # Mon-Fri only
             path = DAILY_REPORTS_DIR / f"{current.isoformat()}.json"
             if path.exists():
-                data = json.loads(path.read_text())
+                data = json.loads(path.read_text(encoding="utf-8"))
                 reports.append(DailyReport.model_validate(data))
         current += timedelta(days=1)
     return reports
@@ -269,7 +269,7 @@ def build_metric_updates(reports: list[DailyReport]) -> dict[str, list[dict]]:
 def save_weekly_review(review: WeeklyReview) -> Path:
     """Save weekly review to JSON."""
     path = WEEKLY_REVIEWS_DIR / f"{review.week}.json"
-    path.write_text(review.model_dump_json(indent=2))
+    path.write_text(review.model_dump_json(indent=2), encoding="utf-8")
     return path
 
 
@@ -278,7 +278,7 @@ def load_weekly_review(week_label: str) -> WeeklyReview | None:
     path = WEEKLY_REVIEWS_DIR / f"{week_label}.json"
     if not path.exists():
         return None
-    data = json.loads(path.read_text())
+    data = json.loads(path.read_text(encoding="utf-8"))
     return WeeklyReview.model_validate(data)
 
 
