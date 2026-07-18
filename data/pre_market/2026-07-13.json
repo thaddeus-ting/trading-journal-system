@@ -1,0 +1,22 @@
+{
+  "date": "2026-07-13",
+  "carry_forward": [],
+  "economic_events": [
+    {
+      "time": "16:00 ET",
+      "event": "Fed Chairman Powell Speech",
+      "impact": "HIGH"
+    }
+  ],
+  "active_rules": [],
+  "watchlist_candidates": [
+    "Watch EOD",
+    "Watch NKE",
+    "Watch TGT",
+    "Watch CROX",
+    "Watch CSCO",
+    "Watch ORCL"
+  ],
+  "generated_at": "2026-07-16T18:29:18.869873",
+  "earnings": []
+}

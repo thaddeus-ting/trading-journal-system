@@ -1,0 +1,207 @@
+# 2026 Major Economic Events (US) - Static Config
+# Source: FOMC calendar, BLS schedule, BEA schedule
+# Only major market-moving events included
+
+events_2026:
+  - date: "2026-01-07"
+    time: "14:00"
+    event: "FOMC Minutes"
+    impact: "HIGH"
+  - date: "2026-01-14"
+    time: "08:30"
+    event: "CPI MoM/YoY"
+    impact: "HIGH"
+  - date: "2026-01-28"
+    time: "14:00"
+    event: "FOMC Rate Decision"
+    impact: "HIGH"
+    press_conference: true
+
+  - date: "2026-02-12"
+    time: "08:30"
+    event: "CPI MoM/YoY"
+    impact: "HIGH"
+  - date: "2026-02-19"
+    time: "14:00"
+    event: "FOMC Minutes"
+    impact: "HIGH"
+
+  - date: "2026-03-12"
+    time: "08:30"
+    event: "CPI MoM/YoY"
+    impact: "HIGH"
+  - date: "2026-03-18"
+    time: "14:00"
+    event: "FOMC Rate Decision"
+    impact: "HIGH"
+    press_conference: true
+  - date: "2026-03-27"
+    time: "08:30"
+    event: "PCE Price Index"
+    impact: "MEDIUM"
+
+  - date: "2026-04-10"
+    time: "08:30"
+    event: "CPI MoM/YoY"
+    impact: "HIGH"
+  - date: "2026-04-16"
+    time: "14:00"
+    event: "FOMC Minutes"
+    impact: "HIGH"
+  - date: "2026-04-29"
+    time: "14:00"
+    event: "FOMC Rate Decision"
+    impact: "HIGH"
+    press_conference: true
+
+  - date: "2026-05-13"
+    time: "08:30"
+    event: "CPI MoM/YoY"
+    impact: "HIGH"
+  - date: "2026-05-21"
+    time: "14:00"
+    event: "FOMC Minutes"
+    impact: "HIGH"
+
+  - date: "2026-06-10"
+    time: "08:30"
+    event: "CPI MoM/YoY"
+    impact: "HIGH"
+  - date: "2026-06-17"
+    time: "14:00"
+    event: "FOMC Rate Decision"
+    impact: "HIGH"
+    press_conference: true
+
+  - date: "2026-07-15"
+    time: "08:30"
+    event: "CPI MoM/YoY"
+    impact: "HIGH"
+  - date: "2026-07-29"
+    time: "14:00"
+    event: "FOMC Rate Decision"
+    impact: "HIGH"
+    press_conference: true
+  - date: "2026-07-31"
+    time: "08:30"
+    event: "ECB Rate Decision"  # Global macro
+    impact: "MEDIUM"
+
+  - date: "2026-08-12"
+    time: "08:30"
+    event: "CPI MoM/YoY"
+    impact: "HIGH"
+  - date: "2026-08-20"
+    time: "14:00"
+    event: "FOMC Minutes"
+    impact: "HIGH"
+  - date: "2026-08-27"
+    time: "10:00"
+    event: "Jackson Hole Symposium"  # Powell speech
+    impact: "HIGH"
+
+  - date: "2026-09-11"
+    time: "08:30"
+    event: "CPI MoM/YoY"
+    impact: "HIGH"
+  - date: "2026-09-16"
+    time: "14:00"
+    event: "FOMC Rate Decision"
+    impact: "HIGH"
+    press_conference: true
+
+  - date: "2026-10-14"
+    time: "08:30"
+    event: "CPI MoM/YoY"
+    impact: "HIGH"
+  - date: "2026-10-22"
+    time: "14:00"
+    event: "FOMC Minutes"
+    impact: "HIGH"
+  - date: "2026-10-28"
+    time: "14:00"
+    event: "FOMC Rate Decision"
+    impact: "HIGH"
+    press_conference: true
+
+  - date: "2026-11-12"
+    time: "08:30"
+    event: "CPI MoM/YoY"
+    impact: "HIGH"
+  - date: "2026-11-19"
+    time: "14:00"
+    event: "FOMC Minutes"
+    impact: "HIGH"
+
+  - date: "2026-12-09"
+    time: "08:30"
+    event: "CPI MoM/YoY"
+    impact: "HIGH"
+  - date: "2026-12-16"
+    time: "14:00"
+    event: "FOMC Rate Decision"
+    impact: "HIGH"
+    press_conference: true
+
+# Recurring monthly events (approximate dates - verify each month)
+recurring_monthly:
+  - name: "NFP (Non-Farm Payrolls)"
+    day: "first_friday"
+    time: "08:30"
+    impact: "HIGH"
+    months: [1,2,3,4,5,6,7,8,9,10,11,12]
+  - name: "ISM Manufacturing PMI"
+    day: "first_business_day"
+    time: "10:00"
+    impact: "MEDIUM"
+    months: [1,2,3,4,5,6,7,8,9,10,11,12]
+  - name: "ISM Services PMI"
+    day: "third_business_day"
+    time: "10:00"
+    impact: "MEDIUM"
+    months: [1,2,3,4,5,6,7,8,9,10,11,12]
+  - name: "Retail Sales"
+    day: "mid_month_thursday"
+    time: "08:30"
+    impact: "MEDIUM"
+    months: [1,2,3,4,5,6,7,8,9,10,11,12]
+  - name: "Initial Jobless Claims"
+    day: "thursday"
+    time: "08:30"
+    impact: "LOW"
+    months: [1,2,3,4,5,6,7,8,9,10,11,12]
+
+# Major Earnings (approximate - update quarterly)
+major_earnings_2026:
+  Q1:
+    - {ticker: "AAPL", week: "2026-01-26"}
+    - {ticker: "MSFT", week: "2026-01-26"}
+    - {ticker: "NVDA", week: "2026-02-23"}
+    - {ticker: "GOOGL", week: "2026-02-02"}
+    - {ticker: "META", week: "2026-02-02"}
+    - {ticker: "AMZN", week: "2026-02-09"}
+    - {ticker: "TSLA", week: "2026-01-26"}
+  Q2:
+    - {ticker: "AAPL", week: "2026-04-27"}
+    - {ticker: "MSFT", week: "2026-04-27"}
+    - {ticker: "NVDA", week: "2026-05-25"}
+    - {ticker: "GOOGL", week: "2026-04-27"}
+    - {ticker: "META", week: "2026-04-27"}
+    - {ticker: "AMZN", week: "2026-04-27"}
+    - {ticker: "TSLA", week: "2026-04-20"}
+  Q3:
+    - {ticker: "AAPL", week: "2026-07-27"}
+    - {ticker: "MSFT", week: "2026-07-27"}
+    - {ticker: "NVDA", week: "2026-08-24"}
+    - {ticker: "GOOGL", week: "2026-07-27"}
+    - {ticker: "META", week: "2026-07-27"}
+    - {ticker: "AMZN", week: "2026-07-27"}
+    - {ticker: "TSLA", week: "2026-07-20"}
+  Q4:
+    - {ticker: "AAPL", week: "2026-10-26"}
+    - {ticker: "MSFT", week: "2026-10-26"}
+    - {ticker: "NVDA", week: "2026-11-23"}
+    - {ticker: "GOOGL", week: "2026-10-26"}
+    - {ticker: "META", week: "2026-10-26"}
+    - {ticker: "AMZN", week: "2026-10-26"}
+    - {ticker: "TSLA", week: "2026-10-19"}

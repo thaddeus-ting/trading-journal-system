@@ -1,0 +1,24 @@
+{
+  "date": "2026-07-15",
+  "carry_forward": [],
+  "economic_events": [
+    {
+      "time": "08:30 ET",
+      "event": "PPI Final Demand MoM/YoY",
+      "impact": "HIGH"
+    },
+    {
+      "time": "08:30 ET",
+      "event": "Core PPI MoM/YoY",
+      "impact": "HIGH"
+    }
+  ],
+  "active_rules": [],
+  "watchlist_candidates": [
+    "Watch FTNT",
+    "Watch APLD",
+    "Watch CVS"
+  ],
+  "generated_at": "2026-07-16T18:28:44.657461",
+  "earnings": []
+}

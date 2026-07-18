@@ -1,0 +1,132 @@
+{
+  "date": "2026-07-02",
+  "organized_notes": [
+    {
+      "timestamp": "10:12",
+      "text": " long CRWD @ 198.64, 3 shares - nice bid check in the market and CRWD - instantly aggressively bought up - good confirmation [TRADE: long CRWD @ 198.64 x3]",
+      "tickers": [
+        "CRWD"
+      ],
+      "category": "entry",
+      "key_levels_mentioned": [],
+      "tags": []
+    },
+    {
+      "timestamp": "10:16",
+      "text": " this is a HPTE where i can get aggressive #flag",
+      "tickers": [],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": [
+        "flag"
+      ]
+    },
+    {
+      "timestamp": "11:06",
+      "text": " exit CRWD long @ 195.95 - oversized, abit too overconfident too early - the HPTE that i predicted did not play out [TRADE: long CRWD @ 195.95 x0]",
+      "tickers": [
+        "CRWD"
+      ],
+      "category": "entry",
+      "key_levels_mentioned": [],
+      "tags": []
+    },
+    {
+      "timestamp": "11:11",
+      "text": " this is what happens when i don't have staying power - i'm unable to let my RS edge play out and just get shaken out on a flush #flag #impt",
+      "tickers": [
+        "RS"
+      ],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": [
+        "flag",
+        "impt"
+      ]
+    },
+    {
+      "timestamp": "11:13",
+      "text": " CRWD was so choppy and many attempts probing below VWAP to flush out buyers",
+      "tickers": [
+        "CRWD"
+      ],
+      "category": "observation",
+      "key_levels_mentioned": [
+        "VWAP",
+        "VWAP+",
+        "VWAP-"
+      ],
+      "tags": []
+    },
+    {
+      "timestamp": "11:37",
+      "text": " analyze the early rally yesterday vs today #task",
+      "tickers": [],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": [
+        "task"
+      ]
+    },
+    {
+      "timestamp": "11:46",
+      "text": " watched Dave ride the momentum down on VZ short using OTM puts for a 100% gain",
+      "tickers": [
+        "OTM",
+        "VZ"
+      ],
+      "category": "decision",
+      "key_levels_mentioned": [],
+      "tags": []
+    },
+    {
+      "timestamp": "11:53",
+      "text": " exit USAR long @ 19.25 from really long ago - was a big winner turned into a bag and now taking the loss - these stocks have big spikes and crash really hard and don't spike again for a while [TRADE: long AGO @ 0.0 x0]",
+      "tickers": [
+        "USAR"
+      ],
+      "category": "entry",
+      "key_levels_mentioned": [],
+      "tags": []
+    }
+  ],
+  "trades": [
+    {
+      "timestamp": "11:06",
+      "direction": "long",
+      "ticker": "CRWD",
+      "price": 195.95,
+      "size": 0,
+      "reason": "the HPTE that i predicted did not play out [TRADE: long CRWD @ 195.95 x0]",
+      "outcome": "open",
+      "exit_timestamp": null,
+      "exit_price": null,
+      "exit_reason": null
+    },
+    {
+      "timestamp": "11:53",
+      "direction": "long",
+      "ticker": "AGO",
+      "price": 0.0,
+      "size": 0,
+      "reason": "these stocks have big spikes and crash really hard and don't spike again for a while [TRADE: long AGO @ 0.0 x0]",
+      "outcome": "open",
+      "exit_timestamp": null,
+      "exit_price": null,
+      "exit_reason": null
+    }
+  ],
+  "highlights_for_carry_forward": [],
+  "market_bias": {
+    "direction": "chop",
+    "confidence": "medium",
+    "regime": "HPTE",
+    "key_levels": [
+      "VWAP",
+      "VWAP+",
+      "VWAP-"
+    ]
+  },
+  "raw_market_notes": "- 10:12 long CRWD @ 198.64, 3 shares - nice bid check in the market and CRWD - instantly aggressively bought up - good confirmation \n- 10:16 this is a HPTE where i can get aggressive #flag \n- 11:06 exit CRWD long @ 195.95 - oversized, abit too overconfident too early - the HPTE that i predicted did not play out \n- 11:11 this is what happens when i don't have staying power - i'm unable to let my RS edge play out and just get shaken out on a flush #flag #impt \n- 11:13 CRWD was so choppy and many attempts probing below VWAP to flush out buyers \n- 11:37 analyze the early rally yesterday vs today #task \n- 11:46 watched Dave ride the momentum down on VZ short using OTM puts for a 100% gain \n- 11:53 exit USAR long @ 19.25 from really long ago - was a big winner turned into a bag and now taking the loss - these stocks have big spikes and crash really hard and don't spike again for a while",
+  "source_file": "C:\\Users\\Thaddeus\\Claude Code Test\\trading-journal-system\\Vaulted\\!Journalit\\2026\\Q3\\07\\W27\\DRC-020726.md"
+}

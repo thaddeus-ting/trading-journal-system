@@ -1,0 +1,526 @@
+{
+  "week": "W27",
+  "date_range": [
+    "2026-06-29",
+    "2026-07-05"
+  ],
+  "daily_reports": [
+    {
+      "date": "2026-07-01",
+      "organized_notes": [
+        {
+          "timestamp": "1:30",
+          "text": " long UNH @ 426.31, 1 share - very steady price action, nice PBO",
+          "tickers": [
+            "PBO",
+            "UNH"
+          ],
+          "category": "entry",
+          "key_levels_mentioned": [],
+          "tags": []
+        },
+        {
+          "timestamp": "8:30",
+          "text": " on UNH just watch prior high where it rejected today",
+          "tickers": [
+            "UNH"
+          ],
+          "category": "decision",
+          "key_levels_mentioned": [],
+          "tags": []
+        },
+        {
+          "timestamp": "9:43",
+          "text": " TWLO nice wimpy pullback - nice long if market rallies into the gap",
+          "tickers": [
+            "TWLO"
+          ],
+          "category": "observation",
+          "key_levels_mentioned": [],
+          "tags": []
+        },
+        {
+          "timestamp": "9:49",
+          "text": " feeling the urge to oversize - that greed will hurt me if i give in to it #flag",
+          "tickers": [],
+          "category": "emotion",
+          "key_levels_mentioned": [],
+          "tags": [
+            "flag"
+          ]
+        },
+        {
+          "timestamp": "9:59",
+          "text": " PANW FTNT TWLO all nice longs #watch",
+          "tickers": [
+            "FTNT",
+            "PANW",
+            "TWLO"
+          ],
+          "category": "decision",
+          "key_levels_mentioned": [],
+          "tags": [
+            "watch"
+          ]
+        },
+        {
+          "timestamp": "10:02",
+          "text": " watching NU closely for a D1 breakout - nice high volume rally on the open",
+          "tickers": [
+            "NU"
+          ],
+          "category": "decision",
+          "key_levels_mentioned": [],
+          "tags": []
+        },
+        {
+          "timestamp": "10:05",
+          "text": " long NU @ 13.53, 30 shares - M5 bull flag with brief M5 compression - stop right below VWAP",
+          "tickers": [
+            "NU"
+          ],
+          "category": "entry",
+          "key_levels_mentioned": [
+            "VWAP",
+            "VWAP+",
+            "VWAP-"
+          ],
+          "tags": []
+        },
+        {
+          "timestamp": "10:12",
+          "text": " long TSLA @ 427.24, 1 share - nice strength yesterday and breakout above PDH and HOD on volume - potential H- above but ill watch what happens at that level before exiting",
+          "tickers": [
+            "TSLA"
+          ],
+          "category": "entry",
+          "key_levels_mentioned": [
+            "PDH"
+          ],
+          "tags": []
+        },
+        {
+          "timestamp": "10:19",
+          "text": " exit NU long @ 13.67, missed out some profits for getting greedy and hoping for more strength and ended up exiting for a pullback - exiting as this rally is really steep and reached measured move - this second leg also does not have high volume candles",
+          "tickers": [
+            "NU"
+          ],
+          "category": "exit",
+          "key_levels_mentioned": [],
+          "tags": []
+        },
+        {
+          "timestamp": "10:23",
+          "text": " APP IBM nice longs too",
+          "tickers": [
+            "APP",
+            "IBM"
+          ],
+          "category": "observation",
+          "key_levels_mentioned": [],
+          "tags": []
+        },
+        {
+          "timestamp": "10:28",
+          "text": " long PANW @ 353.54, 1 share - nice break to new HOD with retest, SPY very nice and tight price action - if we do get a red candle i'm expecting it to instantly reverse",
+          "tickers": [
+            "PANW"
+          ],
+          "category": "entry",
+          "key_levels_mentioned": [],
+          "tags": []
+        },
+        {
+          "timestamp": "10:47",
+          "text": " add PANW long @ 354.51, 1 share nice RS as SPY is testing the bid",
+          "tickers": [
+            "PANW",
+            "RS"
+          ],
+          "category": "observation",
+          "key_levels_mentioned": [],
+          "tags": []
+        },
+        {
+          "timestamp": "11:07",
+          "text": " exit TSLA long @ 429.13, exit into strength at CH+ ceiling - TSLA is really choppy with sharp pullbacks",
+          "tickers": [
+            "TSLA"
+          ],
+          "category": "exit",
+          "key_levels_mentioned": [],
+          "tags": []
+        },
+        {
+          "timestamp": "11:24",
+          "text": " TSLA transitioned out of a range and broke out - what were the signs of it gaining strength? orderly candles? look on the M1? #qn",
+          "tickers": [
+            "TSLA"
+          ],
+          "category": "observation",
+          "key_levels_mentioned": [],
+          "tags": [
+            "qn"
+          ]
+        },
+        {
+          "timestamp": "11:31",
+          "text": " partial exit PANW long @ 356.21, 1 sahrere, holding the other half in case of continuation - market is really strong today",
+          "tickers": [
+            "PANW"
+          ],
+          "category": "exit",
+          "key_levels_mentioned": [],
+          "tags": []
+        },
+        {
+          "timestamp": "11:36",
+          "text": " my comment earlier on SPY having nice tight PA and  likely to be instantly erased was nicely identified - this is a HPTE bullish trend day and THIS is when i size up #flag #impt",
+          "tickers": [
+            "PA"
+          ],
+          "category": "observation",
+          "key_levels_mentioned": [],
+          "tags": [
+            "flag",
+            "impt"
+          ]
+        },
+        {
+          "timestamp": "11:48",
+          "text": " exit PANW long @ 357.97, 1 share",
+          "tickers": [
+            "PANW"
+          ],
+          "category": "exit",
+          "key_levels_mentioned": [],
+          "tags": []
+        },
+        {
+          "timestamp": "11:49",
+          "text": " very nice trade on PANW and nice exit into strength #flag",
+          "tickers": [
+            "PANW"
+          ],
+          "category": "observation",
+          "key_levels_mentioned": [],
+          "tags": [
+            "flag"
+          ]
+        }
+      ],
+      "trades": [
+        {
+          "timestamp": "10:05",
+          "direction": "long",
+          "ticker": "NU",
+          "price": 13.53,
+          "size": 30,
+          "reason": "",
+          "outcome": "closed",
+          "exit_timestamp": "10:19",
+          "exit_price": 13.67,
+          "exit_reason": ""
+        },
+        {
+          "timestamp": "10:12",
+          "direction": "long",
+          "ticker": "TSLA",
+          "price": 427.24,
+          "size": 1,
+          "reason": "",
+          "outcome": "closed",
+          "exit_timestamp": "11:07",
+          "exit_price": 429.13,
+          "exit_reason": ""
+        },
+        {
+          "timestamp": "10:28",
+          "direction": "long",
+          "ticker": "PANW",
+          "price": 353.54,
+          "size": 1,
+          "reason": "",
+          "outcome": "closed",
+          "exit_timestamp": "11:31",
+          "exit_price": 356.21,
+          "exit_reason": ""
+        },
+        {
+          "timestamp": "11:48",
+          "direction": "exit",
+          "ticker": "PANW",
+          "price": 357.97,
+          "size": 0,
+          "reason": "",
+          "outcome": "open",
+          "exit_timestamp": null,
+          "exit_price": null,
+          "exit_reason": null
+        },
+        {
+          "timestamp": "1:30",
+          "direction": "long",
+          "ticker": "UNH",
+          "price": 426.31,
+          "size": 1,
+          "reason": "",
+          "outcome": "open",
+          "exit_timestamp": null,
+          "exit_price": null,
+          "exit_reason": null
+        }
+      ],
+      "highlights_for_carry_forward": [
+        "Market context: - sector rotation out of hardware into software today - SMH weak today #flag \n- ORCL really weak even as its sector was bouncing"
+      ],
+      "market_bias": {
+        "direction": "bullish",
+        "confidence": "high",
+        "regime": "HPTE",
+        "key_levels": [
+          "PDH",
+          "VWAP",
+          "VWAP+",
+          "VWAP-"
+        ]
+      },
+      "raw_market_notes": "- 9:43 TWLO nice wimpy pullback - nice long if market rallies into the gap \n- 9:49 feeling the urge to oversize - that greed will hurt me if i give in to it #flag \n- 9:59 PANW FTNT TWLO all nice longs #watch \n- 10:02 watching NU closely for a D1 breakout - nice high volume rally on the open \n- 10:05 long NU @ 13.53, 30 shares - M5 bull flag with brief M5 compression - stop right below VWAP \n- 10:12 long TSLA @ 427.24, 1 share - nice strength yesterday and breakout above PDH and HOD on volume - potential H- above but ill watch what happens at that level before exiting \n- 10:19 exit NU long @ 13.67, missed out some profits for getting greedy and hoping for more strength and ended up exiting for a pullback - exiting as this rally is really steep and reached measured move - this second leg also does not have high volume candles \n- 10:23 APP IBM nice longs too \n- 10:28 long PANW @ 353.54, 1 share - nice break to new HOD with retest, SPY very nice and tight price action - if we do get a red candle i'm expecting it to instantly reverse \n- 10:47 add PANW long @ 354.51, 1 share nice RS as SPY is testing the bid \n- 11:07 exit TSLA long @ 429.13, exit into strength at CH+ ceiling - TSLA is really choppy with sharp pullbacks    \n- 11:24 TSLA transitioned out of a range and broke out - what were the signs of it gaining strength? orderly candles? look on the M1? #qn \n- 11:31 partial exit PANW long @ 356.21, 1 sahrere, holding the other half in case of continuation - market is really strong today \n- 11:36 my comment earlier on SPY having nice tight PA and  likely to be instantly erased was nicely identified - this is a HPTE bullish trend day and THIS is when i size up #flag #impt\n- 11:48 exit PANW long @ 357.97, 1 share \n- 11:49 very nice trade on PANW and nice exit into strength #flag \n- 1:30 long UNH @ 426.31, 1 share - very steady price action, nice PBO \n- 8:30 on UNH just watch prior high where it rejected today",
+      "source_file": "C:\\Users\\Thaddeus\\Claude Code Test\\trading-journal-system\\Vaulted\\!Journalit\\2026\\Q3\\07\\W27\\DRC-010726.md"
+    },
+    {
+      "date": "2026-07-02",
+      "organized_notes": [
+        {
+          "timestamp": "10:12",
+          "text": " long CRWD @ 198.64, 3 shares - nice bid check in the market and CRWD - instantly aggressively bought up - good confirmation",
+          "tickers": [
+            "CRWD"
+          ],
+          "category": "entry",
+          "key_levels_mentioned": [],
+          "tags": []
+        },
+        {
+          "timestamp": "10:16",
+          "text": " this is a HPTE where i can get aggressive #flag",
+          "tickers": [],
+          "category": "observation",
+          "key_levels_mentioned": [],
+          "tags": [
+            "flag"
+          ]
+        },
+        {
+          "timestamp": "11:06",
+          "text": " exit CRWD long @ 195.95 - oversized, abit too overconfident too early - the HPTE that i predicted did not play out",
+          "tickers": [
+            "CRWD"
+          ],
+          "category": "entry",
+          "key_levels_mentioned": [],
+          "tags": []
+        },
+        {
+          "timestamp": "11:11",
+          "text": " this is what happens when i don't have staying power - i'm unable to let my RS edge play out and just get shaken out on a flush #flag #impt",
+          "tickers": [
+            "RS"
+          ],
+          "category": "observation",
+          "key_levels_mentioned": [],
+          "tags": [
+            "flag",
+            "impt"
+          ]
+        },
+        {
+          "timestamp": "11:13",
+          "text": " CRWD was so choppy and many attempts probing below VWAP to flush out buyers",
+          "tickers": [
+            "CRWD"
+          ],
+          "category": "observation",
+          "key_levels_mentioned": [
+            "VWAP",
+            "VWAP+",
+            "VWAP-"
+          ],
+          "tags": []
+        },
+        {
+          "timestamp": "11:37",
+          "text": " analyze the early rally yesterday vs today #task",
+          "tickers": [],
+          "category": "observation",
+          "key_levels_mentioned": [],
+          "tags": [
+            "task"
+          ]
+        },
+        {
+          "timestamp": "11:46",
+          "text": " watched Dave ride the momentum down on VZ short using OTM puts for a 100% gain",
+          "tickers": [
+            "OTM",
+            "VZ"
+          ],
+          "category": "decision",
+          "key_levels_mentioned": [],
+          "tags": []
+        },
+        {
+          "timestamp": "11:53",
+          "text": " exit USAR long @ 19.25 from really long ago - was a big winner turned into a bag and now taking the loss - these stocks have big spikes and crash really hard and don't spike again for a while",
+          "tickers": [
+            "USAR"
+          ],
+          "category": "entry",
+          "key_levels_mentioned": [],
+          "tags": []
+        }
+      ],
+      "trades": [
+        {
+          "timestamp": "11:06",
+          "direction": "long",
+          "ticker": "CRWD",
+          "price": 195.95,
+          "size": 0,
+          "reason": "",
+          "outcome": "open",
+          "exit_timestamp": null,
+          "exit_price": null,
+          "exit_reason": null
+        },
+        {
+          "timestamp": "11:53",
+          "direction": "long",
+          "ticker": "AGO",
+          "price": 0.0,
+          "size": 0,
+          "reason": "",
+          "outcome": "open",
+          "exit_timestamp": null,
+          "exit_price": null,
+          "exit_reason": null
+        }
+      ],
+      "highlights_for_carry_forward": [],
+      "market_bias": {
+        "direction": "chop",
+        "confidence": "medium",
+        "regime": "HPTE",
+        "key_levels": [
+          "VWAP",
+          "VWAP+",
+          "VWAP-"
+        ]
+      },
+      "raw_market_notes": "- 10:12 long CRWD @ 198.64, 3 shares - nice bid check in the market and CRWD - instantly aggressively bought up - good confirmation \n- 10:16 this is a HPTE where i can get aggressive #flag \n- 11:06 exit CRWD long @ 195.95 - oversized, abit too overconfident too early - the HPTE that i predicted did not play out \n- 11:11 this is what happens when i don't have staying power - i'm unable to let my RS edge play out and just get shaken out on a flush #flag #impt \n- 11:13 CRWD was so choppy and many attempts probing below VWAP to flush out buyers \n- 11:37 analyze the early rally yesterday vs today #task \n- 11:46 watched Dave ride the momentum down on VZ short using OTM puts for a 100% gain \n- 11:53 exit USAR long @ 19.25 from really long ago - was a big winner turned into a bag and now taking the loss - these stocks have big spikes and crash really hard and don't spike again for a while",
+      "source_file": "C:\\Users\\Thaddeus\\Claude Code Test\\trading-journal-system\\Vaulted\\!Journalit\\2026\\Q3\\07\\W27\\DRC-020726.md"
+    }
+  ],
+  "pattern_suggestions": [
+    {
+      "pattern": "Setup: breakout",
+      "type": "setup",
+      "supporting_days": [
+        "2026-07-01",
+        "2026-07-01"
+      ],
+      "evidence_quotes": [
+        " watching NU closely for a D1 breakout - nice high volume rally on the open",
+        " long TSLA @ 427.24, 1 share - nice strength yesterday and breakout above PDH and HOD on volume - potential H- above but ill watch what happens at that level before exiting"
+      ],
+      "frequency": 2,
+      "severity_hint": "low",
+      "user_confirmed": false,
+      "user_dismissed": false,
+      "user_renamed": null
+    },
+    {
+      "pattern": "Setup: vwap",
+      "type": "setup",
+      "supporting_days": [
+        "2026-07-01",
+        "2026-07-02"
+      ],
+      "evidence_quotes": [
+        " long NU @ 13.53, 30 shares - M5 bull flag with brief M5 compression - stop right below VWAP",
+        " CRWD was so choppy and many attempts probing below VWAP to flush out buyers"
+      ],
+      "frequency": 2,
+      "severity_hint": "low",
+      "user_confirmed": false,
+      "user_dismissed": false,
+      "user_renamed": null
+    }
+  ],
+  "setup_performance": [
+    {
+      "setup": "breakout",
+      "market_condition": "mixed",
+      "trades": 3,
+      "wins": 3,
+      "notes": "Observed 2 times in notes"
+    },
+    {
+      "setup": "vwap",
+      "market_condition": "mixed",
+      "trades": 3,
+      "wins": 3,
+      "notes": "Observed 2 times in notes"
+    }
+  ],
+  "market_condition_tracking": [],
+  "metric_updates": {
+    "weekly_mistakes": [
+      {
+        "date": "2026-07-01",
+        "value": 1
+      },
+      {
+        "date": "2026-07-02",
+        "value": 0
+      }
+    ],
+    "weekly_trades": [
+      {
+        "date": "2026-07-01",
+        "value": 5
+      },
+      {
+        "date": "2026-07-02",
+        "value": 2
+      }
+    ],
+    "daily_win_rate": [
+      {
+        "date": "2026-07-01",
+        "value": 100.0
+      }
+    ],
+    "bias_confidence": [
+      {
+        "date": "2026-07-01",
+        "value": 3
+      },
+      {
+        "date": "2026-07-02",
+        "value": 2
+      }
+    ],
+    "highlights_count": [
+      {
+        "date": "2026-07-01",
+        "value": 1
+      },
+      {
+        "date": "2026-07-02",
+        "value": 0
+      }
+    ]
+  },
+  "user_notes": ""
+}

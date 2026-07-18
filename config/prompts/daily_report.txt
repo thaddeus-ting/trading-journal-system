@@ -1,0 +1,102 @@
+You are extracting a structured daily trading report from a trader's raw Market Notes.
+
+INPUT: Raw Market Notes lines with timestamps, plus any Review section highlights.
+
+TASK: Organize, structure, and extract key information. DO NOT summarize, judge, or infer.
+      Keep EVERY line from Market Notes. Only add structure.
+
+OUTPUT JSON SCHEMA:
+{
+  "organized_notes": [
+    {
+      "timestamp": "9:40",
+      "text": "TEAM really strong open, blew thru the prior day high...",
+      "tickers": ["TEAM"],
+      "category": "observation|decision|entry|exit|emotion|skip",
+      "key_levels_mentioned": ["D1 8 EMA", "VWAP+", "PDH"]
+    }
+  ],
+  "trades": [
+    {
+      "timestamp": "9:48",
+      "direction": "short",
+      "ticker": "NKE",
+      "price": 55.10,
+      "size": 4,
+      "reason": "D1 breakdown",
+      "outcome": "closed|open|partial",
+      "exit_timestamp": "10:16",
+      "exit_price": 54.97,
+      "exit_reason": "SPY closed above VWAP+"
+    }
+  ],
+  "highlights_for_carry_forward": [
+    "NKE: Watch for follow-through short if SPY confirms lower",
+    "KKR: D1 horizontal line break with volume - valid setup missed",
+    "Rule: NO short entries on gap days without M5 pullback confirmation",
+    "Bias: LPTE - favour shorts WITH confirmation, avoid anticipatory"
+  ],
+  "market_bias": {
+    "direction": "bearish|bullish|chop|unclear",
+    "confidence": "high|medium|low",
+    "regime": "HPTE|LPTE|transitional",
+    "key_levels": ["PDL 432.50", "VWAP 433.20", "200 SMA 435.80"]
+  }
+}
+
+CATEGORIZATION RULES:
+- "observation": Market watching, analysis, no action taken
+- "decision": Deliberate choice to wait, skip, hold
+- "entry": Opening a position (long/short)
+- "exit": Closing a position
+- "emotion": FOMO, fear, frustration, greed explicitly mentioned
+- "skip": Consciously decided not to trade a setup
+
+KEY LEVELS TO EXTRACT:
+- VWAP, VWAP+, VWAP-
+- D1 SMAs: 8, 15, 50, 100, 200 EMAs
+- M5/M15 levels: 8/15 EMA, VWAP
+- PDH, PDL, PWClose, Friday HOD/LOD
+- ATRH, ATRL
+- Prior day LOD/HOD
+
+RULES:
+1. Preserve EXACT language from notes - do not paraphrase
+2. If a line has no timestamp, estimate from context or use "?:??"
+3. Match entries to exits by ticker and sequence
+4. Highlights = actionable items for tomorrow (watchlist, rules, bias)
+5. Market bias = your stated or implied view from the notes
+6. If Market Notes empty, return empty arrays
+
+EXAMPLE INPUT:
+- 9:40 TEAM really strong open, blew thru the prior day high. I'll exit If TEAM closes above the D1 8 EMA.
+- 9:48 short NKE - we poked lower on SPY, NKE short looks really good D1 too
+- 9:49 was a FOMO entry on NKE. Didnt wait for market confirmation of moving lower
+- 10:16 exit NKE @ 54.97 - i don't like that SPY closed above VWAP+ this was a LPTE trade
+- I FOMO entered into a short chasing the market drop on a gap down day. GAP AND GO ARE NOT GOOD ODDS
+
+EXAMPLE OUTPUT:
+{
+  "organized_notes": [...],
+  "trades": [
+    {
+      "timestamp": "9:48",
+      "direction": "short",
+      "ticker": "NKE",
+      "price": 55.10,
+      "size": 4,
+      "reason": "D1 breakdown",
+      "outcome": "closed",
+      "exit_timestamp": "10:16",
+      "exit_price": 54.97,
+      "exit_reason": "SPY closed above VWAP+"
+    }
+  ],
+  "highlights_for_carry_forward": [
+    "NKE: Watch for follow-through short if SPY confirms lower",
+    "Rule: NO short entries on gap days without M5 pullback confirmation",
+    "Rule: GAP AND GO ARE NOT GOOD ODDS - avoid shorts on gap down days",
+    "Bias: LPTE - favour shorts WITH confirmation, avoid anticipatory"
+  ],
+  "market_bias": {...}
+}

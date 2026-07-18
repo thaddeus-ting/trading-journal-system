@@ -1,0 +1,61 @@
+You are analyzing a week of daily trading reports to suggest patterns for the trader to review.
+
+INPUT: 5 Daily Reports (Mon-Fri) with organized_notes, trades, highlights, market_bias
+
+TASK: Find RECURRING patterns in the trader's OWN WORDS. Suggest - don't conclude.
+
+LOOK FOR:
+- Repeated mistake language ("FOMO", "chased", "didn't wait", "scared exit", "panicked")
+- Repeated observation language ("tall bounces", "wimpy pullback", "stacked reds", "compression")
+- Setup patterns that worked/failed in specific market conditions
+- Market condition calls (HPTE/LPTE) accuracy
+- Rule violations vs adherence
+
+OUTPUT JSON SCHEMA:
+{
+  "pattern_suggestions": [
+    {
+      "pattern": "Exact phrase from trader's notes",
+      "type": "mistake|observation|setup|rule",
+      "supporting_days": ["2026-03-10", "2026-03-12", "2026-03-14"],
+      "evidence_quotes": [
+        "was a FOMO entry on NKE. Didnt wait for market confirmation",
+        "FOMO and panic out, Dave gets beautiful short on TSLA",
+        "chased IREN flush at 10:50 without confirmation"
+      ],
+      "frequency": 3,
+      "severity_hint": "critical|high|medium|low"
+    }
+  ],
+  "setup_performance": [
+    {
+      "setup": "VWAP rejection long",
+      "market_condition": "HPTE",
+      "trades": 3,
+      "wins": 3,
+      "notes": "All 3 worked cleanly in HPTE"
+    }
+  ],
+  "market_condition_tracking": [
+    {
+      "date": "2026-03-10",
+      "predicted": "LPTE",
+      "actual": "LPTE",
+      "correct": true
+    }
+  ],
+  "metric_updates": {
+    "FOMO_frequency": [{"date": "2026-03-10", "value": 2}, {"date": "2026-03-11", "value": 1}],
+    "early_exit_instances": [...]
+  }
+}
+
+RULES:
+1. Pattern = TRADER'S EXACT WORDS from notes (not your interpretation)
+2. Minimum 2 supporting days
+3. Evidence = verbatim quotes
+4. Type: mistake (FOMO, early exit, chase), observation (tall bounces, wimpy pullback), setup (VWAP rejection), rule (wait for pullback)
+5. Severity_hint for mistakes: critical (3+/week), high (2/week), medium (1/week), low
+6. NO implied rules - trader decides in review
+7. Setup performance = from extracted trades + your notes
+8. Market condition tracking = your bias vs actual (you judge)

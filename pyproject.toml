@@ -1,0 +1,52 @@
+[project]
+name = "trading-journal-system"
+version = "0.1.0"
+description = "Trading journal workflow optimizer - extracts learnings from daily notes"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "pyyaml>=6.0",
+    "pydantic>=2.7",
+    "python-frontmatter>=1.0",
+    "groq>=0.5.0",          # For Groq API
+    "google-generativeai>=0.7",  # For Google AI Studio (alternative)
+    "ollama>=0.3.0",        # For local Ollama (alternative)
+    "rich>=13.7",           # CLI output formatting
+    "typer>=0.9",           # CLI framework
+    "python-dotenv>=1.0",   # .env loading
+    "requests>=2.31",       # HTTP for FRED API
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=4.1",
+    "ruff>=0.5",
+    "mypy>=1.10",
+]
+streamlit = [
+    "streamlit>=1.35",
+    "plotly>=5.22",
+    "pandas>=2.2",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+lint.select = ["E", "F", "W", "I", "N", "UP", "B", "C4", "T20"]
+lint.ignore = ["E501", "B008"]
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]

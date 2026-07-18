@@ -1,0 +1,46 @@
+{
+  "date": "2026-07-08",
+  "organized_notes": [
+    {
+      "timestamp": "9:48",
+      "text": " NVDA nice early run up but now pulling back",
+      "tickers": [
+        "NVDA"
+      ],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": []
+    },
+    {
+      "timestamp": "10:34",
+      "text": " BKR CNQ steady long",
+      "tickers": [
+        "BKR",
+        "CNQ"
+      ],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": []
+    },
+    {
+      "timestamp": "10:45",
+      "text": " nice drop on QXO with high volume confirmation here",
+      "tickers": [
+        "QXO"
+      ],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": []
+    }
+  ],
+  "trades": [],
+  "highlights_for_carry_forward": [],
+  "market_bias": {
+    "direction": "bullish",
+    "confidence": "medium",
+    "regime": "transitional",
+    "key_levels": []
+  },
+  "raw_market_notes": "- 9:48 NVDA nice early run up but now pulling back \n- 10:34 BKR CNQ steady long \n- 10:45 nice drop on QXO with high volume confirmation here",
+  "source_file": "C:\\Users\\Thaddeus\\Claude Code Test\\trading-journal-system\\Vaulted\\!Journalit\\2026\\Q3\\07\\W28\\DRC-080726.md"
+}

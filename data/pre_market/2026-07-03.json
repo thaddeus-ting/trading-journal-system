@@ -1,0 +1,23 @@
+{
+  "date": "2026-07-03",
+  "carry_forward": [],
+  "economic_events": [
+    {
+      "time": "08:30",
+      "event": "Nonfarm Payrolls",
+      "impact": "HIGH",
+      "forecast": null,
+      "prior": null
+    }
+  ],
+  "active_rules": [],
+  "watchlist_candidates": [
+    "Watch USAR",
+    "Watch VZ",
+    "Watch AGO",
+    "Watch RS",
+    "Watch CRWD",
+    "Watch OTM"
+  ],
+  "generated_at": "2026-07-16T18:28:55.136012"
+}

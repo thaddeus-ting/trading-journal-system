@@ -1,0 +1,553 @@
+{
+  "week": "W28",
+  "date_range": [
+    "2026-07-06",
+    "2026-07-12"
+  ],
+  "daily_reports": [
+    {
+      "date": "2026-07-06",
+      "organized_notes": [
+        {
+          "timestamp": "9:50",
+          "text": " long PANW @ 363.24, 1 share - decided to enter and GOT GREEDY and had to chase for the fill",
+          "tickers": [
+            "PANW"
+          ],
+          "category": "entry",
+          "key_levels_mentioned": [],
+          "tags": []
+        },
+        {
+          "timestamp": "9:51",
+          "text": " when you make a decision to enter, ENTER IMMEDIATELY - messing around to save a few cents will create inconsistent results",
+          "tickers": [],
+          "category": "observation",
+          "key_levels_mentioned": [],
+          "tags": []
+        },
+        {
+          "timestamp": "10:05",
+          "text": " Dan - every 4-5 days the big money pours into themes in the market, there's usually 1-3 hot ones and they change when the market is chopping like this. last week was Cybersecurity #flag #impt",
+          "tickers": [],
+          "category": "observation",
+          "key_levels_mentioned": [],
+          "tags": [
+            "flag",
+            "impt"
+          ]
+        },
+        {
+          "timestamp": "10:06",
+          "text": " RBRK PANW TENB strong",
+          "tickers": [
+            "PANW",
+            "RBRK",
+            "TENB"
+          ],
+          "category": "observation",
+          "key_levels_mentioned": [],
+          "tags": []
+        },
+        {
+          "timestamp": "10:10",
+          "text": " try to add watching news and 1OP indicator as opening reminders before taking trades #flag #impt",
+          "tickers": [],
+          "category": "decision",
+          "key_levels_mentioned": [],
+          "tags": [
+            "flag",
+            "impt"
+          ]
+        },
+        {
+          "timestamp": "10:15",
+          "text": " add PANW long @ 393.97, 1 share - pullback bounced nicely off 8 EMA - adding as SPY put in a nice green candle",
+          "tickers": [
+            "PANW"
+          ],
+          "category": "entry",
+          "key_levels_mentioned": [
+            "D1 8 EMA"
+          ],
+          "tags": []
+        },
+        {
+          "timestamp": "10:17",
+          "text": " could potentially see some resistance at HOD/SPY $750 so watch closely",
+          "tickers": [],
+          "category": "decision",
+          "key_levels_mentioned": [],
+          "tags": []
+        },
+        {
+          "timestamp": "10:27",
+          "text": " watching AMD long",
+          "tickers": [
+            "AMD"
+          ],
+          "category": "decision",
+          "key_levels_mentioned": [],
+          "tags": []
+        },
+        {
+          "timestamp": "10:28",
+          "text": " CRDO RDDT AAPL long",
+          "tickers": [
+            "AAPL",
+            "CRDO",
+            "RDDT"
+          ],
+          "category": "observation",
+          "key_levels_mentioned": [],
+          "tags": []
+        },
+        {
+          "timestamp": "10:59",
+          "text": " CRDO flush rn",
+          "tickers": [
+            "CRDO"
+          ],
+          "category": "observation",
+          "key_levels_mentioned": [],
+          "tags": []
+        },
+        {
+          "timestamp": "11:00",
+          "text": " AAPL beautiful grinder",
+          "tickers": [
+            "AAPL"
+          ],
+          "category": "observation",
+          "key_levels_mentioned": [],
+          "tags": []
+        },
+        {
+          "timestamp": "11:00",
+          "text": " RDDT possibly breaking HOD here",
+          "tickers": [
+            "RDDT"
+          ],
+          "category": "observation",
+          "key_levels_mentioned": [],
+          "tags": []
+        },
+        {
+          "timestamp": "11:08",
+          "text": " RDDT looks nice for a swing with a base and breakout but its quite extended",
+          "tickers": [
+            "RDDT"
+          ],
+          "category": "observation",
+          "key_levels_mentioned": [],
+          "tags": []
+        },
+        {
+          "timestamp": "11:11",
+          "text": " why is PANW underperforming vs RDDT AAPL what were the signs????????? #flag #qn",
+          "tickers": [
+            "AAPL",
+            "PANW",
+            "RDDT"
+          ],
+          "category": "observation",
+          "key_levels_mentioned": [],
+          "tags": [
+            "flag",
+            "qn"
+          ]
+        },
+        {
+          "timestamp": "11:27",
+          "text": " Dave is going long DOUL and earlier AAPL which seems so extended",
+          "tickers": [
+            "AAPL",
+            "DOUL"
+          ],
+          "category": "entry",
+          "key_levels_mentioned": [],
+          "tags": []
+        },
+        {
+          "timestamp": "11:31",
+          "text": " AMD strong",
+          "tickers": [
+            "AMD"
+          ],
+          "category": "observation",
+          "key_levels_mentioned": [],
+          "tags": []
+        },
+        {
+          "timestamp": "11:32",
+          "text": " exit PANW @ 359.73, 2 shares - oversized",
+          "tickers": [
+            "PANW"
+          ],
+          "category": "exit",
+          "key_levels_mentioned": [],
+          "tags": []
+        },
+        {
+          "timestamp": "11:33",
+          "text": " remember that you are not profitable day trading - DONT SIZE UP",
+          "tickers": [
+            "SIZE"
+          ],
+          "category": "observation",
+          "key_levels_mentioned": [],
+          "tags": []
+        }
+      ],
+      "trades": [
+        {
+          "timestamp": "10:15",
+          "direction": "long",
+          "ticker": "PANW",
+          "price": 393.97,
+          "size": 1,
+          "reason": "",
+          "outcome": "closed",
+          "exit_timestamp": "11:32",
+          "exit_price": 359.73,
+          "exit_reason": ""
+        },
+        {
+          "timestamp": "11:27",
+          "direction": "long",
+          "ticker": "DOUL",
+          "price": 0.0,
+          "size": 0,
+          "reason": "",
+          "outcome": "open",
+          "exit_timestamp": null,
+          "exit_price": null,
+          "exit_reason": null
+        }
+      ],
+      "highlights_for_carry_forward": [
+        "Focus: Dan talking about sector rotation:",
+        "Focus: every 4-5 days the big money pours into themes in the market, there's usually 1-3 hot ones and they change when the market is chopping like this. last week was Cybersecurity",
+        "Focus: how: watch tickers constantly, watch the sectors and industries",
+        "Focus: you can wait for the breakouts to start and then daytrade the trends or you can try to catch the breakout day by watching groups of charts that start compressing/tightening up for swing entries."
+      ],
+      "market_bias": {
+        "direction": "bullish",
+        "confidence": "high",
+        "regime": "transitional",
+        "key_levels": [
+          "D1 8 EMA"
+        ]
+      },
+      "raw_market_notes": "- 9:50 long PANW @ 363.24, 1 share - decided to enter and GOT GREEDY and had to chase for the fill \n- 9:51 when you make a decision to enter, ENTER IMMEDIATELY - messing around to save a few cents will create inconsistent results \n- 10:05 Dan - every 4-5 days the big money pours into themes in the market, there's usually 1-3 hot ones and they change when the market is chopping like this. last week was Cybersecurity #flag #impt \n- 10:06 RBRK PANW TENB strong\n- 10:10 try to add watching news and 1OP indicator as opening reminders before taking trades #flag #impt\n- 10:15 add PANW long @ 393.97, 1 share - pullback bounced nicely off 8 EMA - adding as SPY put in a nice green candle \n- 10:17 could potentially see some resistance at HOD/SPY $750 so watch closely \n- 10:27 watching AMD long \n- 10:28 CRDO RDDT AAPL long \n- 10:59 CRDO flush rn \n- 11:00 AAPL beautiful grinder\n- 11:00 RDDT possibly breaking HOD here\n- 11:08 RDDT looks nice for a swing with a base and breakout but its quite extended \n- 11:11 why is PANW underperforming vs RDDT AAPL what were the signs????????? #flag #qn  \n- 11:27 Dave is going long DOUL and earlier AAPL which seems so extended\n- 11:31 AMD strong \n- 11:32 exit PANW @ 359.73, 2 shares - oversized  \n  11:33 remember that you are not profitable day trading - DONT SIZE UP",
+      "source_file": "C:\\Users\\Thaddeus\\Claude Code Test\\trading-journal-system\\Vaulted\\!Journalit\\2026\\Q3\\07\\W28\\DRC-060726.md"
+    },
+    {
+      "date": "2026-07-08",
+      "organized_notes": [
+        {
+          "timestamp": "9:48",
+          "text": " NVDA nice early run up but now pulling back",
+          "tickers": [
+            "NVDA"
+          ],
+          "category": "observation",
+          "key_levels_mentioned": [],
+          "tags": []
+        },
+        {
+          "timestamp": "10:34",
+          "text": " BKR CNQ steady long",
+          "tickers": [
+            "BKR",
+            "CNQ"
+          ],
+          "category": "observation",
+          "key_levels_mentioned": [],
+          "tags": []
+        },
+        {
+          "timestamp": "10:45",
+          "text": " nice drop on QXO with high volume confirmation here",
+          "tickers": [
+            "QXO"
+          ],
+          "category": "observation",
+          "key_levels_mentioned": [],
+          "tags": []
+        }
+      ],
+      "trades": [],
+      "highlights_for_carry_forward": [],
+      "market_bias": {
+        "direction": "bullish",
+        "confidence": "medium",
+        "regime": "transitional",
+        "key_levels": []
+      },
+      "raw_market_notes": "- 9:48 NVDA nice early run up but now pulling back \n- 10:34 BKR CNQ steady long \n- 10:45 nice drop on QXO with high volume confirmation here",
+      "source_file": "C:\\Users\\Thaddeus\\Claude Code Test\\trading-journal-system\\Vaulted\\!Journalit\\2026\\Q3\\07\\W28\\DRC-080726.md"
+    },
+    {
+      "date": "2026-07-09",
+      "organized_notes": [
+        {
+          "timestamp": "10:44",
+          "text": " FTNT was nice - spotted it earlier but was busy",
+          "tickers": [
+            "FTNT"
+          ],
+          "category": "observation",
+          "key_levels_mentioned": [],
+          "tags": []
+        }
+      ],
+      "trades": [],
+      "highlights_for_carry_forward": [],
+      "market_bias": {
+        "direction": "unclear",
+        "confidence": "low",
+        "regime": "transitional",
+        "key_levels": []
+      },
+      "raw_market_notes": "- 10:44 FTNT was nice - spotted it earlier but was busy",
+      "source_file": "C:\\Users\\Thaddeus\\Claude Code Test\\trading-journal-system\\Vaulted\\!Journalit\\2026\\Q3\\07\\W28\\DRC-090726.md"
+    },
+    {
+      "date": "2026-07-10",
+      "organized_notes": [
+        {
+          "timestamp": "11:04",
+          "text": " #sim short ORCL @ 139.60",
+          "tickers": [
+            "ORCL"
+          ],
+          "category": "entry",
+          "key_levels_mentioned": [],
+          "tags": [
+            "sim"
+          ]
+        },
+        {
+          "timestamp": "11:14",
+          "text": " TGT nice long here leaning on the PDH as support",
+          "tickers": [
+            "TGT"
+          ],
+          "category": "observation",
+          "key_levels_mentioned": [
+            "PDH"
+          ],
+          "tags": []
+        },
+        {
+          "timestamp": "11:17",
+          "text": " long TGT @ 135.47, 1 share adding at EOD if TGT closes well",
+          "tickers": [
+            "EOD",
+            "TGT"
+          ],
+          "category": "entry",
+          "key_levels_mentioned": [],
+          "tags": []
+        },
+        {
+          "timestamp": "11:25",
+          "text": " long CSCO @ 120.02, 10 shares tight stop using PDH support",
+          "tickers": [
+            "CSCO"
+          ],
+          "category": "entry",
+          "key_levels_mentioned": [
+            "PDH"
+          ],
+          "tags": []
+        },
+        {
+          "timestamp": "11:28",
+          "text": " partial exit CSCO long - sizing down to 6 shares, initially oversized",
+          "tickers": [
+            "CSCO"
+          ],
+          "category": "observation",
+          "key_levels_mentioned": [],
+          "tags": []
+        },
+        {
+          "timestamp": "11:30",
+          "text": " CROX nice long but D1 looks like it's in a compression",
+          "tickers": [
+            "CROX"
+          ],
+          "category": "observation",
+          "key_levels_mentioned": [],
+          "tags": []
+        },
+        {
+          "timestamp": "11:31",
+          "text": " \"The stocks leading the charge today are apparel, retail and restaurant. Rails are good too. Hard to get excited about these stocks.\" - Pete",
+          "tickers": [],
+          "category": "observation",
+          "key_levels_mentioned": [],
+          "tags": []
+        },
+        {
+          "timestamp": "11:37",
+          "text": " trending stocks i see with nice D1s - CSCO CROX but i dont know if their sectors will lead the next few days so it is hard for me to take them - D1s also are not the most clean and have the potential to pullback/move around #flag",
+          "tickers": [
+            "CROX",
+            "CSCO"
+          ],
+          "category": "observation",
+          "key_levels_mentioned": [],
+          "tags": [
+            "flag"
+          ]
+        },
+        {
+          "timestamp": "11:39",
+          "text": " NKE looks nice and potentially could have future upside but never properly based",
+          "tickers": [
+            "NKE"
+          ],
+          "category": "observation",
+          "key_levels_mentioned": [],
+          "tags": []
+        }
+      ],
+      "trades": [
+        {
+          "timestamp": "11:04",
+          "direction": "short",
+          "ticker": "ORCL",
+          "price": 0.0,
+          "size": 0,
+          "reason": "",
+          "outcome": "open",
+          "exit_timestamp": null,
+          "exit_price": null,
+          "exit_reason": null
+        },
+        {
+          "timestamp": "11:17",
+          "direction": "long",
+          "ticker": "TGT",
+          "price": 0.0,
+          "size": 0,
+          "reason": "",
+          "outcome": "open",
+          "exit_timestamp": null,
+          "exit_price": null,
+          "exit_reason": null
+        },
+        {
+          "timestamp": "11:25",
+          "direction": "long",
+          "ticker": "CSCO",
+          "price": 0.0,
+          "size": 0,
+          "reason": "",
+          "outcome": "open",
+          "exit_timestamp": null,
+          "exit_price": null,
+          "exit_reason": null
+        }
+      ],
+      "highlights_for_carry_forward": [],
+      "market_bias": {
+        "direction": "bullish",
+        "confidence": "medium",
+        "regime": "transitional",
+        "key_levels": [
+          "PDH"
+        ]
+      },
+      "raw_market_notes": "- 11:04 #sim short ORCL @ 139.60 \n- 11:14 TGT nice long here leaning on the PDH as support \n- 11:17 long TGT @ 135.47, 1 share adding at EOD if TGT closes well \n- 11:25 long CSCO @ 120.02, 10 shares tight stop using PDH support \n- 11:28 partial exit CSCO long - sizing down to 6 shares, initially oversized \n- 11:30 CROX nice long but D1 looks like it's in a compression \n- 11:31 \"The stocks leading the charge today are apparel, retail and restaurant. Rails are good too. Hard to get excited about these stocks.\" - Pete\n- 11:37 trending stocks i see with nice D1s - CSCO CROX but i dont know if their sectors will lead the next few days so it is hard for me to take them - D1s also are not the most clean and have the potential to pullback/move around #flag \n- 11:39 NKE looks nice and potentially could have future upside but never properly based",
+      "source_file": "C:\\Users\\Thaddeus\\Claude Code Test\\trading-journal-system\\Vaulted\\!Journalit\\2026\\Q3\\07\\W28\\DRC-100726.md"
+    }
+  ],
+  "pattern_suggestions": [],
+  "setup_performance": [],
+  "market_condition_tracking": [],
+  "metric_updates": {
+    "weekly_mistakes": [
+      {
+        "date": "2026-07-06",
+        "value": 0
+      },
+      {
+        "date": "2026-07-08",
+        "value": 0
+      },
+      {
+        "date": "2026-07-09",
+        "value": 0
+      },
+      {
+        "date": "2026-07-10",
+        "value": 0
+      }
+    ],
+    "weekly_trades": [
+      {
+        "date": "2026-07-06",
+        "value": 2
+      },
+      {
+        "date": "2026-07-08",
+        "value": 0
+      },
+      {
+        "date": "2026-07-09",
+        "value": 0
+      },
+      {
+        "date": "2026-07-10",
+        "value": 3
+      }
+    ],
+    "daily_win_rate": [
+      {
+        "date": "2026-07-06",
+        "value": 0.0
+      }
+    ],
+    "bias_confidence": [
+      {
+        "date": "2026-07-06",
+        "value": 3
+      },
+      {
+        "date": "2026-07-08",
+        "value": 2
+      },
+      {
+        "date": "2026-07-09",
+        "value": 1
+      },
+      {
+        "date": "2026-07-10",
+        "value": 2
+      }
+    ],
+    "highlights_count": [
+      {
+        "date": "2026-07-06",
+        "value": 4
+      },
+      {
+        "date": "2026-07-08",
+        "value": 0
+      },
+      {
+        "date": "2026-07-09",
+        "value": 0
+      },
+      {
+        "date": "2026-07-10",
+        "value": 0
+      }
+    ]
+  },
+  "user_notes": ""
+}

@@ -1,0 +1,1410 @@
+import streamlit as st
+import json
+import re
+import os
+from datetime import date, datetime, timedelta
+from pathlib import Path
+import sys
+import pandas as pd
+import plotly.express as px
+import plotly.graph_objects as go
+import yaml
+
+# Add src to path
+sys.path.insert(0, str(Path(__file__).parent))
+
+# Load .env file for API keys
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
+from src.core.models import (
+    DailyReport, PreMarketNotes, OrganizedNote, ExtractedTrade,
+    MarketBias, WeeklyReview, PatternSuggestion, SetupPerformance,
+    NoteCategory, TradeDirection, TradeStatus, MarketBiasDirection,
+    PatternType, MarketConditionTracking
+)
+
+# LLM extractor for AI summary
+from src.core.extractor import LLMExtractor
+
+# Page config
+st.set_page_config(
+    page_title="Trading Journal",
+    page_icon="📈",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+
+# Load settings early for data directories
+SETTINGS_FILE = Path("config/settings.yaml")
+if SETTINGS_FILE.exists():
+    settings = yaml.safe_load(SETTINGS_FILE.read_text())
+else:
+    settings = {}
+
+# Data directories from settings
+data_locations = settings.get("data_locations", {})
+DATA_DIR = Path(data_locations.get("data_dir", "data"))
+DAILY_DIR = DATA_DIR / data_locations.get("daily_reports_dir", "daily_reports")
+PRE_DIR = DATA_DIR / data_locations.get("pre_market_dir", "pre_market")
+WEEKLY_DIR = DATA_DIR / data_locations.get("weekly_reviews_dir", "weekly_reviews")
+
+# Tag color constants (module-level to avoid duplication)
+TAG_COLORS = {
+    "watch": "#1f77b4", "flag": "#d62728", "qn": "#ff7f0e",
+    "impt": "#9467bd", "task": "#2ca02c", "review": "#8c564b",
+    "todo": "#e377c2", "note": "#7f7f7f", "idea": "#17becf",
+    "setup": "#bcbd22", "mistake": "#d62728", "good": "#2ca02c",
+    "bad": "#d62728", "emotion": "#ff7f0e", "sector": "#795548",
+    "gold": "#ffd700", "ptrade": "#4caf50"
+}
+
+TAG_EMOJI = {
+    "watch": "🔵", "flag": "🔴", "qn": "❓", "impt": "⭐",
+    "task": "✅", "review": "🔍", "todo": "📋", "note": "📝",
+    "idea": "💡", "setup": "📐", "mistake": "❌", "good": "✅",
+    "bad": "❌", "emotion": "🟠", "sector": "🏭", "gold": "🏆", "ptrade": "📝"
+}
+
+# ================================
+# Data Loading Functions
+# ================================
+
+@st.cache_data(ttl=300)
+def load_daily_reports() -> list[DailyReport]:
+    """Load all daily reports."""
+    reports = []
+    for f in sorted(DAILY_DIR.glob("*.json")):
+        # Skip pretty JSON files - they have a different structure
+        if f.name.endswith("_pretty.json"):
+            continue
+        try:
+            data = json.loads(f.read_text())
+            reports.append(DailyReport.model_validate(data))
+        except Exception as e:
+            st.error(f"Error loading {f.name}: {e}")
+    return reports
+
+@st.cache_data(ttl=300, show_spinner=False)
+def load_pre_market(target_date: date) -> PreMarketNotes | None:
+    """Load pre-market notes for a date."""
+    path = PRE_DIR / f"{target_date.isoformat()}.json"
+    if not path.exists():
+        return None
+    data = json.loads(path.read_text())
+    # Ensure all fields exist with defaults (Pydantic v2 handles this automatically)
+    return PreMarketNotes.model_validate(data)
+
+@st.cache_data(ttl=300)
+def load_weekly_reviews() -> list[WeeklyReview]:
+    """Load all weekly reviews."""
+    reviews = []
+    for f in sorted(WEEKLY_DIR.glob("W*.json")):
+        try:
+            data = json.loads(f.read_text())
+            reviews.append(WeeklyReview.model_validate(data))
+        except Exception as e:
+            st.error(f"Error loading {f.name}: {e}")
+    return reviews
+
+# ================================
+# UI Components
+# ================================
+
+# Inject custom CSS for larger headers, tabs
+st.markdown("""
+<style>
+/* Larger section headers (expanders) */
+[data-testid="stExpander"] summary {
+    font-size: 1.15rem !important;
+    font-weight: 600 !important;
+}
+
+/* Larger tab labels */
+[data-testid="stTabs"] button {
+    font-size: 1.05rem !important;
+    font-weight: 500 !important;
+    padding: 0.5rem 1rem !important;
+}
+
+/* Larger main headers */
+h1 { font-size: 2.2rem !important; }
+h2 { font-size: 1.8rem !important; }
+h3 { font-size: 1.4rem !important; }
+
+/* Reduce sidebar title font size */
+[data-testid="stSidebar"] h1 {
+    font-size: 1.5rem !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
+
+def render_daily_report(report: DailyReport):
+    """Render a complete daily report."""
+    # Market Bias emoji for header
+    bias_emoji = ""
+    if report.market_bias:
+        bias = report.market_bias
+        bias_emoji = {
+            MarketBiasDirection.BULLISH: "🟢",
+            MarketBiasDirection.BEARISH: "🔴",
+            MarketBiasDirection.CHOP: "🟡",
+            MarketBiasDirection.UNCLEAR: "⚪"
+        }.get(bias.direction, "⚪")
+
+    st.header(f"📊 Daily Report - {report.date}  {bias_emoji}")
+    st.markdown('<div style="margin-top: 2.5rem;"></div>', unsafe_allow_html=True)
+
+    # Session Summary - AI/rule-based synthesis
+    render_ai_summary(report)
+    st.markdown('<hr style="margin: 1rem 0; border: none; border-top: 0.1px solid white;">', unsafe_allow_html=True)
+
+    # Carry-Forward Highlights, Metrics in row
+    col1, col2 = st.columns([2, 1])
+
+    with col1:
+        if report.highlights_for_carry_forward:
+            st.markdown("**Carry-Forward Highlights:**")
+            for h in report.highlights_for_carry_forward:
+                st.markdown(f"- {h}")
+
+    # Tabs with counts in brackets
+    notes_count = len(report.organized_notes)
+    tags = set()
+    for n in report.organized_notes:
+        tags.update(getattr(n, 'tags', []) or [])
+    tags_count = len(tags)
+    trades_count = len(report.trades)
+    highlights_count = len(report.highlights_for_carry_forward)
+    pred_count = sum(1 for n in report.organized_notes if 'gold' in (getattr(n, 'tags', []) or []) or 'ptrade' in (getattr(n, 'tags', []) or []))
+
+    tab1, tab2, tab3, tab4, tab5 = st.tabs([
+        f"📝 Notes ({notes_count})",
+        f"🏷️ Tags ({tags_count})",
+        f"💰 Trades ({trades_count})",
+        f"🎯 Highlights ({highlights_count})",
+        f"📊 Scorecard ({pred_count})"
+    ])
+
+    with tab1:
+        render_notes_tab(report)
+
+    with tab2:
+        render_tags_tab(report)
+
+    with tab3:
+        render_trades_tab(report)
+
+    with tab4:
+        render_highlights_tab(report)
+
+    with tab5:
+        render_prediction_scorecard_daily(report)
+
+
+def render_tags_tab(report: DailyReport):
+    """Render tags and associated notes - matches Notes tab format with single expander per tag."""
+    all_tags = {}
+    for note in report.organized_notes:
+        tags = getattr(note, 'tags', []) or []
+        for tag in tags:
+            if tag not in all_tags:
+                all_tags[tag] = []
+            all_tags[tag].append(note)
+
+    if not all_tags:
+        st.info("No tags found in notes")
+        return
+
+    for tag, notes in sorted(all_tags.items()):
+        emoji = TAG_EMOJI.get(tag.lower(), "🏷️")
+        count_str = f"({len(notes)} notes)"
+
+        # Single expander with emoji in title (matches Notes tab format)
+        with st.expander(f"{emoji} **#{tag}**  {count_str}", expanded=False):
+            for i, note in enumerate(notes):
+                # Clean note text - remove [TRADE:...] only
+                clean_text = re.sub(r'\s*\[TRADE:[^\]]*\]\s*', ' ', note.text).strip()
+                clean_text = re.sub(r'\s{2,}', ' ', clean_text).strip()
+
+                # Strip ALL #tags from text for display (tags shown as badges)
+                display_text = re.sub(r'\s*#\w+', '', clean_text).strip()
+                display_text = re.sub(r'\s{2,}', ' ', display_text).strip()
+
+                # Blank line separator between notes (not before first)
+                if i > 0:
+                    st.markdown('<div style="margin: 8px 0;"></div>', unsafe_allow_html=True)
+
+                # Format tag badges (colored pills)
+                tag_badges = ""
+                if note.tags:
+                    badges = []
+                    for t in note.tags:
+                        color = TAG_COLORS.get(t.lower(), "#6c757d")
+                        badges.append(f'<span style="background-color: {color}; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.75em; margin-left: 4px;">#{t}</span>')
+                    tag_badges = " ".join(badges)
+
+                # Display note with white timestamp
+                st.markdown(f"""
+                <div style="padding-left: 4px; margin: 4px 0;">
+                    <strong style="color:#ffffff;">{note.timestamp}</strong>  {display_text} {tag_badges}
+                </div>
+                """, unsafe_allow_html=True)
+
+                # If this note has flag_context > 0, show expanded context
+                flag_context = getattr(note, 'flag_context', 0)
+                if flag_context and flag_context > 1:
+                    # Find prior notes in the same day (by timestamp order)
+                    note_idx = report.organized_notes.index(note)
+                    if note_idx > 0:
+                        context_notes = report.organized_notes[max(0, note_idx - flag_context + 1):note_idx]
+                        if context_notes:
+                            color = TAG_COLORS.get(tag.lower(), "#6c757d")
+                            st.markdown(f'<div style="margin-left: 20px; margin-top: 4px; padding-left: 8px; border-left: 2px solid {color};">', unsafe_allow_html=True)
+                            st.caption(f"📎 Flag context ({len(context_notes)} prior {'note' if len(context_notes) == 1 else 'notes'}):")
+                            for ctx_note in context_notes:
+                                ctx_text = re.sub(r'\s*\[TRADE:[^\]]*\]\s*', ' ', ctx_note.text).strip()
+                                ctx_text = re.sub(r'\s*#\w+', '', ctx_text).strip()
+                                st.markdown(f'<div style="color: #aaa; font-size: 0.9em; margin: 2px 0;">{ctx_note.timestamp} — {ctx_text}</div>', unsafe_allow_html=True)
+                            st.markdown('</div>', unsafe_allow_html=True)
+
+
+# ================================
+# LLM-based AI Summary
+# ================================
+
+def render_ai_summary(report: DailyReport):
+    """Generate AI summary using LLM (Groq/Ollama/Google) - force AI when key available."""
+    if not report.organized_notes and not report.trades:
+        st.caption("No data to summarize")
+        return
+
+    # Build context from report
+    # Only include non-trade-execution notes (exclude entry/exit categories)
+    filtered_notes = [n for n in report.organized_notes if n.category.value not in ("entry", "exit")]
+    notes_text = "\n".join([f"[{n.timestamp}] {n.category.value}: {n.text}" for n in filtered_notes])
+    bias_text = ""
+    if report.market_bias:
+        b = report.market_bias
+        bias_text = f"Market Bias: {b.direction.value} ({b.confidence.value} confidence, {b.regime.value} regime)"
+
+    # Load previous day's pre-market notes for context
+    pre_market_context = ""
+    try:
+        prev_date = report.date - timedelta(days=1)
+        # Skip weekends
+        while prev_date.weekday() > 4:  # 5=Sat, 6=Sun
+            prev_date -= timedelta(days=1)
+        pre = load_pre_market(prev_date)
+        if pre:
+            parts = []
+            if pre.carry_forward:
+                parts.append("Carry-forward: " + "; ".join(pre.carry_forward[:3]))
+            if pre.watchlist_candidates:
+                parts.append("Watchlist: " + ", ".join(pre.watchlist_candidates[:5]))
+            if pre.active_rules:
+                parts.append("Rules: " + "; ".join(pre.active_rules[:3]))
+            pre_market_context = " | ".join(parts)
+    except Exception:
+        pre_market_context = ""
+
+    # Check if user disabled LLM API calls in settings
+    if st.session_state.get("disable_llm", False):
+        st.info("🔧 LLM disabled in Settings — using rule-based summary")
+        render_rule_based_summary(report, notes_text, bias_text)
+        return
+
+    config_path = Path("config/settings.yaml")
+    if not config_path.exists():
+        st.warning("⚠️ Config not found — using rule-based summary")
+        render_rule_based_summary(report, notes_text, bias_text)
+        return
+
+    settings = yaml.safe_load(config_path.read_text())
+
+    # Check if API key is available - if so, FORCE AI
+    api_key_env = settings.get("llm", {}).get("api_key_env", "GROQ_API_KEY")
+    api_key = os.environ.get(api_key_env)
+
+    if not api_key:
+        st.warning(f"⚠️ {api_key_env} not set — using rule-based summary")
+        render_rule_based_summary(report, notes_text, bias_text)
+        return
+
+    # API key present - force AI generation
+    with st.spinner("Generating AI summary..."):
+        try:
+            extractor = LLMExtractor(settings)
+            summary = generate_llm_summary(extractor, notes_text, bias_text, pre_market_context)
+
+            if summary:
+                st.subheader("🤖 AI-Generated Summary")
+                st.write(summary)
+            else:
+                st.warning("AI returned empty — using rule-based fallback")
+                render_rule_based_summary(report, notes_text, bias_text)
+        except Exception as e:
+            st.error(f"LLM error: {e} — using rule-based fallback")
+            render_rule_based_summary(report, notes_text, bias_text)
+
+
+def generate_llm_summary(extractor: LLMExtractor, notes_text: str, bias_text: str, pre_market_context: str = "") -> str:
+    """Call LLM to generate structured session summary."""
+    prompt = f"""You are a trading performance coach. Write a concise summary of THIS trading session.
+
+{bias_text}
+
+PREVIOUS DAY PRE-MARKET CONTEXT (reference only):
+{pre_market_context if pre_market_context else "None provided"}
+
+TODAY'S NOTES:
+{notes_text if notes_text else "No notes"}
+
+Write ONE paragraph (max 4 sentences) covering:
+- One key observation from the notes
+- One action item for tomorrow using "you should"
+
+Rules:
+- ONLY use facts from today's data above
+- NO inferences, NO assumptions, NO generic advice
+- If something isn't in the data, skip it
+- Be specific: cite tickers, times, or exact behaviors from notes
+- Do NOT use headers, bullet points, or ANY markdown formatting (no bold, italics, code blocks, backticks)
+- Output plain text only
+- Use second person for the action item: "you should [action]" """
+
+    try:
+        if extractor.provider == "groq":
+            response = extractor.client.chat.completions.create(
+                model=extractor.model,
+                messages=[{"role": "user", "content": prompt}],
+                temperature=extractor.temperature,
+                max_tokens=extractor.max_tokens
+            )
+            return response.choices[0].message.content
+        elif extractor.provider == "google":
+            response = extractor.client.generate_content(prompt)
+            return response.text
+        elif extractor.provider == "ollama":
+            response = extractor.client.generate(
+                model=extractor.model,
+                prompt=prompt,
+                options={"temperature": extractor.temperature}
+            )
+            return response.get("response", "")
+    except Exception as e:
+        return f"Error: {e}"
+
+
+def render_rule_based_summary(report: DailyReport, notes_text: str, bias_text: str):
+    """Fallback rule-based summary when LLM unavailable."""
+    note_texts = [n.text.lower() for n in report.organized_notes]
+    all_text = " ".join(note_texts)
+
+    # Count categories
+    cat_counts = {}
+    for n in report.organized_notes:
+        cat = n.category.value
+        cat_counts[cat] = cat_counts.get(cat, 0) + 1
+
+    # Trade analysis
+    closed_trades = [t for t in report.trades if t.outcome == TradeStatus.CLOSED and t.exit_price and t.price > 0]
+    wins = 0
+    for t in closed_trades:
+        if t.direction == TradeDirection.LONG and t.exit_price > t.price:
+            wins += 1
+        elif t.direction == TradeDirection.SHORT and t.exit_price < t.price:
+            wins += 1
+    win_rate = f"{wins}/{len(closed_trades)} ({wins/len(closed_trades)*100:.0f}%)" if closed_trades else "—"
+
+    # Pattern detection
+    patterns = []
+    if any("oversiz" in t or "chase" in t or "fomo" in t for t in note_texts):
+        patterns.append("⚠️ **Sizing/Chasing** — Multiple entries mention oversizing or chasing")
+    if any("early exit" in t or "cut winner" in t or "took profit early" in t for t in note_texts):
+        patterns.append("📉 **Early Exits** — Cutting winners mentioned")
+    if any("stop" in t and ("hit" in t or "taken" in t) for t in note_texts):
+        patterns.append("🛑 **Stops Hit** — Multiple stops triggered")
+    if any("vwap" in t for t in note_texts):
+        patterns.append("📊 **VWAP Focus** — VWAP referenced as key level")
+    if cat_counts.get("emotion", 0) > 0:
+        patterns.append(f"🧠 **Emotion Notes** — {cat_counts['emotion']} emotion/mistake entries")
+    if cat_counts.get("decision", 0) > 0:
+        patterns.append(f"🤔 **Decision Points** — {cat_counts['decision']} deliberate decisions logged")
+
+    # Watch/flag tracking
+    watch_tags = sum(1 for n in report.organized_notes if "watch" in (getattr(n, 'tags', []) or []))
+    flag_tags = sum(1 for n in report.organized_notes if "flag" in (getattr(n, 'tags', []) or []))
+
+    # Render
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.markdown("**Session Scorecard**")
+        st.markdown(f"- **Trades**: {len(report.trades)} total | {win_rate} win rate")
+        st.markdown(f"- **Notes**: {len(report.organized_notes)} total ({cat_counts.get('entry',0)} entries, {cat_counts.get('exit',0)} exits, {cat_counts.get('observation',0)} observations)")
+        st.markdown(f"- **Watchlist**: {watch_tags} tagged #watch | **Flags**: {flag_tags} tagged #flag")
+
+    with col2:
+        st.markdown("**Patterns for Review**")
+        if patterns:
+            for p in patterns:
+                st.markdown(f"- {p}")
+        else:
+            st.markdown("- No clear patterns detected")
+
+        st.markdown("**Suggested Review Topics**")
+        if closed_trades:
+            st.markdown("- Compare exit reasoning vs actual outcome on closed trades")
+        if cat_counts.get("entry", 0) > 0:
+            st.markdown("- Entry quality: Were setups A-grade or forced?")
+        if any("earnings" in t or "news" in t for t in note_texts):
+            st.markdown("- Event-driven trades: How did catalyst plays work?")
+        if cat_counts.get("emotion", 0) > 0:
+            st.markdown("- Emotion log: What triggered each flag? Pattern?")
+        st.markdown("- Next session: What's the one setup rule to enforce?")
+
+
+def render_notes_tab(report: DailyReport):
+    """Render organized notes in clean card layout."""
+    if not report.organized_notes:
+        st.info("No organized notes for this day.")
+        return
+
+    # Category order and styling - decision + observation combined
+    cat_order = ["entry", "exit", "decision_observation", "emotion", "skip"]
+    cat_config = {
+        "entry": {"icon": "🟢", "title": "Entries", "color": "#28a745"},
+        "exit": {"icon": "🔴", "title": "Exits", "color": "#dc3545"},
+        "decision_observation": {"icon": "🔵", "title": "Analysis", "color": "#007bff"},
+        "emotion": {"icon": "🟠", "title": "Emotion / Mistakes", "color": "#fd7e14"},
+        "skip": {"icon": "⚪", "title": "Skipped", "color": "#6c757d"}
+    }
+
+    # Group by category - merge decision and observation
+    # Also re-categorize notes that are clearly exits but mislabeled as entry/observation
+    cat_groups = {}
+    for note in report.organized_notes:
+        cat = note.category.value
+
+        # Fix mis-categorized exits: if text starts with "exit" or contains "exit " followed by ticker pattern
+        if cat in ["entry", "observation"]:
+            text_lower = note.text.lower().strip()
+            # Check if this is actually an exit note
+            if text_lower.startswith("exit ") or " exit " in text_lower[:30]:
+                cat = "exit"
+            elif cat in ["decision", "observation"]:
+                cat = "decision_observation"
+
+        if cat in ["decision", "observation"]:
+            cat = "decision_observation"
+
+        if cat not in cat_groups:
+            cat_groups[cat] = []
+        cat_groups[cat].append(note)
+
+    # Render each category
+    for cat in cat_order:
+        if cat not in cat_groups and cat not in ["entry", "exit"]:
+            continue
+        elif cat in ["entry", "exit"] and cat not in cat_groups:
+            # Always show Entries and Exits sections even if empty (show 0)
+            notes = []
+            cfg = cat_config[cat]
+            count_str = "(0)"
+
+            empty_messages = {
+                "entry": "No entries logged this session",
+                "exit": "No exits logged this session"
+            }
+            msg = empty_messages.get(cat, f"No {cat} notes logged this session")
+
+            with st.expander(f"{cfg['icon']} **{cfg['title']}**  {count_str}", expanded=False):
+                st.caption(msg)
+            continue
+
+        notes = cat_groups[cat]
+        cfg = cat_config[cat]
+        count_str = f"({len(notes)})"
+
+        with st.expander(f"{cfg['icon']} **{cfg['title']}**  {count_str}", expanded=(cat in ["entry", "exit", "emotion"])):
+            for i, note in enumerate(notes):
+                # Clean note text - remove [TRADE:...] only
+                clean_text = re.sub(r'\s*\[TRADE:[^\]]*\]\s*', ' ', note.text).strip()
+                clean_text = re.sub(r'\s{2,}', ' ', clean_text).strip()
+
+                # Remove leading dash/space from comments (the " - " separator or leading dash)
+                # Split on " - " and keep the part after it if it looks like a comment
+                if " - " in clean_text:
+                    parts = clean_text.split(" - ", 1)
+                    if len(parts) == 2:
+                        # Check if first part looks like a trade/action (has ticker)
+                        # If so, show both parts but without the " - " separator
+                        clean_text = f"{parts[0]} — {parts[1]}"
+
+                # Remove leading space if present
+                clean_text = clean_text.lstrip()
+
+                # Format tags as visual badges
+                tag_badges = ""
+                if note.tags:
+                    badges = []
+                    for tag in note.tags:
+                        color = TAG_COLORS.get(tag.lower(), "#6c757d")
+                        badges.append(f'<span style="background-color: {color}; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.75em; margin-left: 4px;">#{tag}</span>')
+                    tag_badges = " ".join(badges)
+
+                # Strip #tags from clean_text for display (tags shown as badges instead)
+                display_text = re.sub(r'\s*#\w+', '', clean_text).strip()
+                display_text = re.sub(r'\s{2,}', ' ', display_text).strip()
+
+                # Blank line separator between notes (except first)
+                if i > 0:
+                    st.markdown('<div style="margin: 8px 0;"></div>', unsafe_allow_html=True)
+
+                # Display note with white timestamp for all categories
+                st.markdown(f"""
+                <div style="padding-left: 4px; margin: 4px 0;">
+                    <strong style="color: #ffffff;">{note.timestamp}</strong>  {display_text} {tag_badges}
+                </div>
+                """, unsafe_allow_html=True)
+
+            # Show warning if too many notes collapsed
+            if len(notes) > 5 and cat not in ["entry", "exit", "emotion"]:
+                st.caption(f"{len(notes)} notes — click to expand")
+
+    # Gold Mine Section — highlight all #gold tagged notes
+    gold_notes = [n for n in report.organized_notes if "gold" in (getattr(n, 'tags', []) or [])]
+    if gold_notes:
+        with st.expander(f"🏆 **Gold Mine**  ({len(gold_notes)} {'note' if len(gold_notes) == 1 else 'notes'})", expanded=True):
+            st.caption("Key insights flagged for review — predictions, setups spotted, and valuable observations")
+            for i, note in enumerate(gold_notes):
+                clean_text = re.sub(r'\s*\[TRADE:[^\]]*\]\s*', ' ', note.text).strip()
+                clean_text = re.sub(r'\s{2,}', ' ', clean_text).strip()
+                clean_text = clean_text.lstrip()
+
+                # Format all tags as badges
+                tag_badges = ""
+                if note.tags:
+                    badges = []
+                    for tag in note.tags:
+                        color = TAG_COLORS.get(tag.lower(), "#6c757d")
+                        badges.append(f'<span style="background-color: {color}; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.75em; margin-left: 4px;">#{tag}</span>')
+                    tag_badges = " ".join(badges)
+
+                if i > 0:
+                    st.markdown('<div style="margin: 8px 0;"></div>', unsafe_allow_html=True)
+
+                st.markdown(f"""
+                <div style="padding-left: 4px; margin: 4px 0; border-left: 3px solid #ffd700; padding-left: 10px;">
+                    <strong style="color:#ffffff;">{note.timestamp}</strong>  {clean_text} {tag_badges}
+                </div>
+                """, unsafe_allow_html=True)
+
+
+def render_trades_tab(report: DailyReport):
+    """Render trades table."""
+    if not report.trades:
+        st.info("No trades extracted for this day.")
+        return
+
+    df_data = []
+    for t in report.trades:
+        pnl = 0
+        if t.exit_price and t.price > 0:
+            if t.direction == TradeDirection.LONG:
+                pnl = (t.exit_price - t.price) / t.price * 100
+            elif t.direction == TradeDirection.SHORT:
+                pnl = (t.price - t.exit_price) / t.price * 100
+
+        df_data.append({
+            "Time": t.timestamp,
+            "Direction": t.direction.value.upper(),
+            "Ticker": t.ticker,
+            "Entry": f"${t.price:.2f}" if t.price > 0 else "—",
+            "Exit": f"${t.exit_price:.2f}" if t.exit_price else "—",
+            "Size": t.size if t.size > 0 else "—",
+            "P&L %": f"{pnl:.2f}%" if pnl != 0 else "—",
+            "Reason": re.sub(r'\s*\[TRADE:[^\]]*\]\s*', ' ', t.reason).strip(),
+            "Status": t.outcome.value
+        })
+
+    df = pd.DataFrame(df_data)
+    # Configure column widths
+    st.dataframe(
+        df,
+        use_container_width=True,
+        hide_index=True,
+        column_config={
+            "Time": st.column_config.TextColumn(width="small"),
+            "Direction": st.column_config.TextColumn(width="small", help="Trade direction"),
+            "Ticker": st.column_config.TextColumn(width="small"),
+            "Entry": st.column_config.TextColumn(width="small"),
+            "Exit": st.column_config.TextColumn(width="small"),
+            "Size": st.column_config.TextColumn(width="small"),
+            "P&L %": st.column_config.TextColumn(width="small"),
+            "Reason": st.column_config.TextColumn(width="large"),
+            "Status": st.column_config.TextColumn(width="small"),
+        }
+    )
+
+    # Center the table content with CSS
+    st.markdown("""
+    <style>
+    [data-testid="stDataFrame"] td { text-align: center; }
+    [data-testid="stDataFrame"] th { text-align: center; }
+    </style>
+    """, unsafe_allow_html=True)
+
+    # Trade summary
+    closed = [t for t in report.trades if t.outcome == TradeStatus.CLOSED]
+    if closed:
+        wins = sum(1 for t in closed if t.exit_price and t.price > 0 and
+                   ((t.direction == TradeDirection.LONG and t.exit_price > t.price) or
+                    (t.direction == TradeDirection.SHORT and t.exit_price < t.price)))
+        st.metric("Win Rate", f"{wins}/{len(closed)} ({wins/len(closed)*100:.0f}%)")
+
+
+def render_highlights_tab(report: DailyReport):
+    """Render carry-forward highlights."""
+    if not report.highlights_for_carry_forward:
+        st.info("No highlights for carry-forward.")
+        return
+
+    for h in report.highlights_for_carry_forward:
+        # Classify highlight type
+        if h.startswith("Market context:"):
+            st.markdown(f"📊 **Market Context:** {h[15:]}")
+        elif h.startswith("Focus:"):
+            st.markdown(f"🎯 **Focus:** {h[6:]}")
+        elif h.startswith("Improve:"):
+            st.markdown(f"📈 **Improve:** {h[8:]}")
+        elif h.startswith("Strength:"):
+            st.markdown(f"💪 **Strength:** {h[9:]}")
+        elif h.startswith("Rule:"):
+            st.markdown(f"📜 **Rule:** {h[5:]}")
+        else:
+            st.markdown(f"• {h}")
+
+
+def render_pre_market(pre: PreMarketNotes):
+    """Render pre-market notes in a nice format."""
+    if not pre.carry_forward and not pre.economic_events and not pre.active_rules and not pre.watchlist_candidates:
+        st.info("No pre-market data available")
+        return
+
+    st.markdown("""
+    <style>
+    /* Pre-market page visual improvements - use thin lines instead of boxes */
+    .premarket-section {
+        margin-bottom: 0.25rem;
+        padding-bottom: 0.25rem;
+    }
+    .premarket-section:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+    .premarket-section h3 {
+        margin-top: 0 !important;
+        margin-bottom: 0.4rem !important;
+        font-size: 1.15rem !important;
+        font-weight: 600 !important;
+        color: #e0e0e0 !important;
+    }
+    .stMarkdown {
+        line-height: 1.6;
+    }
+    /* Reduce space before watchlist section and ensure left alignment */
+    .watchlist-section {
+        margin-top: 0;
+    }
+    .watchlist-table {
+        width: 100%;
+        max-width: 100%;
+        margin-left: 0 !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    # Carry-Forward
+    if pre.carry_forward:
+        st.markdown('<div class="premarket-section">', unsafe_allow_html=True)
+        st.markdown("### 📋 Carry-Forward from Yesterday")
+        for item in pre.carry_forward:
+            st.markdown(f"> {item}")
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    # Economic Events
+    if pre.economic_events:
+        st.markdown('<hr style="margin: 0.1rem 0; border: none; border-top: 0.1px solid white;">', unsafe_allow_html=True)
+        st.markdown('<div class="premarket-section">', unsafe_allow_html=True)
+        st.markdown("### 📅 Economic Events")
+        for e in pre.economic_events:
+            impact_color = {"HIGH": "🔴", "MEDIUM": "🟡", "LOW": "🟢"}.get(e.impact, "⚪")
+            st.markdown(f"{impact_color} **{e.time}** — {e.event}")
+        st.markdown('</div>', unsafe_allow_html=True)
+    else:
+        st.markdown('<hr style="margin: 0.25rem 0; border: none; border-top: 0.1px solid white;">', unsafe_allow_html=True)
+        st.markdown('<div class="premarket-section">', unsafe_allow_html=True)
+        st.caption("No economic events today")
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    # Earnings (Major companies >$50B)
+    earnings = getattr(pre, "earnings", [])
+    if earnings:
+        st.markdown('<div class="premarket-section">', unsafe_allow_html=True)
+        st.markdown("### 💰 Major Earnings (>$50B Market Cap)")
+        for e in pre.earnings[:10]:
+            symbol = e.get("symbol", "")
+            name = e.get("name", "")
+            mcap = e.get("marketCap", 0) / 1e9
+            time_str = e.get("time", "BMO")
+            eps_est = e.get("epsEstimated")
+            extra = f" | Est EPS: {eps_est}" if eps_est is not None else ""
+            st.markdown(f"📊 **{symbol}** — {name} (${mcap:.0f}B) {time_str}{extra}")
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    # Active Rules
+    if pre.active_rules:
+        st.markdown('<hr style="margin: 0.25rem 0; border: none; border-top: 0.1px solid white;">', unsafe_allow_html=True)
+        st.markdown('<div class="premarket-section">', unsafe_allow_html=True)
+        st.markdown("### 📜 Active Rules")
+        for r in pre.active_rules:
+            st.markdown(f"• {r}")
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    # Watchlist Candidates
+    if pre.watchlist_candidates:
+        st.markdown('<hr style="margin: 0.25rem 0; border: none; border-top: 0.1px solid white;">', unsafe_allow_html=True)
+        st.markdown('<div class="premarket-section watchlist-section">', unsafe_allow_html=True)
+        st.markdown("### Watchlist Candidates")
+        # Extract just ticker names from "Watch X" format, filter out non-ticker items
+        longs = []
+        shorts = []
+        for w in pre.watchlist_candidates:
+            # Skip non-ticker items (Focus:, Improve:, Rule:, etc.)
+            skip_prefixes = ("Focus:", "Improve:", "Rule:", "Strength:", "Market context:", "Bias:")
+            if w.startswith(skip_prefixes):
+                continue
+            ticker = w[6:].strip() if w.startswith("Watch ") else w
+            # Skip invalid tickers (RS, HOD, EOD are not valid tickers)
+            if ticker.upper() in ("RS", "HOD", "EOD"):
+                continue
+            # Check for ' short' suffix and strip it
+            if ticker.lower().endswith(" short"):
+                ticker = ticker[:-6].strip()
+                # Skip invalid tickers
+                if ticker.upper() in ("RS", "HOD", "EOD"):
+                    continue
+                # Only add if valid ticker (1-5 uppercase letters)
+                if re.match(r'^[A-Z]{1,5}$', ticker):
+                    shorts.append(ticker)
+            else:
+                # Also strip ' long' suffix if present
+                if ticker.lower().endswith(" long"):
+                    ticker = ticker[:-5].strip()
+                # Skip invalid tickers
+                if ticker.upper() in ("RS", "HOD", "EOD"):
+                    continue
+                # Only add if valid ticker (1-5 uppercase letters)
+                if re.match(r'^[A-Z]{1,5}$', ticker):
+                    longs.append(ticker)
+
+        # Sort tickers: XL* tickers (XLE, XLF, XLV, XLRE, etc.) and sector ETFs (SMH, IGV, MAGS) go to the end
+        def sort_key(ticker):
+            # XL* tickers (any length) and SMH, IGV, MAGS get a higher sort key so they appear at the end
+            is_sector_etf = ticker.startswith("XL") or ticker in ("SMH", "IGV", "MAGS")
+            return (is_sector_etf, ticker)
+        longs.sort(key=sort_key)
+        shorts.sort(key=sort_key)
+
+        # Display as aligned HTML table
+        if longs or shorts:
+            long_str = ', '.join(longs) if longs else '—'
+            short_str = ', '.join(shorts) if shorts else '—'
+            st.markdown(f"""
+<table class="watchlist-table" style="width: 100%; border-collapse: collapse; font-family: inherit; margin-left: 0;">
+  <thead>
+    <tr style="background: rgba(128,128,128,0.1);">
+      <th style="text-align: left; padding: 8px 12px; border: 1px solid rgba(128,128,128,0.2); font-weight: 600;">Direction</th>
+      <th style="text-align: left; padding: 8px 12px; border: 1px solid rgba(128,128,128,0.2); font-weight: 600;">Watchlist</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left; padding: 8px 12px; border: 1px solid rgba(128,128,128,0.15);"><strong>Long</strong></td>
+      <td style="text-align: left; padding: 8px 12px; border: 1px solid rgba(128,128,128,0.15);">{long_str}</td>
+    </tr>
+    <tr>
+      <td style="text-align: left; padding: 8px 12px; border: 1px solid rgba(128,128,128,0.15);"><strong>Short</strong></td>
+      <td style="text-align: left; padding: 8px 12px; border: 1px solid rgba(128,128,128,0.15);">{short_str}</td>
+    </tr>
+  </tbody>
+</table>
+""", unsafe_allow_html=True)
+        elif pre.watchlist_candidates:
+            # Fallback for non-standard formats
+            all_tickers = [w[6:].strip() if w.startswith("Watch ") else w for w in pre.watchlist_candidates]
+            valid_tickers = [t for t in all_tickers if re.match(r'^[A-Z]{1,5}$', t)]
+            st.markdown(f"**Watch** — {', '.join(sorted(set(valid_tickers)))}")
+        st.markdown('</div>', unsafe_allow_html=True)
+
+
+def render_weekly_review(review: WeeklyReview):
+    """Render a weekly review."""
+    st.header(f"📅 Weekly Review - {review.week} ({review.date_range[0]} to {review.date_range[1]})")
+
+    total_trades = sum(len(r.trades) for r in review.daily_reports)
+    total_notes = sum(len(r.organized_notes) for r in review.daily_reports)
+    total_highlights = sum(len(r.highlights_for_carry_forward) for r in review.daily_reports)
+
+    # Compact inline stats — avoid st.metric vertical stacking
+    st.markdown(f"""
+    <div style="display: flex; gap: 24px; margin-top: 2.5rem; margin-bottom: 2.5rem; flex-wrap: wrap;">
+        <div style="
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(128,128,128,0.15);
+            border-radius: 6px;
+            padding: 8px 16px;
+            text-align: center;
+            min-width: 100px;
+        ">
+            <div style="font-size: 0.8rem; color: #9e9e9e;">Trading Days</div>
+            <div style="font-size: 1.4rem; font-weight: 600; color: #e0e0e0;">{len(review.daily_reports)}</div>
+        </div>
+        <div style="
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(128,128,128,0.15);
+            border-radius: 6px;
+            padding: 8px 16px;
+            text-align: center;
+            min-width: 100px;
+        ">
+            <div style="font-size: 0.8rem; color: #9e9e9e;">Total Trades</div>
+            <div style="font-size: 1.4rem; font-weight: 600; color: #e0e0e0;">{total_trades}</div>
+        </div>
+        <div style="
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(128,128,128,0.15);
+            border-radius: 6px;
+            padding: 8px 16px;
+            text-align: center;
+            min-width: 100px;
+        ">
+            <div style="font-size: 0.8rem; color: #9e9e9e;">Total Notes</div>
+            <div style="font-size: 1.4rem; font-weight: 600; color: #e0e0e0;">{total_notes}</div>
+        </div>
+        <div style="
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(128,128,128,0.15);
+            border-radius: 6px;
+            padding: 8px 16px;
+            text-align: center;
+            min-width: 100px;
+        ">
+            <div style="font-size: 0.8rem; color: #9e9e9e;">Highlights</div>
+            <div style="font-size: 1.4rem; font-weight: 600; color: #e0e0e0;">{total_highlights}</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown('<hr style="margin: 1rem 0; border: none; border-top: 0.1px solid white;">', unsafe_allow_html=True)
+
+    tab1, tab2, tab3, tab4 = st.tabs(["🏆 Gold Mine", "🔍 Pattern Suggestions", "📏 Metrics", "📈 Scorecard"])
+
+    with tab1:
+        render_weekly_gold_mine(review)
+
+    with tab2:
+        render_pattern_suggestions(review.pattern_suggestions, review.week)
+
+    with tab3:
+        render_metrics(review.metric_updates)
+
+    with tab4:
+        render_weekly_prediction_scorecard(review)
+
+
+def render_pattern_suggestions(suggestions: list[PatternSuggestion], week_prefix: str = ""):
+    """Render pattern suggestions with confirmation UI."""
+    if not suggestions:
+        st.info("No pattern suggestions for this week.")
+        return
+
+    for i, s in enumerate(suggestions):
+        severity_icon = {"critical": "🔴", "high": "🟠", "medium": "🟡", "low": "🟢"}.get(s.severity_hint, "⚪")
+        type_icon = {"mistake": "❌", "observation": "👁️", "setup": "📐", "rule": "📜"}.get(s.type.value, "📌")
+
+        with st.expander(f"{type_icon} {severity_icon} {s.pattern} (x{s.frequency})"):
+            st.write(f"**Type:** {s.type.value}")
+            st.write(f"**Frequency:** {s.frequency} occurrences")
+            st.write(f"**Severity:** {s.severity_hint}")
+            st.write(f"**Supporting Days:** {', '.join(str(d) for d in s.supporting_days)}")
+
+            st.write("**Evidence:**")
+            for quote in s.evidence_quotes:
+                st.text(f"  • {quote}")
+
+            # User confirmation controls
+            col1, col2, col3 = st.columns(3)
+            key_prefix = f"{week_prefix}_" if week_prefix else ""
+            with col1:
+                if st.button("✅ Confirm", key=f"{key_prefix}confirm_{i}"):
+                    st.success("Marked as confirmed!")
+            with col2:
+                if st.button("❌ Dismiss", key=f"{key_prefix}dismiss_{i}"):
+                    st.warning("Pattern dismissed.")
+            with col3:
+                new_name = st.text_input("Rename", key=f"{key_prefix}rename_{i}", placeholder="Custom name...")
+                if new_name:
+                    st.info(f"Renamed to: {new_name}")
+
+
+def render_metrics(metrics: dict[str, list[dict]]):
+    """Render metric charts."""
+    if not metrics:
+        st.info("No metrics data.")
+        return
+
+    for metric_name, series in metrics.items():
+        if not series:
+            continue
+
+        df = pd.DataFrame(series)
+        df['date'] = pd.to_datetime(df['date'])
+
+        fig = px.line(df, x='date', y='value', title=metric_name.replace('_', ' ').title(),
+                      markers=True)
+        st.plotly_chart(fig, use_container_width=True)
+
+
+def render_weekly_gold_mine(review: "WeeklyReview"):
+    """Render gold mine — all #gold and #ptrade tagged notes aggregated from the week."""
+
+    all_gold = []
+    all_ptrade = []
+    for report in review.daily_reports:
+        for note in report.organized_notes:
+            tags = getattr(note, 'tags', []) or []
+            if "gold" in tags:
+                all_gold.append((report.date, note))
+            if "ptrade" in tags:
+                all_ptrade.append((report.date, note))
+
+    all_items = all_gold + all_ptrade
+    if not all_items:
+        st.info("No #gold or #ptrade tagged notes this week.")
+        return
+
+    st.caption(f"Key insights & paper trades from {len(set(d for d, _ in all_items))} trading days — review for calibration")
+
+    current_date = None
+    for report_date, note in all_items:
+        # Date header when date changes
+        if report_date != current_date:
+            current_date = report_date
+            if current_date is not None:
+                st.markdown('<hr style="margin: 8px 0; border: none; border-top: 0.1px solid white;">', unsafe_allow_html=True)
+            st.markdown(f"**{report_date}**")
+
+        tags = getattr(note, 'tags', []) or []
+        is_ptrade = 'ptrade' in tags
+        tag_label = "🧪 Paper Trade" if is_ptrade else "🏆 Gold Insight"
+
+        clean_text = re.sub(r'\s*\[TRADE:[^\]]*\]\s*', ' ', note.text).strip()
+        clean_text = re.sub(r'\s{2,}', ' ', clean_text).strip()
+        clean_text = clean_text.lstrip()
+
+        # Format tags
+        tag_badges = ""
+        if note.tags:
+            badges = []
+            for tag in note.tags:
+                color = TAG_COLORS.get(tag.lower(), "#6c757d")
+                badges.append(f'<span style="background-color: {color}; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.75em; margin-left: 4px;">#{tag}</span>')
+            tag_badges = " ".join(badges)
+
+        border_color = "#4caf50" if is_ptrade else "#ffd700"
+        st.markdown(f"""
+        <div style="padding-left: 4px; margin: 4px 0; border-left: 3px solid {border_color}; padding-left: 10px;">
+            <strong style="color:{border_color};">{tag_label} {note.timestamp}</strong>  {clean_text} {tag_badges}
+        </div>
+        """, unsafe_allow_html=True)
+
+    # Summary count
+    st.markdown(f'<div style="margin-top: 12px;"><strong>Total: {len(all_gold)} gold insights + {len(all_ptrade)} paper trades this week</strong></div>', unsafe_allow_html=True)
+
+
+def render_prediction_scorecard_daily(report: DailyReport):
+    """Render prediction scorecard for a single day - shows #gold and #ptrade notes with grading."""
+    gold_notes = []
+    ptrade_notes = []
+
+    for note in report.organized_notes:
+        tags = getattr(note, 'tags', []) or []
+        if 'gold' in tags:
+            gold_notes.append(note)
+        if 'ptrade' in tags:
+            ptrade_notes.append(note)
+
+    all_pred_notes = gold_notes + ptrade_notes
+    if not all_pred_notes:
+        st.info("No #gold or #ptrade predictions to score for this day.")
+        return
+
+    st.markdown("**📊 Prediction Scorecard — Daily Review**")
+    st.caption("💡 #gold = key insights to revisit (not to act on) | #ptrade = paper trades to grade")
+
+    # Use session state to store grades for this session
+    if 'prediction_grades' not in st.session_state:
+        st.session_state['prediction_grades'] = {}
+
+    # Create a container for each prediction
+    for i, note in enumerate(all_pred_notes):
+        tags = getattr(note, 'tags', []) or []
+        is_ptrade = 'ptrade' in tags
+        is_gold = 'gold' in tags
+
+        tag_label = "🧪 Paper Trade" if is_ptrade else "🏆 Gold Insight"
+        tag_color = "#4caf50" if is_ptrade else "#ffd700"
+
+        clean_text = re.sub(r'\s*\[TRADE:[^\]]*\]\s*', ' ', note.text).strip()
+        clean_text = re.sub(r'\s{2,}', ' ', clean_text).strip()
+        clean_text = clean_text.lstrip()
+
+        note_key = f"{report.date}_{note.timestamp}_{i}"
+        current_grade = st.session_state['prediction_grades'].get(note_key, None)
+
+        with st.expander(f"{tag_label} — {note.timestamp} | {clean_text[:80]}...", expanded=(current_grade is None)):
+            st.markdown(f"""
+            <div style="padding: 8px; border-left: 3px solid {tag_color}; background: rgba(255,255,255,0.02); margin: 4px 0;">
+                <strong style="color:{tag_color};">{tag_label}</strong>  {note.timestamp}
+                <div style="margin-top: 4px;">{clean_text}</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+            col1, col2, col3, col4 = st.columns(4)
+            with col1:
+                if st.button("✅ Right", key=f"grade_right_{note_key}", use_container_width=True):
+                    st.session_state['prediction_grades'][note_key] = "right"
+                    st.rerun()
+            with col2:
+                if st.button("❌ Wrong", key=f"grade_wrong_{note_key}", use_container_width=True):
+                    st.session_state['prediction_grades'][note_key] = "wrong"
+                    st.rerun()
+            with col3:
+                if st.button("⚪ Partial", key=f"grade_partial_{note_key}", use_container_width=True):
+                    st.session_state['prediction_grades'][note_key] = "partial"
+                    st.rerun()
+            with col4:
+                if st.button("🔄 Clear", key=f"grade_clear_{note_key}", use_container_width=True):
+                    if note_key in st.session_state['prediction_grades']:
+                        del st.session_state['prediction_grades'][note_key]
+                    st.rerun()
+
+            if current_grade:
+                grade_colors = {"right": "#2ca02c", "wrong": "#d62728", "partial": "#ff7f0e"}
+                grade_labels = {"right": "✅ CORRECT", "wrong": "❌ WRONG", "partial": "⚪ PARTIAL"}
+                st.markdown(f"**Grade:** <span style='color:{grade_colors[current_grade]}; font-weight:600;'>{grade_labels[current_grade]}</span>", unsafe_allow_html=True)
+                notes = st.text_input("Notes on outcome", key=f"grade_notes_{note_key}", placeholder="What happened?")
+                if notes:
+                    st.session_state['prediction_grades'][note_key + "_notes"] = notes
+
+    # Summary
+    graded = {k: v for k, v in st.session_state['prediction_grades'].items() if not k.endswith("_notes") and v in ("right", "wrong", "partial")}
+    if graded:
+        right = sum(1 for v in graded.values() if v == "right")
+        wrong = sum(1 for v in graded.values() if v == "wrong")
+        partial = sum(1 for v in graded.values() if v == "partial")
+        total = len(graded)
+        accuracy = right / total * 100 if total > 0 else 0
+
+        st.markdown(f"""
+        <div style="display: flex; gap: 16px; margin-top: 12px; padding: 12px; border-radius: 6px; background: rgba(255,255,255,0.03);">
+            <div style="text-align: center; flex: 1;">
+                <div style="font-size: 1.5rem; font-weight: 600; color: #2ca02c;">{right}</div>
+                <div style="font-size: 0.8rem; color: #9e9e9e;">Right</div>
+            </div>
+            <div style="text-align: center; flex: 1;">
+                <div style="font-size: 1.5rem; font-weight: 600; color: #d62728;">{wrong}</div>
+                <div style="font-size: 0.8rem; color: #9e9e9e;">Wrong</div>
+            </div>
+            <div style="text-align: center; flex: 1;">
+                <div style="font-size: 1.5rem; font-weight: 600; color: #ff7f0e;">{partial}</div>
+                <div style="font-size: 0.8rem; color: #9e9e9e;">Partial</div>
+            </div>
+            <div style="text-align: center; flex: 1;">
+                <div style="font-size: 1.5rem; font-weight: 600; color: #17becf;">{accuracy:.0f}%</div>
+                <div style="font-size: 0.8rem; color: #9e9e9e;">Accuracy</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+
+def render_weekly_prediction_scorecard(review: "WeeklyReview"):
+    """Aggregate prediction scorecard for the entire week."""
+    st.markdown("**📈 Weekly Prediction Scorecard**")
+    st.caption("Aggregated from daily #gold and #ptrade notes across the week")
+
+    # Collect all graded predictions
+    all_grades = {}
+    for report in review.daily_reports:
+        day_key = str(report.date)
+        for note in report.organized_notes:
+            tags = getattr(note, 'tags', []) or []
+            if 'gold' in tags or 'ptrade' in tags:
+                note_key = f"{day_key}_{note.timestamp}"
+                if note_key in st.session_state.get('prediction_grades', {}):
+                    grade = st.session_state['prediction_grades'][note_key]
+                    if grade in ("right", "wrong", "partial"):
+                        all_grades[note_key] = {"grade": grade, "date": day_key, "note": note, "type": "ptrade" if 'ptrade' in tags else "gold"}
+
+    if not all_grades:
+        st.info("No graded predictions yet. Use the daily Prediction Scorecard to grade your #gold and #ptrade notes.")
+        return
+
+    # Separate by type
+    gold_grades = {k: v for k, v in all_grades.items() if v["type"] == "gold"}
+    ptrade_grades = {k: v for k, v in all_grades.items() if v["type"] == "ptrade"}
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.markdown("**🏆 Gold Insights**")
+        if gold_grades:
+            total = len(gold_grades)
+            right = sum(1 for v in gold_grades.values() if v["grade"] == "right")
+            wrong = sum(1 for v in gold_grades.values() if v["grade"] == "wrong")
+            partial = sum(1 for v in gold_grades.values() if v["grade"] == "partial")
+            acc = right / total * 100 if total > 0 else 0
+            st.metric("Accuracy", f"{acc:.0f}%", f"{right}/{total}")
+
+            for k, v in gold_grades.items():
+                grade_color = {"right": "green", "wrong": "red", "partial": "orange"}[v["grade"]]
+                st.markdown(f"- <span style='color:{grade_color}'>●</span> {v['date']} {v['note'].timestamp}: {v['note'].text[:60]}...", unsafe_allow_html=True)
+        else:
+            st.caption("No gold insights graded yet")
+
+    with col2:
+        st.markdown("**🧪 Paper Trades**")
+        if ptrade_grades:
+            total = len(ptrade_grades)
+            right = sum(1 for v in ptrade_grades.values() if v["grade"] == "right")
+            wrong = sum(1 for v in ptrade_grades.values() if v["grade"] == "wrong")
+            partial = sum(1 for v in ptrade_grades.values() if v["grade"] == "partial")
+            acc = right / total * 100 if total > 0 else 0
+            st.metric("Accuracy", f"{acc:.0f}%", f"{right}/{total}")
+
+            for k, v in ptrade_grades.items():
+                grade_color = {"right": "green", "wrong": "red", "partial": "orange"}[v["grade"]]
+                st.markdown(f"- <span style='color:{grade_color}'>●</span> {v['date']} {v['note'].timestamp}: {v['note'].text[:60]}...", unsafe_allow_html=True)
+        else:
+            st.caption("No paper trades graded yet")
+
+
+# ================================
+# Sidebar Navigation
+# ================================
+
+def render_sidebar():
+    """Render sidebar navigation and date/week selectors."""
+    st.sidebar.title("📈 Trading Journal")
+
+    page = st.sidebar.radio(
+        "Navigate",
+        ["Daily Report", "Pre-Market", "Weekly Review", "Settings"]
+    )
+
+    # Date selector for daily/pre-market
+    reports = load_daily_reports()
+    available_dates = sorted([r.date for r in reports])
+
+    if available_dates:
+        selected_date = st.sidebar.date_input(
+            "Select Date",
+            value=available_dates[-1] if available_dates else date.today(),
+            min_value=min(available_dates),
+            max_value=max(available_dates)
+        )
+
+        if selected_date not in available_dates:
+            st.sidebar.warning(f"No report for {selected_date}. Showing latest.")
+            selected_date = available_dates[-1]
+    else:
+        selected_date = date.today()
+        st.sidebar.warning("No daily reports found. Run historical ingestion first.")
+
+    # Week selector for weekly review (show in sidebar)
+    reviews = load_weekly_reviews()
+    if reviews:
+        week_labels = [r.week for r in reviews]
+        selected_week = st.sidebar.selectbox(
+            "Select Week",
+            week_labels,
+            index=len(week_labels) - 1,
+            key="week_selector_sidebar"
+        )
+    else:
+        selected_week = None
+        st.sidebar.caption("No weekly reviews found. Run weekly synthesis first.")
+
+    return page, selected_date, selected_week, reports, reviews
+
+
+# ================================
+# Main Pages
+# ================================
+
+def page_daily_report(selected_date: date, reports: list[DailyReport]):
+    """Daily report page."""
+    report = next((r for r in reports if r.date == selected_date), None)
+    if report:
+        render_daily_report(report)
+    else:
+        st.error(f"No report found for {selected_date}")
+
+
+def page_pre_market(selected_date: date):
+    """Pre-market page - shows pre-market for selected date AND next trading day."""
+    st.header(f"🌅 Pre-Market for {selected_date}")
+
+    # Load pre-market for this date
+    pre = load_pre_market(selected_date)
+    if pre:
+        render_pre_market(pre)
+    else:
+        st.info(f"No pre-market notes generated for {selected_date}.")
+        st.caption("Pre-market notes are generated from the PREVIOUS day's daily report during daily_sync.")
+
+
+def page_weekly_review(selected_week: str, reviews: list[WeeklyReview]):
+    """Weekly review page."""
+    if not reviews:
+        st.warning("No weekly reviews found. Run weekly synthesis first.")
+        return
+
+    if not selected_week:
+        st.info("Select a week from the sidebar.")
+        return
+
+    review = next((r for r in reviews if r.week == selected_week), None)
+    if review:
+        render_weekly_review(review)
+
+
+def page_settings():
+    """Settings page."""
+    st.header("⚙️ Settings")
+
+    st.subheader("Active Rules")
+    for rule in settings.get("active_rules", []):
+        st.markdown(f"• {rule}")
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    st.subheader("Quick Actions")
+
+    # Use raw HTML buttons instead of st.columns to have full control
+    st.markdown("""
+    <style>
+    /* Target Streamlit button structure - button has inner div/p/span */
+    .stButton > button {
+        width: 10rem !important;
+        min-width: 10rem !important;
+        max-width: 10rem !important;
+        padding: 0.25rem 0.5rem !important;
+        font-size: 0.6rem !important;
+        line-height: 1.2 !important;
+        white-space: nowrap !important;
+        text-align: center !important;
+        flex: 0 0 10rem !important;
+    }
+    .stButton > button > * {
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+    /* Target columns containing quick action buttons */
+    div[data-testid="column"]:has(.stButton > button[key="qa_reload"]),
+    div[data-testid="column"]:has(.stButton > button[key="qa_daily"]),
+    div[data-testid="column"]:has(.stButton > button[key="qa_weekly"]) {
+        flex: 0 0 10rem !important;
+        width: 10rem !important;
+        min-width: 10rem !important;
+        max-width: 10rem !important;
+    }
+    div[data-testid="column"]:has(.stButton > button[key="qa_reload"]) > div,
+    div[data-testid="column"]:has(.stButton > button[key="qa_daily"]) > div,
+    div[data-testid="column"]:has(.stButton > button[key="qa_weekly"]) > div {
+        width: 10rem !important;
+        min-width: 10rem !important;
+        max-width: 10rem !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    # Use st.columns but with fixed width via CSS
+    col1, col2, col3 = st.columns(3, gap="small")
+    with col1:
+        if st.button("📅 Run Daily Sync", help="Process today's DRC file and generate Daily Report + Pre-Market notes", use_container_width=False, key="qa_daily"):
+            st.info("Run from CLI: `python -m src.cli.daily_sync run --date YYYY-MM-DD`")
+
+    with col2:
+        if st.button("📊 Run Weekly Synthesis", help="Aggregate daily reports into weekly review with patterns", use_container_width=False, key="qa_weekly"):
+            st.info("Run from CLI: `python scripts/weekly_synthesis.py`")
+
+    with col3:
+        if st.button("🔄 Reload Data", help="Clear all cached data and reload from JSON files", use_container_width=False, key="qa_reload"):
+            st.cache_data.clear()
+            st.success("Cache cleared!")
+
+    st.markdown("---")
+
+    st.subheader("Project Paths")
+    st.markdown("""
+**Data Locations:** Configured in `config/settings.yaml` under the `data_locations` section. Edit that file directly to change paths (requires app restart).
+
+**Key Paths in settings.yaml:**
+- `data_locations.data_dir` — Root data directory (default: `data/`)
+- `data_locations.daily_reports_dir` — Daily reports subdirectory (default: `daily_reports/`)
+- `data_locations.pre_market_dir` — Pre-market notes subdirectory (default: `pre_market/`)
+- `data_locations.weekly_reviews_dir` — Weekly reviews subdirectory (default: `weekly_reviews/`)
+- `data_locations.monthly_reviews_dir` — Monthly reviews subdirectory (default: `monthly_reviews/`)
+- `data_locations.cache_dir` — LLM cache subdirectory (default: `cache/llm/`)
+
+**Other Important Settings in settings.yaml:**
+- `vault_path` — Path to your Obsidian vault (read-only, set once during setup)
+- `llm.provider` / `model` / `temperature` — LLM provider configuration (Groq, Google, OpenRouter, Ollama)
+- `fmp_api_key_env` — Environment variable name for FMP API key (for earnings/calendar)
+- `active_rules` — Add trading rules here after weekly review to track them
+- `metrics` — Define custom metrics to track in weekly reviews
+**Economic Calendar & Earnings (FMP API):**
+- Set `FMP_API_KEY` in `.env` to enable automatic fetching from Financial Modeling Prep
+- When configured, `src/data/fetchers/economic_earnings.py` auto-fetches events & earnings for pre-market
+- `economic_calendar.events_2026_q3` in settings.yaml serves as a manual fallback/supplement for major recurring events (FOMC, CPI, NFP, Jackson Hole) if API is unavailable or for far-future dates
+- `earnings_min_market_cap` filters earnings to large caps only (default $50B+)
+
+**Quick Actions from this page** (buttons above) clear cache or show CLI commands for daily/weekly sync.
+""")
+
+
+# ================================
+# Main App
+# ================================
+
+# Render sidebar and get navigation
+page, selected_date, selected_week, reports, reviews = render_sidebar()
+
+# Route to pages
+if page == "Daily Report":
+    page_daily_report(selected_date, reports)
+elif page == "Pre-Market":
+    page_pre_market(selected_date)
+elif page == "Weekly Review":
+    page_weekly_review(selected_week, reviews)
+elif page == "Settings":
+    page_settings()

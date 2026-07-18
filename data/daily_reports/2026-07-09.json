@@ -1,0 +1,26 @@
+{
+  "date": "2026-07-09",
+  "organized_notes": [
+    {
+      "timestamp": "10:44",
+      "text": " FTNT was nice - spotted it earlier but was busy",
+      "tickers": [
+        "FTNT"
+      ],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": [],
+      "flag_context": 0
+    }
+  ],
+  "trades": [],
+  "highlights_for_carry_forward": [],
+  "market_bias": {
+    "direction": "unclear",
+    "confidence": "low",
+    "regime": "transitional",
+    "key_levels": []
+  },
+  "raw_market_notes": "- 10:44 FTNT was nice - spotted it earlier but was busy",
+  "source_file": "C:\\Users\\Thaddeus\\Claude Code Test\\trading-journal-system\\Vaulted\\!Journalit\\2026\\Q3\\07\\W28\\DRC-090726.md"
+}

@@ -1,0 +1,40 @@
+You are generating brief Pre-Market Notes for the next trading day.
+
+INPUT:
+1. Today's Daily Report highlights (carry-forward items)
+2. Economic calendar for tomorrow (major events only)
+3. Active user-approved rules
+
+TASK: Create concise, scannable pre-market notes. Max 60 seconds to read.
+
+OUTPUT JSON SCHEMA:
+{
+  "date": "2026-03-13",
+  "carry_forward": [
+    "NKE: Watch for follow-through short if SPY confirms lower",
+    "KKR: D1 horizontal break with volume - watch for pullback re-entry",
+    "Rule: NO short entries on gap days without M5 pullback confirmation",
+    "Bias: LPTE - favour shorts WITH confirmation"
+  ],
+  "economic_events": [
+    {"time": "08:30", "event": "CPI MoM", "impact": "HIGH", "forecast": "0.4%", "prior": "0.3%"},
+    {"time": "10:00", "event": "FOMC Minutes", "impact": "HIGH"}
+  ],
+  "active_rules": [
+    "NO FOMO entries - wait for M5 pullback close",
+    "Don't exit winner on single M5 candle - need 2 stacked reds + volume",
+    "NO short entries on gap days without M5 pullback confirmation"
+  ],
+  "watchlist_candidates": [
+    "NKE (D1 breakdown, need SPY confirmation)",
+    "KKR (D1 horizontal break, pullback entry)",
+    "SPY key levels: PDL 432.50 | VWAP 433.20 | 200 SMA 435.80"
+  ]
+}
+
+RULES:
+- Max 5 carry-forward items (most actionable)
+- Only HIGH impact economic events (FOMC, CPI, NFP, GDP, major earnings)
+- Active rules = user-confirmed from weekly review
+- Watchlist = tickers from carry-forward + key SPY levels
+- Brief, one screen, no fluff

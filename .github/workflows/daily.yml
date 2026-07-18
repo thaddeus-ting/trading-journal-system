@@ -1,0 +1,75 @@
+name: Daily Sync
+
+on:
+  schedule:
+    # 4:30 PM ET = 20:30 UTC (summer) / 21:30 UTC (winter)
+    # Uses cron in UTC - adjust seasonally if needed
+    - cron: '30 20 * * 1-5'
+  workflow_dispatch:
+    inputs:
+      date:
+        description: 'Date to process (YYYY-MM-DD)'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  daily-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run daily sync
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
+        run: |
+          # Determine date to process
+          if [ "${{ github.event.inputs.date }}" != "" ]; then
+            TARGET_DATE="${{ github.event.inputs.date }}"
+          else
+            # Get current date in ET timezone, skip weekends
+            TARGET_DATE=$(TZ=America/New_York date +%F)
+            # If Saturday (6) or Sunday (7), use Friday
+            DOW=$(TZ=America/New_York date +%u)
+            if [ "$DOW" -eq 6 ]; then
+              TARGET_DATE=$(TZ=America/New_York date -d "yesterday" +%F)
+            elif [ "$DOW" -eq 7 ]; then
+              TARGET_DATE=$(TZ=America/New_York date -d "2 days ago" +%F)
+            fi
+          fi
+          echo "Processing date: $TARGET_DATE"
+          python -m src.cli.daily_sync run --date "$TARGET_DATE"
+
+      - name: Commit and push changes
+        env:
+          TARGET_DATE: ${{ env.TARGET_DATE }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # Check if there are changes in data/
+          if git diff --quiet data/; then
+            echo "No changes to commit"
+            exit 0
+          fi
+
+          git add data/
+          git commit -m "chore: daily reports for $TARGET_DATE"
+          git push

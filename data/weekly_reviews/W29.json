@@ -1,0 +1,240 @@
+{
+  "week": "W29",
+  "date_range": [
+    "2026-07-13",
+    "2026-07-19"
+  ],
+  "daily_reports": [
+    {
+      "date": "2026-07-13",
+      "organized_notes": [
+        {
+          "timestamp": "9:41",
+          "text": " XLE XLF XLC strong, tech quite weak",
+          "tickers": [
+            "XLC",
+            "XLE",
+            "XLF"
+          ],
+          "category": "observation",
+          "key_levels_mentioned": [],
+          "tags": []
+        },
+        {
+          "timestamp": "9:51",
+          "text": " short ORCL @ 136.81, 3 shares - nice stacked reds on heavy volume",
+          "tickers": [
+            "ORCL"
+          ],
+          "category": "entry",
+          "key_levels_mentioned": [],
+          "tags": []
+        },
+        {
+          "timestamp": "10:07",
+          "text": " long CVS @ 106.10, 5 shares - nice RS and new HOD",
+          "tickers": [
+            "CVS",
+            "RS"
+          ],
+          "category": "entry",
+          "key_levels_mentioned": [],
+          "tags": []
+        },
+        {
+          "timestamp": "10:20",
+          "text": " long FTNT @ 158.40, 2 shares - might swing depending on market conditions",
+          "tickers": [
+            "FTNT"
+          ],
+          "category": "entry",
+          "key_levels_mentioned": [],
+          "tags": []
+        }
+      ],
+      "trades": [
+        {
+          "timestamp": "9:51",
+          "direction": "short",
+          "ticker": "ORCL",
+          "price": 136.81,
+          "size": 3,
+          "reason": "",
+          "outcome": "open",
+          "exit_timestamp": null,
+          "exit_price": null,
+          "exit_reason": null
+        },
+        {
+          "timestamp": "10:07",
+          "direction": "long",
+          "ticker": "CVS",
+          "price": 106.1,
+          "size": 5,
+          "reason": "",
+          "outcome": "open",
+          "exit_timestamp": null,
+          "exit_price": null,
+          "exit_reason": null
+        },
+        {
+          "timestamp": "10:20",
+          "direction": "long",
+          "ticker": "FTNT",
+          "price": 158.4,
+          "size": 2,
+          "reason": "",
+          "outcome": "open",
+          "exit_timestamp": null,
+          "exit_price": null,
+          "exit_reason": null
+        }
+      ],
+      "highlights_for_carry_forward": [],
+      "market_bias": {
+        "direction": "bullish",
+        "confidence": "medium",
+        "regime": "transitional",
+        "key_levels": []
+      },
+      "raw_market_notes": "- 9:41 XLE XLF XLC strong, tech quite weak \n- 9:51 short ORCL @ 136.81, 3 shares - nice stacked reds on heavy volume \n- 10:07 long CVS @ 106.10, 5 shares - nice RS and new HOD \n- 10:20 long FTNT @ 158.40, 2 shares - might swing depending on market conditions",
+      "source_file": "C:\\Users\\Thaddeus\\Claude Code Test\\trading-journal-system\\Vaulted\\!Journalit\\2026\\Q3\\07\\W29\\DRC-130726.md"
+    },
+    {
+      "date": "2026-07-14",
+      "organized_notes": [
+        {
+          "timestamp": "10:11",
+          "text": " exit FTNT long @ 165.85, 2 shares - nice profits, already past ATRH today and  in a CH+ and is at the H+ rn and tends to pullback to at least 8 EMA at this level - low profit potential and high risk",
+          "tickers": [
+            "FTNT"
+          ],
+          "category": "entry",
+          "key_levels_mentioned": [
+            "D1 8 EMA",
+            "ATRH"
+          ],
+          "tags": []
+        },
+        {
+          "timestamp": "10:20",
+          "text": " APLD nice short",
+          "tickers": [
+            "APLD"
+          ],
+          "category": "observation",
+          "key_levels_mentioned": [],
+          "tags": []
+        },
+        {
+          "timestamp": "10:33",
+          "text": " S nice long but past ATRH and too extended to swing #watch check price at the end of week if it hit 2ATR",
+          "tickers": [],
+          "category": "decision",
+          "key_levels_mentioned": [
+            "ATRH"
+          ],
+          "tags": [
+            "watch"
+          ]
+        },
+        {
+          "timestamp": "10:35",
+          "text": " exit CVS long @ 105.28, 5 shares - this doesnt seem like a good stop to use as it could very well just be a small pullback - evaluate at the end of the week #watch",
+          "tickers": [
+            "CVS"
+          ],
+          "category": "entry",
+          "key_levels_mentioned": [],
+          "tags": [
+            "watch"
+          ]
+        }
+      ],
+      "trades": [
+        {
+          "timestamp": "10:11",
+          "direction": "long",
+          "ticker": "FTNT",
+          "price": 165.85,
+          "size": 2,
+          "reason": "",
+          "outcome": "open",
+          "exit_timestamp": null,
+          "exit_price": null,
+          "exit_reason": null
+        },
+        {
+          "timestamp": "10:35",
+          "direction": "long",
+          "ticker": "CVS",
+          "price": 105.28,
+          "size": 5,
+          "reason": "",
+          "outcome": "open",
+          "exit_timestamp": null,
+          "exit_price": null,
+          "exit_reason": null
+        }
+      ],
+      "highlights_for_carry_forward": [],
+      "market_bias": {
+        "direction": "bullish",
+        "confidence": "medium",
+        "regime": "transitional",
+        "key_levels": [
+          "ATRH",
+          "D1 8 EMA"
+        ]
+      },
+      "raw_market_notes": "- 10:11 exit FTNT long @ 165.85, 2 shares - nice profits, already past ATRH today and  in a CH+ and is at the H+ rn and tends to pullback to at least 8 EMA at this level - low profit potential and high risk\n- 10:20 APLD nice short \n- 10:33S nice long but past ATRH and too extended to swing #watch check price at the end of week if it hit 2ATR \n- 10:35 exit CVS long @ 105.28, 5 shares - this doesnt seem like a good stop to use as it could very well just be a small pullback - evaluate at the end of the week #watch \n-",
+      "source_file": "C:\\Users\\Thaddeus\\Claude Code Test\\trading-journal-system\\Vaulted\\!Journalit\\2026\\Q3\\07\\W29\\DRC-140726.md"
+    }
+  ],
+  "pattern_suggestions": [],
+  "setup_performance": [],
+  "market_condition_tracking": [],
+  "metric_updates": {
+    "weekly_mistakes": [
+      {
+        "date": "2026-07-13",
+        "value": 0
+      },
+      {
+        "date": "2026-07-14",
+        "value": 0
+      }
+    ],
+    "weekly_trades": [
+      {
+        "date": "2026-07-13",
+        "value": 3
+      },
+      {
+        "date": "2026-07-14",
+        "value": 2
+      }
+    ],
+    "bias_confidence": [
+      {
+        "date": "2026-07-13",
+        "value": 2
+      },
+      {
+        "date": "2026-07-14",
+        "value": 2
+      }
+    ],
+    "highlights_count": [
+      {
+        "date": "2026-07-13",
+        "value": 0
+      },
+      {
+        "date": "2026-07-14",
+        "value": 0
+      }
+    ]
+  },
+  "user_notes": ""
+}

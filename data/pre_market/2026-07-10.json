@@ -1,0 +1,27 @@
+{
+  "date": "2026-07-10",
+  "carry_forward": [],
+  "economic_events": [
+    {
+      "time": "08:30 ET",
+      "event": "Nonfarm Payrolls",
+      "impact": "HIGH"
+    },
+    {
+      "time": "08:30 ET",
+      "event": "Unemployment Rate",
+      "impact": "HIGH"
+    },
+    {
+      "time": "08:30 ET",
+      "event": "Average Hourly Earnings MoM",
+      "impact": "HIGH"
+    }
+  ],
+  "earnings": [],
+  "active_rules": [],
+  "watchlist_candidates": [
+    "Watch FTNT"
+  ],
+  "generated_at": "2026-07-17T15:28:08.945088"
+}

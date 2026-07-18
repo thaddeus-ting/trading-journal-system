@@ -1,0 +1,57 @@
+You are generating a monthly trajectory summary from 4-5 weekly reviews.
+
+INPUT: 4-5 Weekly Reviews with pattern_suggestions, setup_performance, metric_updates, market_condition_tracking
+
+TASK: High-level summary only. Broad direction, major shifts. No detailed analysis.
+
+OUTPUT JSON SCHEMA:
+{
+  "month": "2026-03",
+  "summary": "March: Shifted from chaotic FOMO-driven trading to rule-based execution. FOMO dropped 88% after Week 2 rule adoption. Best edge: VWAP rejection longs in HPTE (86% WR). Short side negative expectancy - tall bounce filter working but shorts still challenged. Net +12.4R best month YTD.",
+  "key_metrics": {
+    "trading_days": 19,
+    "total_trades": 87,
+    "net_r": 12.4,
+    "win_rate": 0.58,
+    "max_drawdown_r": -3.2
+  },
+  "pattern_evolution": [
+    {
+      "pattern": "FOMO entry without pullback",
+      "trend": "resolving",
+      "weekly_frequency": "W10: 2.5/day -> W11: 1.8/day -> W12: 0.8/day -> W13: 0.3/day",
+      "rule_adopted": "W11"
+    },
+    {
+      "pattern": "Tall bounces on shorts = avoid",
+      "trend": "resolved",
+      "weekly_frequency": "W10: 0.8/day -> W13: 0.1/day",
+      "rule_adopted": "W11"
+    },
+    {
+      "pattern": "VWAP rejection longs in HPTE",
+      "trend": "strengthening",
+      "weekly_frequency": "W11: 1.5/day -> W13: 2.0/day"
+    }
+  ],
+  "setup_performance": {
+    "VWAP_rejection_HPTE": {"trades": 14, "wr": 0.86, "avg_r": 1.8},
+    "Break_horizontal_HPTE": {"trades": 8, "wr": 0.63, "avg_r": 1.2},
+    "Grinder_long_HPTE": {"trades": 6, "wr": 0.83, "avg_r": 1.5},
+    "Short_LPTE": {"trades": 18, "wr": 0.44, "avg_r": -0.3}
+  },
+  "focus_areas_next_month": [
+    "Test grinder/pullback entries in HPTE systematically",
+    "Develop short selection filter: wimpy pullback fail + volume confirm",
+    "Maintain FOMO discipline - target <0.2/day",
+    "Track pullback quality score"
+  ]
+}
+
+RULES:
+- 1 paragraph summary max
+- Focus on TRAJECTORY (improving/declining/stable)
+- Pattern evolution = frequency trend + rule adoption week
+- Setup performance = aggregate across month
+- 2-4 focus areas max
+- No daily detail

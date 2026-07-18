@@ -1,0 +1,19 @@
+{
+  "date": "2026-07-09",
+  "carry_forward": [],
+  "economic_events": [
+    {
+      "time": "08:30 ET",
+      "event": "Fed Balance Sheet",
+      "impact": "HIGH"
+    }
+  ],
+  "active_rules": [],
+  "watchlist_candidates": [
+    "Watch CNQ",
+    "Watch NVDA",
+    "Watch BKR",
+    "Watch QXO"
+  ],
+  "generated_at": "2026-07-16T18:29:12.730469"
+}

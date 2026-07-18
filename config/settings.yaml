@@ -1,0 +1,102 @@
+# Trading Journal System - Configuration
+# Copy to .env for secrets or use environment variables
+
+# Vault path (READ-ONLY)
+vault_path: "C:/Users/Thaddeus/Claude Code Test/trading-journal-system/Vaulted/!Journalit"
+
+# Data locations (editable via Settings page)
+data_locations:
+  data_dir: "data"
+  daily_reports_dir: "daily_reports"
+  pre_market_dir: "pre_market"
+  weekly_reviews_dir: "weekly_reviews"
+  monthly_reviews_dir: "monthly_reviews"
+  cache_dir: "cache/llm"
+
+# Output directories (legacy - kept for backward compatibility)
+data_dir: "C:/Users/Thaddeus/Claude Code Test/trading-journal-system/data"
+daily_reports_dir: "daily_reports"
+pre_market_dir: "pre_market"
+weekly_reviews_dir: "weekly_reviews"
+monthly_reviews_dir: "monthly_reviews"
+cache_dir: "cache/llm"
+
+# LLM Configuration
+llm:
+  provider: "groq"
+  model: "meta-llama/llama-4-scout-17b-16e-instruct"
+  # API key from environment: GROQ_API_KEY, GOOGLE_API_KEY, OPENROUTER_API_KEY
+  temperature: 0.1
+  max_tokens: 4000
+  timeout: 60
+  max_retries: 3
+
+# Financial Modeling Prep (FMP) - Economic Calendar & Earnings
+fmp_api_key_env: "FMP_API_KEY"
+earnings_min_market_cap: 50000000000  # $50B
+
+# Economic Calendar
+economic_calendar:
+  # Major recurring events - add dates manually each quarter
+  events_2026_q3:
+    - date: "2026-07-29"
+      time: "14:00"
+      event: "FOMC Rate Decision"
+      impact: "HIGH"
+      press_conference: true
+    - date: "2026-08-13"
+      time: "08:30"
+      event: "CPI MoM/YoY"
+      impact: "HIGH"
+    - date: "2026-08-07"
+      time: "08:30"
+      event: "Nonfarm Payrolls"
+      impact: "HIGH"
+    - date: "2026-08-28"
+      time: "10:00"
+      event: "Jackson Hole Symposium"
+      impact: "HIGH"
+    - date: "2026-09-10"
+      time: "08:30"
+      event: "CPI MoM/YoY"
+      impact: "HIGH"
+    - date: "2026-09-17"
+      time: "14:00"
+      event: "FOMC Rate Decision"
+      impact: "HIGH"
+      press_conference: true
+    - date: "2026-09-04"
+      time: "08:30"
+      event: "Nonfarm Payrolls"
+      impact: "HIGH"
+
+  # Major earnings (add as needed)
+  earnings_2026_q3: []
+
+# User-defined metrics to track (subprojects)
+metrics:
+  - name: "FOMO_frequency"
+    description: "Number of FOMO entries per day"
+    active: true
+  - name: "early_exit_instances"
+    description: "Early exits on single M5 candle fear"
+    active: true
+  - name: "VWAP_rejection_HPTE_winrate"
+    description: "Win rate of VWAP rejection longs in HPTE"
+    active: true
+  - name: "market_condition_accuracy"
+    description: "Accuracy of HPTE/LPTE bias call"
+    active: true
+  - name: "pullback_quality_score"
+    description: "Wimpy vs strong pullback classification accuracy"
+    active: true
+
+# User-approved rules (activated from weekly review)
+active_rules: []
+
+# Prompt settings
+prompts:
+  daily_report: "config/prompts/daily_report.txt"
+  pre_market: "config/prompts/pre_market.txt"
+  weekly_patterns: "config/prompts/weekly_patterns.txt"
+  monthly_trajectory: "config/prompts/monthly_trajectory.txt"

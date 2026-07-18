@@ -1,0 +1,152 @@
+{
+  "date": "2026-07-10",
+  "organized_notes": [
+    {
+      "timestamp": "11:04",
+      "text": " #sim short ORCL @ 139.60 [TRADE: short ORCL @ 0.0 x0]",
+      "tickers": [
+        "ORCL"
+      ],
+      "category": "entry",
+      "key_levels_mentioned": [],
+      "tags": [
+        "sim"
+      ]
+    },
+    {
+      "timestamp": "11:14",
+      "text": " TGT nice long here leaning on the PDH as support",
+      "tickers": [
+        "TGT"
+      ],
+      "category": "observation",
+      "key_levels_mentioned": [
+        "PDH"
+      ],
+      "tags": []
+    },
+    {
+      "timestamp": "11:17",
+      "text": " long TGT @ 135.47, 1 share adding at EOD if TGT closes well [TRADE: long TGT @ 0.0 x0]",
+      "tickers": [
+        "EOD",
+        "TGT"
+      ],
+      "category": "entry",
+      "key_levels_mentioned": [],
+      "tags": []
+    },
+    {
+      "timestamp": "11:25",
+      "text": " long CSCO @ 120.02, 10 shares tight stop using PDH support [TRADE: long CSCO @ 0.0 x0]",
+      "tickers": [
+        "CSCO"
+      ],
+      "category": "entry",
+      "key_levels_mentioned": [
+        "PDH"
+      ],
+      "tags": []
+    },
+    {
+      "timestamp": "11:28",
+      "text": " partial exit CSCO long - sizing down to 6 shares, initially oversized",
+      "tickers": [
+        "CSCO"
+      ],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": []
+    },
+    {
+      "timestamp": "11:30",
+      "text": " CROX nice long but D1 looks like it's in a compression",
+      "tickers": [
+        "CROX"
+      ],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": []
+    },
+    {
+      "timestamp": "11:31",
+      "text": " \"The stocks leading the charge today are apparel, retail and restaurant. Rails are good too. Hard to get excited about these stocks.\" - Pete",
+      "tickers": [],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": []
+    },
+    {
+      "timestamp": "11:37",
+      "text": " trending stocks i see with nice D1s - CSCO CROX but i dont know if their sectors will lead the next few days so it is hard for me to take them - D1s also are not the most clean and have the potential to pullback/move around #flag",
+      "tickers": [
+        "CROX",
+        "CSCO"
+      ],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": [
+        "flag"
+      ]
+    },
+    {
+      "timestamp": "11:39",
+      "text": " NKE looks nice and potentially could have future upside but never properly based",
+      "tickers": [
+        "NKE"
+      ],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": []
+    }
+  ],
+  "trades": [
+    {
+      "timestamp": "11:04",
+      "direction": "short",
+      "ticker": "ORCL",
+      "price": 0.0,
+      "size": 0,
+      "reason": "From notes",
+      "outcome": "open",
+      "exit_timestamp": null,
+      "exit_price": null,
+      "exit_reason": null
+    },
+    {
+      "timestamp": "11:17",
+      "direction": "long",
+      "ticker": "TGT",
+      "price": 0.0,
+      "size": 0,
+      "reason": "From notes",
+      "outcome": "open",
+      "exit_timestamp": null,
+      "exit_price": null,
+      "exit_reason": null
+    },
+    {
+      "timestamp": "11:25",
+      "direction": "long",
+      "ticker": "CSCO",
+      "price": 0.0,
+      "size": 0,
+      "reason": "From notes",
+      "outcome": "open",
+      "exit_timestamp": null,
+      "exit_price": null,
+      "exit_reason": null
+    }
+  ],
+  "highlights_for_carry_forward": [],
+  "market_bias": {
+    "direction": "bullish",
+    "confidence": "medium",
+    "regime": "transitional",
+    "key_levels": [
+      "PDH"
+    ]
+  },
+  "raw_market_notes": "- 11:04 #sim short ORCL @ 139.60 \n- 11:14 TGT nice long here leaning on the PDH as support \n- 11:17 long TGT @ 135.47, 1 share adding at EOD if TGT closes well \n- 11:25 long CSCO @ 120.02, 10 shares tight stop using PDH support \n- 11:28 partial exit CSCO long - sizing down to 6 shares, initially oversized \n- 11:30 CROX nice long but D1 looks like it's in a compression \n- 11:31 \"The stocks leading the charge today are apparel, retail and restaurant. Rails are good too. Hard to get excited about these stocks.\" - Pete\n- 11:37 trending stocks i see with nice D1s - CSCO CROX but i dont know if their sectors will lead the next few days so it is hard for me to take them - D1s also are not the most clean and have the potential to pullback/move around #flag \n- 11:39 NKE looks nice and potentially could have future upside but never properly based",
+  "source_file": "C:\\Users\\Thaddeus\\Claude Code Test\\trading-journal-system\\Vaulted\\!Journalit\\2026\\Q3\\07\\W28\\DRC-100726.md"
+}

@@ -1,0 +1,95 @@
+{
+  "date": "2026-07-13",
+  "organized_notes": [
+    {
+      "timestamp": "9:41",
+      "text": " XLE XLF XLC strong, tech quite weak",
+      "tickers": [
+        "XLC",
+        "XLE",
+        "XLF"
+      ],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": []
+    },
+    {
+      "timestamp": "9:51",
+      "text": " short ORCL @ 136.81, 3 shares - nice stacked reds on heavy volume [TRADE: short ORCL @ 136.81 x3]",
+      "tickers": [
+        "ORCL"
+      ],
+      "category": "entry",
+      "key_levels_mentioned": [],
+      "tags": []
+    },
+    {
+      "timestamp": "10:07",
+      "text": " long CVS @ 106.10, 5 shares - nice RS and new HOD [TRADE: long CVS @ 106.1 x5]",
+      "tickers": [
+        "CVS",
+        "RS"
+      ],
+      "category": "entry",
+      "key_levels_mentioned": [],
+      "tags": []
+    },
+    {
+      "timestamp": "10:20",
+      "text": " long FTNT @ 158.40, 2 shares - might swing depending on market conditions [TRADE: long FTNT @ 158.4 x2]",
+      "tickers": [
+        "FTNT"
+      ],
+      "category": "entry",
+      "key_levels_mentioned": [],
+      "tags": []
+    }
+  ],
+  "trades": [
+    {
+      "timestamp": "9:51",
+      "direction": "short",
+      "ticker": "ORCL",
+      "price": 136.81,
+      "size": 3,
+      "reason": "nice stacked reds on heavy volume [TRADE: short ORCL @ 136.81 x3]",
+      "outcome": "open",
+      "exit_timestamp": null,
+      "exit_price": null,
+      "exit_reason": null
+    },
+    {
+      "timestamp": "10:07",
+      "direction": "long",
+      "ticker": "CVS",
+      "price": 106.1,
+      "size": 5,
+      "reason": "nice RS and new HOD [TRADE: long CVS @ 106.1 x5]",
+      "outcome": "open",
+      "exit_timestamp": null,
+      "exit_price": null,
+      "exit_reason": null
+    },
+    {
+      "timestamp": "10:20",
+      "direction": "long",
+      "ticker": "FTNT",
+      "price": 158.4,
+      "size": 2,
+      "reason": "might swing depending on market conditions [TRADE: long FTNT @ 158.4 x2]",
+      "outcome": "open",
+      "exit_timestamp": null,
+      "exit_price": null,
+      "exit_reason": null
+    }
+  ],
+  "highlights_for_carry_forward": [],
+  "market_bias": {
+    "direction": "bullish",
+    "confidence": "medium",
+    "regime": "transitional",
+    "key_levels": []
+  },
+  "raw_market_notes": "- 9:41 XLE XLF XLC strong, tech quite weak \n- 9:51 short ORCL @ 136.81, 3 shares - nice stacked reds on heavy volume \n- 10:07 long CVS @ 106.10, 5 shares - nice RS and new HOD \n- 10:20 long FTNT @ 158.40, 2 shares - might swing depending on market conditions",
+  "source_file": "C:\\Users\\Thaddeus\\Claude Code Test\\trading-journal-system\\Vaulted\\!Journalit\\2026\\Q3\\07\\W29\\DRC-130726.md"
+}
