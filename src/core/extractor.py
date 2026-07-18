@@ -68,7 +68,7 @@ class LLMExtractor:
         cache_file = self.cache_dir / f"{cache_key}.json"
         if cache_file.exists():
             try:
-                return json.loads(cache_file.read_text())
+                return json.loads(cache_file.read_text(encoding="utf-8"))
             except Exception:
                 pass
         return None
@@ -76,7 +76,7 @@ class LLMExtractor:
     def _save_cache(self, cache_key: str, response: dict):
         """Save response to cache."""
         cache_file = self.cache_dir / f"{cache_key}.json"
-        cache_file.write_text(json.dumps(response, indent=2))
+        cache_file.write_text(json.dumps(response, indent=2), encoding="utf-8")
 
     def _call_llm(self, prompt: str, input_text: str) -> Optional[dict]:
         """Call LLM with retry logic."""

@@ -60,7 +60,7 @@ def parse_date(date_str: str) -> date:
 def save_daily_report(report: DailyReport) -> Path:
     """Save daily report to JSON."""
     path = DAILY_REPORTS_DIR / f"{report.date.isoformat()}.json"
-    path.write_text(report.model_dump_json(indent=2))
+    path.write_text(report.model_dump_json(indent=2), encoding="utf-8")
     return path
 
 
@@ -69,14 +69,14 @@ def load_daily_report(target_date: date) -> Optional[DailyReport]:
     path = DAILY_REPORTS_DIR / f"{target_date.isoformat()}.json"
     if not path.exists():
         return None
-    data = json.loads(path.read_text())
+    data = json.loads(path.read_text(encoding="utf-8"))
     return DailyReport.model_validate(data)
 
 
 def save_pre_market(pre_market: PreMarketNotes) -> Path:
     """Save pre-market notes to JSON."""
     path = PRE_MARKET_DIR / f"{pre_market.date.isoformat()}.json"
-    path.write_text(pre_market.model_dump_json(indent=2))
+    path.write_text(pre_market.model_dump_json(indent=2), encoding="utf-8")
     return path
 
 
@@ -178,21 +178,25 @@ def extract_daily_report_fallback(raw_report) -> dict:
     }
 
 
-def generate_pre_market_fallback(daily_report: DailyReport, economic_events: list) -> dict:
+def generate_pre_market_fallback(daily_report: Optional[DailyReport], economic_events: list) -> dict:
     """Generate pre-market notes without LLM."""
-    carry_forward = daily_report.highlights_for_carry_forward[:5]
+    if daily_report:
+        carry_forward = daily_report.highlights_for_carry_forward[:5]
+
+        watchlist = []
+        for h in daily_report.highlights_for_carry_forward:
+            if h.startswith("Focus:") or h.startswith("Improve:") or h.startswith("Rule:"):
+                watchlist.append(h)
+        # Add tickers from notes
+        tickers = daily_report.get_tickers_mentioned()
+        for t in tickers:
+            if t not in str(watchlist):
+                watchlist.append(f"Watch {t}")
+    else:
+        carry_forward = []
+        watchlist = []
 
     active_rules = settings.get("active_rules", [])
-
-    watchlist = []
-    for h in daily_report.highlights_for_carry_forward:
-        if h.startswith("Focus:") or h.startswith("Improve:") or h.startswith("Rule:"):
-            watchlist.append(h)
-    # Add tickers from notes
-    tickers = daily_report.get_tickers_mentioned()
-    for t in tickers:
-        if t not in str(watchlist):
-            watchlist.append(f"Watch {t}")
 
     return {
         "carry_forward": carry_forward,
