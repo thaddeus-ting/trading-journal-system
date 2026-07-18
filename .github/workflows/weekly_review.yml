@@ -1,17 +1,21 @@
-name: Weekly Synthesis
+name: Weekly Review
 
 on:
   schedule:
-    # 10:00 AM ET = 14:00 UTC (summer) / 15:00 UTC (winter)
-    # Runs every Sunday
-    - cron: '0 14 * * 0'
+    # 5:30 PM ET Friday = 21:30 UTC (EDT) / 22:30 UTC (EST)
+    - cron: '30 21 * * 5'
   workflow_dispatch:
+    inputs:
+      week:
+        description: 'Week label to process (e.g., W29)'
+        required: false
+        type: string
 
 permissions:
   contents: write
 
 jobs:
-  weekly-synthesis:
+  weekly-review:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -42,13 +46,12 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          # Check if there are changes in data/
-          if git diff --quiet data/; then
-            echo "No changes to commit"
+          if git diff --quiet data/weekly_reviews/; then
+            echo "No weekly review changes to commit"
             exit 0
           fi
 
-          git add data/
-          WEEK=$(date -d "last monday" +%Y-W%V 2>/dev/null || date -v-1w +%Y-W%V)
-          git commit -m "chore: weekly review for week $WEEK"
+          WEEK_LABEL=$(python -c "from datetime import date; d=date.today(); m=d-timedelta(days=d.weekday()); print(f'W{m.isocalendar()[1]:02d}')")
+          git add data/weekly_reviews/
+          git commit -m "chore: weekly review for $WEEK_LABEL"
           git push

@@ -1,14 +1,13 @@
-name: Daily Sync
+name: Pre-Market Report
 
 on:
   schedule:
-    # 4:30 PM ET = 20:30 UTC (summer) / 21:30 UTC (winter)
-    # Uses cron in UTC - adjust seasonally if needed
-    - cron: '30 20 * * 1-5'
+    # 8:30 PM ET = 00:30 UTC (next day, EDT) / 01:30 UTC (EST)
+    - cron: '30 0 * * 2-6'
   workflow_dispatch:
     inputs:
       date:
-        description: 'Date to process (YYYY-MM-DD)'
+        description: 'Date to process (YYYY-MM-DD) - generates pre-market for this date'
         required: false
         type: string
 
@@ -16,7 +15,7 @@ permissions:
   contents: write
 
 jobs:
-  daily-sync:
+  pre-market-report:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -35,41 +34,37 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run daily sync
+      - name: Run pre-market generation
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
         run: |
-          # Determine date to process
           if [ "${{ github.event.inputs.date }}" != "" ]; then
             TARGET_DATE="${{ github.event.inputs.date }}"
           else
-            # Get current date in ET timezone, skip weekends
-            TARGET_DATE=$(TZ=America/New_York date +%F)
-            # If Saturday (6) or Sunday (7), use Friday
-            DOW=$(TZ=America/New_York date +%u)
+            # Generate for NEXT trading day
+            TARGET_DATE=$(TZ=America/New_York date -d "tomorrow" +%F)
+            DOW=$(TZ=America/New_York date -d "$TARGET_DATE" +%u)
+            # If Saturday (6) or Sunday (7), use Monday
             if [ "$DOW" -eq 6 ]; then
-              TARGET_DATE=$(TZ=America/New_York date -d "yesterday" +%F)
+              TARGET_DATE=$(TZ=America/New_York date -d "$TARGET_DATE +2 days" +%F)
             elif [ "$DOW" -eq 7 ]; then
-              TARGET_DATE=$(TZ=America/New_York date -d "2 days ago" +%F)
+              TARGET_DATE=$(TZ=America/New_York date -d "$TARGET_DATE +1 day" +%F)
             fi
           fi
-          echo "Processing date: $TARGET_DATE"
-          python -m src.cli.daily_sync run --date "$TARGET_DATE"
+          echo "Generating Pre-Market for: $TARGET_DATE"
+          python -m src.cli.daily_sync generate_pre_market --date "$TARGET_DATE"
 
       - name: Commit and push changes
-        env:
-          TARGET_DATE: ${{ env.TARGET_DATE }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          # Check if there are changes in data/
-          if git diff --quiet data/; then
-            echo "No changes to commit"
+          if git diff --quiet data/pre_market/; then
+            echo "No pre-market changes to commit"
             exit 0
           fi
 
-          git add data/
-          git commit -m "chore: daily reports for $TARGET_DATE"
+          git add data/pre_market/
+          git commit -m "chore: pre-market report for $TARGET_DATE"
           git push

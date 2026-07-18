@@ -303,9 +303,12 @@ def extract_daily_report_fallback(raw_report: DailyReport) -> dict:
     }
 
 
-def generate_pre_market_fallback(daily_report: DailyReport, economic_events: list[dict]) -> dict:
+def generate_pre_market_fallback(daily_report: Optional[DailyReport], economic_events: list[dict]) -> dict:
     """Rule-based pre-market generation."""
-    carry_forward = daily_report.highlights_for_carry_forward[:5]
+    if daily_report:
+        carry_forward = daily_report.highlights_for_carry_forward[:5]
+    else:
+        carry_forward = []
 
     active_rules = [
         "NO FOMO entries - wait for M5 pullback close",

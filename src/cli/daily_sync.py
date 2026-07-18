@@ -89,6 +89,39 @@ def load_pre_market(target_date: date) -> Optional[PreMarketNotes]:
     return PreMarketNotes.model_validate(data)
 
 
+def generate_pre_market_fallback(target_date: date) -> PreMarketNotes:
+    """Generate pre-market notes using fallback logic (no LLM)."""
+    # Load today's daily report for context
+    daily_report = load_daily_report(target_date - timedelta(days=1))
+
+    # Get economic events
+    events = get_events_for_date(target_date)
+
+    # Get latest DRC file for any overnight notes
+    vault_path = Path(settings.get("vault_path", "").replace("\\", "/"))
+    drc_files = find_all_drc_files(vault_path)
+    latest_drc = None
+    for f in drc_files:
+        try:
+            f_date = parse_date_from_filename(f.name)
+            if f_date == target_date:
+                latest_drc = f
+                break
+        except ValueError:
+            continue
+
+    # Build pre-market using fallback extractor
+    from src.core.extractor import generate_pre_market_fallback
+    pre_market = generate_pre_market_fallback(
+        target_date=target_date,
+        daily_report=daily_report,
+        economic_events=events,
+        drc_file=latest_drc
+    )
+
+    return pre_market
+
+
 def get_events_for_date(target_date: date) -> list[dict]:
     """Get economic events for a specific date from static calendar."""
     events = []
@@ -440,6 +473,69 @@ def show_pre_market_summary(pre_market: PreMarketNotes):
         console.print("[bold]Watchlist Candidates:[/bold]")
         for w in pre_market.watchlist_candidates:
             console.print(f"  • {w}")
+
+
+@app.command()
+def generate_pre_market(
+    date_str: str = typer.Option(None, "--date", "-d", help="Date for pre-market (YYYY-MM-DD)"),
+):
+    """Generate pre-market notes for a specific date (default: next trading day)."""
+    if date_str:
+        target_date = parse_date(date_str)
+    else:
+        target_date = date.today() + timedelta(days=1)
+        while target_date.weekday() >= 5:
+            target_date += timedelta(days=1)
+
+    console.print(f"[bold]Generating Pre-Market for {target_date}[/bold]")
+
+    # Get economic events
+    fmp_data = fetch_pre_market_data(target_date)
+    econ_events_raw = fmp_data["economic_events"]
+    earnings_raw = fmp_data["earnings"]
+
+    econ_events = format_economic_for_pre_market(econ_events_raw)
+    earnings_watchlist = format_earnings_for_watchlist(earnings_raw)
+
+    if fmp_data["economic_events"] or fmp_data["earnings"]:
+        console.print(f"  FMP: {len(econ_events)} economic events, {len(earnings_watchlist)} major earnings")
+    else:
+        econ_events = format_economic_for_pre_market(get_events_for_date(target_date))
+        console.print(f"  Static fallback: {len(econ_events)} economic events")
+
+    # Load prior daily report for carry-forward
+    prev_date = target_date - timedelta(days=1)
+    while prev_date.weekday() >= 5:
+        prev_date -= timedelta(days=1)
+    daily_report = load_daily_report(prev_date)
+
+    # Generate
+    pre_market_data = generate_pre_market_fallback(daily_report, econ_events)
+
+    watchlist = pre_market_data["watchlist_candidates"]
+    for ew in earnings_watchlist:
+        if ew not in str(watchlist):
+            watchlist.append(ew)
+
+    events = [EconomicEvent(
+        date=target_date,
+        time=e["time"],
+        event=e["event"],
+        impact=e["impact"]
+    ) for e in econ_events]
+
+    pre_market = PreMarketNotes(
+        date=target_date,
+        carry_forward=pre_market_data["carry_forward"],
+        economic_events=events,
+        earnings=earnings_raw,
+        active_rules=pre_market_data["active_rules"],
+        watchlist_candidates=watchlist[:15]
+    )
+
+    pre_path = save_pre_market(pre_market)
+    console.print(f"[green]Saved Pre-Market:[/green] {pre_path}")
+    show_pre_market_summary(pre_market)
 
 
 if __name__ == "__main__":

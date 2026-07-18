@@ -1,0 +1,68 @@
+name: Daily Report
+
+on:
+  schedule:
+    # 4:30 PM ET = 20:30 UTC (EDT) / 21:30 UTC (EST)
+    - cron: '30 20 * * 1-5'
+  workflow_dispatch:
+    inputs:
+      date:
+        description: 'Date to process (YYYY-MM-DD)'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  daily-report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run daily report generation
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
+        run: |
+          if [ "${{ github.event.inputs.date }}" != "" ]; then
+            TARGET_DATE="${{ github.event.inputs.date }}"
+          else
+            TARGET_DATE=$(TZ=America/New_York date +%F)
+            DOW=$(TZ=America/New_York date +%u)
+            if [ "$DOW" -eq 6 ]; then
+              TARGET_DATE=$(TZ=America/New_York date -d "yesterday" +%F)
+            elif [ "$DOW" -eq 7 ]; then
+              TARGET_DATE=$(TZ=America/New_York date -d "2 days ago" +%F)
+            fi
+          fi
+          echo "Processing Daily Report for: $TARGET_DATE"
+          python -m src.cli.daily_sync run --date "$TARGET_DATE"
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          if git diff --quiet data/daily_reports/; then
+            echo "No daily report changes to commit"
+            exit 0
+          fi
+
+          git add data/daily_reports/
+          git commit -m "chore: daily report for $TARGET_DATE"
+          git push
