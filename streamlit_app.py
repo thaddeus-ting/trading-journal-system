@@ -1941,16 +1941,18 @@ def page_settings():
         <style>
         /* Make rule delete buttons smaller */
         .stButton > button[key^="del_rule_"] {
-            padding: 0.15rem 0.4rem !important;
-            font-size: 0.7rem !important;
-            min-width: 1.8rem !important;
-            max-width: 2.2rem !important;
+            padding: 0.1rem 0.3rem !important;
+            font-size: 0.65rem !important;
+            min-width: 1.5rem !important;
+            max-width: 1.8rem !important;
+            width: 1.8rem !important;
         }
         .stButton > button[key^="confirm_yes_"], .stButton > button[key^="confirm_no_"] {
-            padding: 0.15rem 0.4rem !important;
-            font-size: 0.7rem !important;
-            min-width: 1.8rem !important;
-            max-width: 2.2rem !important;
+            padding: 0.1rem 0.3rem !important;
+            font-size: 0.65rem !important;
+            min-width: 1.5rem !important;
+            max-width: 1.8rem !important;
+            width: 1.8rem !important;
         }
         </style>
         """, unsafe_allow_html=True)
@@ -1991,7 +1993,7 @@ def page_settings():
 
                 # Delete (moved right)
                 with cols[3]:
-                    if st.button("✕", key=f"del_rule_{i}", help="Delete this rule", use_container_width=True):
+                    if st.button("✕", key=f"del_rule_{i}", help="Delete this rule"):
                         st.session_state[f"confirm_del_rule_{i}"] = True
                         st.rerun()
 
@@ -2000,13 +2002,13 @@ def page_settings():
                     if st.session_state.get(f"confirm_del_rule_{i}", False):
                         c_yes, c_no = st.columns(2)
                         with c_yes:
-                            if st.button("✓", key=f"confirm_yes_{i}", type="primary", use_container_width=True, help="Yes, delete"):
+                            if st.button("✓", key=f"confirm_yes_{i}", type="primary", help="Yes, delete"):
                                 new_rules = active_rules[:i] + active_rules[i+1:]
                                 save_active_rules(new_rules)
                                 st.session_state.pop(f"confirm_del_rule_{i}", None)
                                 st.rerun()
                         with c_no:
-                            if st.button("✗", key=f"confirm_no_{i}", use_container_width=True, help="Cancel"):
+                            if st.button("✗", key=f"confirm_no_{i}", help="Cancel"):
                                 st.session_state.pop(f"confirm_del_rule_{i}", None)
                                 st.rerun()
             else:
@@ -2014,19 +2016,19 @@ def page_settings():
                 with cols[1]:
                     st.write("")
                 with cols[2]:
-                    if st.button("✕", key=f"del_rule_{i}", help="Delete this rule", use_container_width=True):
+                    if st.button("✕", key=f"del_rule_{i}", help="Delete this rule"):
                         st.session_state[f"confirm_del_rule_{i}"] = True
                         st.rerun()
                     if st.session_state.get(f"confirm_del_rule_{i}", False):
                         c_yes, c_no = st.columns(2)
                         with c_yes:
-                            if st.button("✓", key=f"confirm_yes_{i}", type="primary", use_container_width=True, help="Yes, delete"):
+                            if st.button("✓", key=f"confirm_yes_{i}", type="primary", help="Yes, delete"):
                                 new_rules = active_rules[:i] + active_rules[i+1:]
                                 save_active_rules(new_rules)
                                 st.session_state.pop(f"confirm_del_rule_{i}", None)
                                 st.rerun()
                         with c_no:
-                            if st.button("✗", key=f"confirm_no_{i}", use_container_width=True, help="Cancel"):
+                            if st.button("✗", key=f"confirm_no_{i}", help="Cancel"):
                                 st.session_state.pop(f"confirm_del_rule_{i}", None)
                                 st.rerun()
     else:
