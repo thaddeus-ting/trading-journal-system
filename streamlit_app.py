@@ -1384,6 +1384,12 @@ def render_sidebar():
         ["Daily Report", "Pre-Market", "Weekly Review", "Settings"]
     )
 
+    # Initialize session state for separate dates per page
+    if "daily_report_date" not in st.session_state:
+        st.session_state.daily_report_date = None
+    if "pre_market_date" not in st.session_state:
+        st.session_state.pre_market_date = None
+
     # Date selector - use daily report dates for Daily Report page, pre-market dates for Pre-Market page
     reports = load_daily_reports()
     daily_dates = sorted([r.date for r in reports])
@@ -1394,9 +1400,13 @@ def render_sidebar():
     if page == "Pre-Market":
         # Use pre-market dates for Pre-Market page
         available_dates = pre_market_dates if pre_market_dates else daily_dates
+        # Use session state date if available, otherwise default to latest
+        default_date = st.session_state.pre_market_date if st.session_state.pre_market_date in available_dates else available_dates[-1]
     else:
         # Use daily report dates for Daily Report page
         available_dates = daily_dates
+        # Use session state date if available, otherwise default to latest
+        default_date = st.session_state.daily_report_date if st.session_state.daily_report_date in available_dates else available_dates[-1]
 
     if available_dates:
         # Use a reasonable date range: min from available dates, max as today or latest available (whichever is greater)
@@ -1405,10 +1415,16 @@ def render_sidebar():
 
         selected_date = st.sidebar.date_input(
             "Select Date",
-            value=available_dates[-1],
+            value=default_date,
             min_value=min_date,
             max_value=max_date
         )
+
+        # Store selected date in session state for this page type
+        if page == "Pre-Market":
+            st.session_state.pre_market_date = selected_date
+        else:
+            st.session_state.daily_report_date = selected_date
 
         # Check if selected date has a report
         if page == "Pre-Market":

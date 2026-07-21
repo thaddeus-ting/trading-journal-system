@@ -33,7 +33,8 @@
       "Bash(timeout 15 python -m streamlit run streamlit_app.py --server.headless true --server.port 8504)",
       "Bash(git commit -m 'fix: sidebar logic for Pre-Market page *)",
       "Bash(curl -s \"http://localhost:8504/_stcore/health\")",
-      "Bash(git commit -m 'fix: sidebar shows Create Daily Report for Pre-Market, generation buttons on page *)"
+      "Bash(git commit -m 'fix: sidebar shows Create Daily Report for Pre-Market, generation buttons on page *)",
+      "Bash(git commit -m 'fix: sidebar date selection logic *)"
     ]
   }
 }
