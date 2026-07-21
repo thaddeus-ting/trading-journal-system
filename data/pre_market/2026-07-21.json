@@ -5,7 +5,11 @@
   ],
   "economic_events": [],
   "earnings": [],
-  "active_rules": [],
+  "active_rules": [
+    "NO FOMO entries - wait for M5 pullback close",
+    "Don't exit winner on single M5 candle - need 2 stacked reds + volume",
+    "NO short entries on gap days without M5 pullback confirmation"
+  ],
   "watchlist_candidates": [],
-  "generated_at": "2026-07-21T14:04:07.993954"
+  "generated_at": "2026-07-21T16:02:31.626187"
 }

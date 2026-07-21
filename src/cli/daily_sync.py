@@ -184,10 +184,7 @@ def generate_pre_market_fallback(daily_report: Optional[DailyReport], economic_e
         carry_forward = daily_report.highlights_for_carry_forward[:5]
 
         watchlist = []
-        for h in daily_report.highlights_for_carry_forward:
-            if h.startswith("Focus:") or h.startswith("Improve:") or h.startswith("Rule:"):
-                watchlist.append(h)
-        # Add tickers from notes
+        # Add tickers from notes as "Watch TICKER"
         tickers = daily_report.get_tickers_mentioned()
         for t in tickers:
             if t not in str(watchlist):

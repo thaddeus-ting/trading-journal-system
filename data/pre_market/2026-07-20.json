@@ -3,18 +3,22 @@
   "carry_forward": [],
   "economic_events": [],
   "earnings": [],
-  "active_rules": [],
+  "active_rules": [
+    "NO FOMO entries - wait for M5 pullback close",
+    "Don't exit winner on single M5 candle - need 2 stacked reds + volume",
+    "NO short entries on gap days without M5 pullback confirmation"
+  ],
   "watchlist_candidates": [
-    "Watch BAC",
+    "Watch JNJ",
+    "Watch CSCO",
+    "Watch MRK",
     "Watch JPM",
     "Watch XLF",
-    "Watch MRK",
     "Watch GE",
-    "Watch CSCO",
-    "Watch JNJ",
+    "Watch FTNT",
+    "Watch BAC",
     "Watch PANW",
-    "Watch TRV",
-    "Watch FTNT"
+    "Watch TRV"
   ],
-  "generated_at": "2026-07-21T14:27:08.773985"
+  "generated_at": "2026-07-21T15:59:23.789501"
 }

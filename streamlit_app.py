@@ -833,11 +833,12 @@ def render_pre_market(pre: PreMarketNotes):
         return
 
     # Check if this pre-market was generated without a prior daily report
+    # Look through ALL carry_forward items for the "no prior daily" marker
     has_prior_daily = True
-    if pre.carry_forward:
-        first_item = pre.carry_forward[0]
-        if "No prior daily journal" in first_item and "showing economic events only" in first_item:
+    for item in pre.carry_forward:
+        if "No prior daily journal" in item and "showing economic events only" in item:
             has_prior_daily = False
+            break
 
     st.markdown("""
     <style>
@@ -919,56 +920,60 @@ def render_pre_market(pre: PreMarketNotes):
             st.markdown(f"• {r}")
         st.markdown('</div>', unsafe_allow_html=True)
 
-    # Watchlist Candidates - only show if we have a prior daily report
+    # Watchlist Candidates - only show if we have a prior daily report AND valid watchlist items
+    # First, filter valid tickers from watchlist_candidates
+    valid_longs = []
+    valid_shorts = []
     if has_prior_daily and pre.watchlist_candidates:
-        st.markdown('<hr style="margin: 0.25rem 0; border: none; border-top: 0.1px solid white;">', unsafe_allow_html=True)
-        st.markdown('<div class="premarket-section watchlist-section">', unsafe_allow_html=True)
-        st.markdown("### Watchlist Candidates")
-        # Extract just ticker names from "Watch X" format, filter out non-ticker items
-        longs = []
-        shorts = []
         for w in pre.watchlist_candidates:
-            # Skip non-ticker items (Focus:, Improve:, Rule:, etc.)
-            skip_prefixes = ("Focus:", "Improve:", "Rule:", "Strength:", "Market context:", "Bias:")
+            # Skip non-ticker items (Focus:, Improve:, Rule:, Strength:, Market context:, Bias:, SPY key levels:)
+            skip_prefixes = ("Focus:", "Improve:", "Rule:", "Strength:", "Market context:", "Bias:", "SPY key levels:")
             if w.startswith(skip_prefixes):
                 continue
-            ticker = w[6:].strip() if w.startswith("Watch ") else w
+            # Extract ticker from "Watch TICKER" or "Watch TICKER (Earnings BMO/AMC)"
+            if w.startswith("Watch "):
+                ticker_part = w[6:].strip()
+                # Handle "Watch TICKER (Earnings BMO/AMC)" format
+                if "(" in ticker_part:
+                    ticker = ticker_part.split("(")[0].strip()
+                else:
+                    ticker = ticker_part
+            else:
+                ticker = w
             # Skip invalid tickers (RS, HOD, EOD are not valid tickers)
             if ticker.upper() in ("RS", "HOD", "EOD"):
                 continue
             # Check for ' short' suffix and strip it
             if ticker.lower().endswith(" short"):
                 ticker = ticker[:-6].strip()
-                # Skip invalid tickers
                 if ticker.upper() in ("RS", "HOD", "EOD"):
                     continue
-                # Only add if valid ticker (1-5 uppercase letters)
                 if re.match(r'^[A-Z]{1,5}$', ticker):
-                    shorts.append(ticker)
+                    valid_shorts.append(ticker)
             else:
                 # Also strip ' long' suffix if present
                 if ticker.lower().endswith(" long"):
                     ticker = ticker[:-5].strip()
-                # Skip invalid tickers
                 if ticker.upper() in ("RS", "HOD", "EOD"):
                     continue
-                # Only add if valid ticker (1-5 uppercase letters)
                 if re.match(r'^[A-Z]{1,5}$', ticker):
-                    longs.append(ticker)
+                    valid_longs.append(ticker)
 
         # Sort tickers: XL* tickers (XLE, XLF, XLV, XLRE, etc.) and sector ETFs (SMH, IGV, MAGS) go to the end
         def sort_key(ticker):
-            # XL* tickers (any length) and SMH, IGV, MAGS get a higher sort key so they appear at the end
             is_sector_etf = ticker.startswith("XL") or ticker in ("SMH", "IGV", "MAGS")
             return (is_sector_etf, ticker)
-        longs.sort(key=sort_key)
-        shorts.sort(key=sort_key)
+        valid_longs.sort(key=sort_key)
+        valid_shorts.sort(key=sort_key)
 
-        # Display as aligned HTML table
-        if longs or shorts:
-            long_str = ', '.join(longs) if longs else '—'
-            short_str = ', '.join(shorts) if shorts else '—'
-            st.markdown(f"""
+    # Display watchlist section ONLY if we have valid tickers
+    if valid_longs or valid_shorts:
+        st.markdown('<hr style="margin: 0.25rem 0; border: none; border-top: 0.1px solid white;">', unsafe_allow_html=True)
+        st.markdown('<div class="premarket-section watchlist-section">', unsafe_allow_html=True)
+        st.markdown("### Watchlist Candidates")
+        long_str = ', '.join(valid_longs) if valid_longs else '—'
+        short_str = ', '.join(valid_shorts) if valid_shorts else '—'
+        st.markdown(f"""
 <table class="watchlist-table" style="width: 100%; border-collapse: collapse; font-family: inherit; margin-left: 0;">
   <thead>
     <tr style="background: rgba(128,128,128,0.1);">
@@ -988,11 +993,6 @@ def render_pre_market(pre: PreMarketNotes):
   </tbody>
 </table>
 """, unsafe_allow_html=True)
-        elif pre.watchlist_candidates:
-            # Fallback for non-standard formats
-            all_tickers = [w[6:].strip() if w.startswith("Watch ") else w for w in pre.watchlist_candidates]
-            valid_tickers = [t for t in all_tickers if re.match(r'^[A-Z]{1,5}$', t)]
-            st.markdown(f"**Watch** — {', '.join(sorted(set(valid_tickers)))}")
         st.markdown('</div>', unsafe_allow_html=True)
 
 
@@ -1711,36 +1711,43 @@ def delete_weekly_review(target_week: str):
     load_weekly_reviews.clear()
 
 
-def page_pre_market(selected_date: date):
-    """Pre-market page - shows pre-market for selected date AND next trading day."""
-    st.header(f"🌅 Pre-market Report — {selected_date}")
+def next_trading_day(d: date) -> date:
+    """Get the next trading day (skip weekends)."""
+    next_d = d + timedelta(days=1)
+    while next_d.weekday() >= 5:  # Skip weekends
+        next_d += timedelta(days=1)
+    return next_d
 
-    # Load pre-market for this date
-    pre = load_pre_market(selected_date)
+
+def page_pre_market(selected_date: date):
+    """Pre-market page - shows pre-market for the NEXT trading day after selected daily report date."""
+    # Compute the pre-market date (next trading day after the daily report date)
+    pre_market_date = next_trading_day(selected_date)
+
+    st.header(f"🌅 Pre-market Report — {pre_market_date}")
+    st.caption(f"Based on daily report from {selected_date}")
+
+    # Load pre-market for the computed date
+    pre = load_pre_market(pre_market_date)
     if pre:
         render_pre_market(pre)
     else:
-        st.info(f"No pre-market notes generated for {selected_date}.")
+        st.info(f"No pre-market notes generated for {pre_market_date}.")
         st.caption("Pre-market notes are generated from the PREVIOUS day's daily report during daily_sync.")
 
-        # Check if previous day's daily report exists
-        prior_date = selected_date - timedelta(days=1)
-        while prior_date.weekday() >= 5:  # Skip weekends
-            prior_date -= timedelta(days=1)
-
-        # Check if we have a daily report for the prior date
+        # Check if we have a daily report for the selected date (which is the prior trading day)
         reports = load_daily_reports()
-        prior_report = next((r for r in reports if r.date == prior_date), None)
+        prior_report = next((r for r in reports if r.date == selected_date), None)
 
         if prior_report:
             if st.button("📊 Generate Pre-market Report", key="gen_premarket", type="primary", use_container_width=False):
-                generate_pre_market_from_daily(selected_date, prior_report)
+                generate_pre_market_from_daily(pre_market_date, prior_report)
                 st.rerun()
         else:
-            st.warning(f"⚠️ No daily report found for previous trading day ({prior_date}).")
+            st.warning(f"⚠️ No daily report found for {selected_date}.")
             st.caption("You can still generate a pre-market report with just economic events/earnings.")
             if st.button("📊 Generate Pre-market (Economic Events Only)", key="gen_premarket_no_prior", type="secondary", use_container_width=False):
-                generate_pre_market_from_daily(selected_date, None)
+                generate_pre_market_from_daily(pre_market_date, None)
                 st.rerun()
 
 
@@ -1820,12 +1827,62 @@ def page_settings():
     st.header("⚙️ Settings")
 
     st.subheader("Active Rules")
-    for rule in settings.get("active_rules", []):
-        st.markdown(f"• {rule}")
+
+    # Load current settings
+    SETTINGS_FILE = Path("config/settings.yaml")
+    if SETTINGS_FILE.exists():
+        current_settings = yaml.safe_load(SETTINGS_FILE.read_text())
+    else:
+        current_settings = {}
+
+    active_rules = current_settings.get("active_rules", [])
+
+    # Display current rules with delete buttons
+    if active_rules:
+        for i, rule in enumerate(active_rules):
+            col1, col2 = st.columns([0.9, 0.1])
+            with col1:
+                st.markdown(f"• {rule}")
+            with col2:
+                if st.button("✕", key=f"del_rule_{i}", help="Remove this rule"):
+                    new_rules = active_rules[:i] + active_rules[i+1:]
+                    save_active_rules(new_rules)
+                    st.rerun()
+    else:
+        st.caption("No active rules set. Add rules below from your weekly review.")
+
+    # Add new rule
+    with st.expander("➕ Add Active Rule", expanded=not active_rules):
+        new_rule = st.text_input("Rule text", placeholder="e.g., NO FOMO entries - wait for M5 pullback close")
+        if st.button("Add Rule", type="primary", key="add_rule_btn"):
+            if new_rule.strip():
+                updated_rules = active_rules + [new_rule.strip()]
+                save_active_rules(updated_rules)
+                st.success(f"Added rule: {new_rule.strip()}")
+                st.rerun()
+            else:
+                st.error("Rule text cannot be empty")
 
     st.markdown("<br>", unsafe_allow_html=True)
 
     st.subheader("Quick Actions")
+
+
+def save_active_rules(rules: list[str]):
+    """Save active rules to settings.yaml."""
+    SETTINGS_FILE = Path("config/settings.yaml")
+    if SETTINGS_FILE.exists():
+        current_settings = yaml.safe_load(SETTINGS_FILE.read_text())
+    else:
+        current_settings = {}
+
+    current_settings["active_rules"] = rules
+
+    SETTINGS_FILE.write_text(yaml.dump(current_settings, default_flow_style=False, sort_keys=False))
+
+    # Reload the global settings variable
+    global settings
+    settings = current_settings
 
     # Use raw HTML buttons instead of st.columns to have full control
     st.markdown("""

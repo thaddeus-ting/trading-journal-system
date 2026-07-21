@@ -306,33 +306,31 @@ def extract_daily_report_fallback(raw_report: DailyReport) -> dict:
 
 def generate_pre_market_fallback(daily_report: Optional[DailyReport], economic_events: list[dict]) -> dict:
     """Rule-based pre-market generation."""
+    import re
+    settings = load_settings()
+    active_rules = settings.get("active_rules", [])
+
     if daily_report:
         carry_forward = daily_report.highlights_for_carry_forward[:5]
     else:
         carry_forward = []
 
-    active_rules = [
-        "NO FOMO entries - wait for M5 pullback close",
-        "Don't exit winner on single M5 candle - need 2 stacked reds + volume",
-        "NO short entries on gap days without M5 pullback confirmation"
-    ]
-
     watchlist = []
-    for h in carry_forward:
-        if ":" in h and not h.startswith(("Rule:", "Bias:", "Improve:", "Strength:", "Focus:")):
-            watchlist.append(h.split(":")[0].strip())
-
-    # Add SPY key levels from market bias (only if daily_report exists)
-    if daily_report and daily_report.market_bias and daily_report.market_bias.key_levels:
-        levels_str = " | ".join(daily_report.market_bias.key_levels)
-        watchlist.append(f"SPY key levels: {levels_str}")
+    # Only add tickers as "Watch TICKER" format
+    # Get tickers from carry_forward highlights that have tickers mentioned
+    tickers = set()
+    if daily_report:
+        tickers.update(daily_report.get_tickers_mentioned())
+    for t in tickers:
+        if re.match(r'^[A-Z]{1,5}$', t):
+            watchlist.append(f"Watch {t}")
 
     return {
         "date": str(daily_report.date) if daily_report else "",
         "carry_forward": carry_forward,
         "economic_events": economic_events,
         "active_rules": active_rules,
-        "watchlist_candidates": watchlist
+        "watchlist_candidates": watchlist[:15]
     }
 
 

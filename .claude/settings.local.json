@@ -1,7 +1,25 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(python -m py_compile streamlit_app.py)",
+      "Bash(python -c ' *)",
+      "Bash(git commit -m 'feat: add persistent disk cache for AI summary *)",
+      "Bash(git push *)",
+      "Bash(python -c \"import streamlit_app; print\\('OK'\\)\")",
+      "Bash(git commit -m 'ui: remove \\(cached\\) label, add footnote; update LLM prompt for bullet point format *)",
+      "Bash(git commit -m 'feat: improve AI summary prompt with bullet format + synthesis *)",
+      "Bash(python scripts/weekly_synthesis.py)",
+      "Bash(rm data/weekly_reviews/*.json)",
+      "Bash(python *)",
+      "Bash(git checkout *)",
+      "Bash(timeout 10 streamlit run streamlit_app.py --server.headless true --server.port 8502)",
+      "Bash(python -m streamlit run streamlit_app.py --server.headless true --server.port 8502)",
+      "Bash(curl -s http://localhost:8502/_stcore/health)",
+      "Bash(curl -s \"http://localhost:8502\")",
+      "Bash(pkill -f \"streamlit run streamlit_app.py\")",
+      "Bash(git commit -m 'fix: pre-market date logic, active rules UI, watchlist filtering *)"
     ]
   }
 }
