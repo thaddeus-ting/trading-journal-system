@@ -1936,6 +1936,25 @@ def page_settings():
         if reorder_mode:
             st.caption("Use ⬆/⬇ to reorder rules. Changes save automatically.")
 
+        # CSS for smaller delete button on rules
+        st.markdown("""
+        <style>
+        /* Make rule delete buttons smaller */
+        .stButton > button[key^="del_rule_"] {
+            padding: 0.15rem 0.4rem !important;
+            font-size: 0.7rem !important;
+            min-width: 1.8rem !important;
+            max-width: 2.2rem !important;
+        }
+        .stButton > button[key^="confirm_yes_"], .stButton > button[key^="confirm_no_"] {
+            padding: 0.15rem 0.4rem !important;
+            font-size: 0.7rem !important;
+            min-width: 1.8rem !important;
+            max-width: 2.2rem !important;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+
         for i, rule in enumerate(active_rules):
             if reorder_mode:
                 # With reorder: rule text | move up | move down | delete
@@ -2122,8 +2141,8 @@ def page_settings():
                     st.session_state["confirm_delete_daily"] = True
                     st.rerun()
 
-            # Bulk delete button - compact, beside single delete (no use_container_width)
-            if st.button("🗑️ Bulk Delete", type="secondary", key="bulk_daily_delete", help="Delete by date range"):
+            # Bulk delete button - match width of single delete button
+            if st.button("🗑️ Bulk Delete", type="secondary", key="bulk_daily_delete", help="Delete by date range", use_container_width=True):
                 st.session_state["show_bulk_daily"] = not st.session_state.get("show_bulk_daily", False)
                 st.rerun()
 
@@ -2182,8 +2201,8 @@ def page_settings():
                         st.session_state["confirm_delete_pre"] = True
                         st.rerun()
 
-                # Bulk delete button - compact (no use_container_width)
-                if st.button("🗑️ Bulk Delete", type="secondary", key="bulk_pre_delete", help="Delete by date range"):
+                # Bulk delete button - match width of single delete button
+                if st.button("🗑️ Bulk Delete", type="secondary", key="bulk_pre_delete", help="Delete by date range", use_container_width=True):
                     st.session_state["show_bulk_pre"] = not st.session_state.get("show_bulk_pre", False)
                     st.rerun()
 
@@ -2243,8 +2262,8 @@ def page_settings():
                     st.session_state["confirm_delete_weekly"] = True
                     st.rerun()
 
-        # Bulk delete button - compact, beside single delete (no use_container_width)
-        if st.button("🗑️ Bulk Delete", type="secondary", key="bulk_weekly_delete", help="Delete by week range"):
+        # Bulk delete button - match width of single delete button
+        if st.button("🗑️ Bulk Delete", type="secondary", key="bulk_weekly_delete", help="Delete by week range", use_container_width=True):
             st.session_state["show_bulk_weekly"] = not st.session_state.get("show_bulk_weekly", False)
             st.rerun()
 
