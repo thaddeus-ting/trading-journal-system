@@ -2102,7 +2102,7 @@ def page_settings():
             date_to_delete = st.selectbox(
                 "Select daily report to delete",
                 available_dates,
-                format_func=lambda d: f"{d.isoformat()} (newest first)",
+                format_func=lambda d: d.isoformat(),
                 key="delete_daily_date"
             )
             # Inline confirmation instead of checkbox
@@ -2122,8 +2122,8 @@ def page_settings():
                     st.session_state["confirm_delete_daily"] = True
                     st.rerun()
 
-            # Bulk delete button - compact, beside single delete
-            if st.button("🗑️ Bulk Delete", type="secondary", key="bulk_daily_delete", help="Delete by date range", use_container_width=True):
+            # Bulk delete button - compact, beside single delete (no use_container_width)
+            if st.button("🗑️ Bulk Delete", type="secondary", key="bulk_daily_delete", help="Delete by date range"):
                 st.session_state["show_bulk_daily"] = not st.session_state.get("show_bulk_daily", False)
                 st.rerun()
 
@@ -2162,7 +2162,7 @@ def page_settings():
                 pre_date_to_delete = st.selectbox(
                     "Select pre-market to delete",
                     pre_dates,
-                    format_func=lambda d: f"{d.isoformat()} (newest first)",
+                    format_func=lambda d: d.isoformat(),
                     key="delete_pre_date"
                 )
                 # Inline confirmation
@@ -2182,32 +2182,30 @@ def page_settings():
                         st.session_state["confirm_delete_pre"] = True
                         st.rerun()
 
-            # Bulk delete button - compact, beside single delete
-            if st.button("🗑️ Bulk Delete", type="secondary", key="bulk_pre_delete", help="Delete by date range", use_container_width=True):
-                st.session_state["show_bulk_pre"] = not st.session_state.get("show_bulk_pre", False)
-                st.rerun()
+                # Bulk delete button - compact (no use_container_width)
+                if st.button("🗑️ Bulk Delete", type="secondary", key="bulk_pre_delete", help="Delete by date range"):
+                    st.session_state["show_bulk_pre"] = not st.session_state.get("show_bulk_pre", False)
+                    st.rerun()
 
-        # Bulk delete by date range - expandable section
-        if st.session_state.get("show_bulk_pre", False):
-            with st.container():
-                st.caption("Delete multiple pre-market notes between two dates (inclusive)")
-                br_col1, br_col2 = st.columns(2)
-                with br_col1:
-                    pre_start = st.date_input("Start date", value=pre_dates[-1] if pre_dates else None, key="bulk_pre_start")
-                with br_col2:
-                    pre_end = st.date_input("End date", value=pre_dates[0] if pre_dates else None, key="bulk_pre_end")
-                if st.button("🗑️ Confirm Bulk Delete", type="primary", key="bulk_pre_confirm"):
-                    dates_to_delete = [d for d in pre_dates if pre_start <= d <= pre_end]
-                    if dates_to_delete:
-                        for d in dates_to_delete:
-                            delete_pre_market(d)
-                        st.success(f"Deleted {len(dates_to_delete)} pre-market note(s)")
-                        st.session_state["show_bulk_pre"] = False
-                        st.rerun()
-                    else:
-                        st.warning("No dates in selected range")
-        else:
-            st.caption("No pre-market notes to delete.")
+            # Bulk delete by date range - expandable section
+            if st.session_state.get("show_bulk_pre", False):
+                with st.container():
+                    st.caption("Delete multiple pre-market notes between two dates (inclusive)")
+                    br_col1, br_col2 = st.columns(2)
+                    with br_col1:
+                        pre_start = st.date_input("Start date", value=pre_dates[-1] if pre_dates else None, key="bulk_pre_start")
+                    with br_col2:
+                        pre_end = st.date_input("End date", value=pre_dates[0] if pre_dates else None, key="bulk_pre_end")
+                    if st.button("🗑️ Confirm Bulk Delete", type="primary", key="bulk_pre_confirm"):
+                        dates_to_delete = [d for d in pre_dates if pre_start <= d <= pre_end]
+                        if dates_to_delete:
+                            for d in dates_to_delete:
+                                delete_pre_market(d)
+                            st.success(f"Deleted {len(dates_to_delete)} pre-market note(s)")
+                            st.session_state["show_bulk_pre"] = False
+                            st.rerun()
+                        else:
+                            st.warning("No dates in selected range")
     else:
         st.caption("No pre-market notes to delete.")
 
@@ -2225,7 +2223,7 @@ def page_settings():
             week_to_delete = st.selectbox(
                 "Select weekly review to delete",
                 week_labels_desc,
-                format_func=lambda w: f"{w} (newest first)",
+                format_func=lambda w: w,
                 key="delete_weekly_week"
             )
             # Inline confirmation
@@ -2245,34 +2243,34 @@ def page_settings():
                     st.session_state["confirm_delete_weekly"] = True
                     st.rerun()
 
-        # Bulk delete button - compact, beside single delete
-        if st.button("🗑️ Bulk Delete", type="secondary", key="bulk_weekly_delete", help="Delete by week range", use_container_width=True):
+        # Bulk delete button - compact, beside single delete (no use_container_width)
+        if st.button("🗑️ Bulk Delete", type="secondary", key="bulk_weekly_delete", help="Delete by week range"):
             st.session_state["show_bulk_weekly"] = not st.session_state.get("show_bulk_weekly", False)
             st.rerun()
 
-    # Bulk delete by week range - expandable section
-    if st.session_state.get("show_bulk_weekly", False):
-        with st.container():
-            st.caption("Delete multiple weekly reviews between two weeks (inclusive)")
-            br_col1, br_col2 = st.columns(2)
-            with br_col1:
-                week_start = st.selectbox("Start week", week_labels_desc, key="bulk_weekly_start")
-            with br_col2:
-                week_end = st.selectbox("End week", week_labels_desc, key="bulk_weekly_end")
-            if st.button("🗑️ Confirm Bulk Delete", type="primary", key="bulk_weekly_confirm"):
-                start_idx = week_labels.index(week_start)
-                end_idx = week_labels.index(week_end)
-                if start_idx > end_idx:
-                    start_idx, end_idx = end_idx, start_idx
-                weeks_to_delete = week_labels[start_idx:end_idx+1]
-                if weeks_to_delete:
-                    for w in weeks_to_delete:
-                        delete_weekly_review(w)
-                    st.success(f"Deleted {len(weeks_to_delete)} weekly review(s)")
-                    st.session_state["show_bulk_weekly"] = False
-                    st.rerun()
-                else:
-                    st.warning("No weeks in selected range")
+        # Bulk delete by week range - expandable section (inside if reviews block)
+        if st.session_state.get("show_bulk_weekly", False):
+            with st.container():
+                st.caption("Delete multiple weekly reviews between two weeks (inclusive)")
+                br_col1, br_col2 = st.columns(2)
+                with br_col1:
+                    week_start = st.selectbox("Start week", week_labels_desc, key="bulk_weekly_start")
+                with br_col2:
+                    week_end = st.selectbox("End week", week_labels_desc, key="bulk_weekly_end")
+                if st.button("🗑️ Confirm Bulk Delete", type="primary", key="bulk_weekly_confirm"):
+                    start_idx = week_labels.index(week_start)
+                    end_idx = week_labels.index(week_end)
+                    if start_idx > end_idx:
+                        start_idx, end_idx = end_idx, start_idx
+                    weeks_to_delete = week_labels[start_idx:end_idx+1]
+                    if weeks_to_delete:
+                        for w in weeks_to_delete:
+                            delete_weekly_review(w)
+                        st.success(f"Deleted {len(weeks_to_delete)} weekly review(s)")
+                        st.session_state["show_bulk_weekly"] = False
+                        st.rerun()
+                    else:
+                        st.warning("No weeks in selected range")
     else:
         st.caption("No weekly reviews to delete.")
 
