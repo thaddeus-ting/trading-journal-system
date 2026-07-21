@@ -1936,23 +1936,35 @@ def page_settings():
         if reorder_mode:
             st.caption("Use ⬆/⬇ to reorder rules. Changes save automatically.")
 
-        # CSS for smaller delete button on rules
+        # CSS for smaller delete button on rules - square with centered X
         st.markdown("""
         <style>
-        /* Make rule delete buttons smaller */
+        /* Make rule delete buttons square with centered content */
         .stButton > button[key^="del_rule_"] {
-            padding: 0.1rem 0.3rem !important;
-            font-size: 0.65rem !important;
-            min-width: 1.5rem !important;
-            max-width: 1.8rem !important;
-            width: 1.8rem !important;
+            padding: 0 !important;
+            font-size: 0.7rem !important;
+            min-width: 1.6rem !important;
+            max-width: 1.6rem !important;
+            width: 1.6rem !important;
+            height: 1.6rem !important;
+            line-height: 1.6rem !important;
+            text-align: center !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
         }
         .stButton > button[key^="confirm_yes_"], .stButton > button[key^="confirm_no_"] {
-            padding: 0.1rem 0.3rem !important;
-            font-size: 0.65rem !important;
-            min-width: 1.5rem !important;
-            max-width: 1.8rem !important;
-            width: 1.8rem !important;
+            padding: 0 !important;
+            font-size: 0.7rem !important;
+            min-width: 1.6rem !important;
+            max-width: 1.6rem !important;
+            width: 1.6rem !important;
+            height: 1.6rem !important;
+            line-height: 1.6rem !important;
+            text-align: center !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
         }
         </style>
         """, unsafe_allow_html=True)
