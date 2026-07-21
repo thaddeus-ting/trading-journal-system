@@ -140,6 +140,29 @@ def load_pre_market(target_date: date) -> PreMarketNotes | None:
     # Ensure all fields exist with defaults (Pydantic v2 handles this automatically)
     return PreMarketNotes.model_validate(data)
 
+
+@st.cache_data(ttl=300, show_spinner=False)
+def load_pre_market_list() -> list:
+    """Load list of all pre-market notes (just metadata - no heavy parsing)."""
+    if not PRE_DIR.exists():
+        return []
+    result = []
+    for f in sorted(PRE_DIR.glob("*.json")):
+        try:
+            data = json.loads(f.read_text(encoding="utf-8"))
+            result.append(type("PreMarketMeta", (), {
+                "date": date.fromisoformat(data["date"]),
+                "carry_forward": data.get("carry_forward", []),
+                "economic_events": [],
+                "earnings": [],
+                "active_rules": data.get("active_rules", []),
+                "watchlist_candidates": data.get("watchlist_candidates", []),
+                "earnings_data": data.get("earnings", [])
+            })())
+        except Exception:
+            continue
+    return result
+
 @st.cache_data(ttl=300)
 def load_weekly_reviews() -> list[WeeklyReview]:
     """Load all weekly reviews."""
@@ -1361,9 +1384,19 @@ def render_sidebar():
         ["Daily Report", "Pre-Market", "Weekly Review", "Settings"]
     )
 
-    # Date selector for daily/pre-market - native st.date_input in sidebar
+    # Date selector - use daily report dates for Daily Report page, pre-market dates for Pre-Market page
     reports = load_daily_reports()
-    available_dates = sorted([r.date for r in reports])
+    daily_dates = sorted([r.date for r in reports])
+
+    pre_markets = load_pre_market_list()
+    pre_market_dates = sorted([p.date for p in pre_markets])
+
+    if page == "Pre-Market":
+        # Use pre-market dates for Pre-Market page
+        available_dates = pre_market_dates if pre_market_dates else daily_dates
+    else:
+        # Use daily report dates for Daily Report page
+        available_dates = daily_dates
 
     if available_dates:
         selected_date = st.sidebar.date_input(
@@ -1374,25 +1407,37 @@ def render_sidebar():
         )
 
         # Check if selected date has a report
-        has_report = selected_date in available_dates
+        if page == "Pre-Market":
+            has_report = selected_date in pre_market_dates
+        else:
+            has_report = selected_date in daily_dates
 
         if not has_report and selected_date <= date.today():
             # Past date without report - offer to create
-            st.sidebar.warning(f"No report for {selected_date}.")
-            if st.sidebar.button("📝 Create Daily Report", key="create_daily_report", use_container_width=True):
-                create_daily_report(selected_date)
-                st.rerun()
+            if page == "Pre-Market":
+                st.sidebar.warning(f"No pre-market for {selected_date}.")
+                if st.sidebar.button("📊 Generate Pre-Market", key="gen_premarket_missing", use_container_width=True):
+                    # Need a prior daily report to generate from
+                    prior_dates = [d for d in daily_dates if d < selected_date]
+                    if prior_dates:
+                        prior_date = prior_dates[-1]
+                        prior_reports = load_daily_reports()
+                        prior_report = next((r for r in prior_reports if r.date == prior_date), None)
+                        if prior_report:
+                            generate_pre_market_from_daily(selected_date, prior_report)
+                            st.rerun()
+            else:
+                st.sidebar.warning(f"No report for {selected_date}.")
+                if st.sidebar.button("📝 Create Daily Report", key="create_daily_report", use_container_width=True):
+                    create_daily_report(selected_date)
+                    st.rerun()
         elif not has_report and selected_date > date.today():
             # Future date - already unclickable due to max_value, but handle edge case
             st.sidebar.info("Future dates cannot be selected.")
             selected_date = available_dates[-1]
-        elif selected_date not in available_dates:
-            # This handles edge case where min_value > available_dates[-1] somehow
-            st.sidebar.warning(f"No report for {selected_date}. Showing latest.")
-            selected_date = available_dates[-1]
     else:
         selected_date = date.today()
-        st.sidebar.warning("No daily reports found. Run historical ingestion first.")
+        st.sidebar.warning("No data found. Run historical ingestion first.")
 
     # Week selector for weekly review (show in sidebar)
     reviews = load_weekly_reviews()
@@ -1409,6 +1454,30 @@ def render_sidebar():
         st.sidebar.caption("No weekly reviews found. Run weekly synthesis first.")
 
     return page, selected_date, selected_week, reports, reviews
+
+
+def load_pre_market_list() -> list:
+    """Load list of all pre-market notes (just metadata)."""
+    from src.core.models import PreMarketNotes
+    pre_dir = PRE_DIR
+    if not pre_dir.exists():
+        return []
+    result = []
+    for f in pre_dir.glob("*.json"):
+        try:
+            data = json.loads(f.read_text(encoding="utf-8"))
+            result.append(PreMarketNotes(
+                date=date.fromisoformat(data["date"]),
+                carry_forward=data.get("carry_forward", []),
+                economic_events=[],
+                earnings=[],
+                active_rules=data.get("active_rules", []),
+                watchlist_candidates=data.get("watchlist_candidates", []),
+                earnings_data=data.get("earnings", [])
+            ))
+        except Exception:
+            continue
+    return result
 
 
 def create_daily_report(target_date: date):
@@ -1711,43 +1780,35 @@ def delete_weekly_review(target_week: str):
     load_weekly_reviews.clear()
 
 
-def next_trading_day(d: date) -> date:
-    """Get the next trading day (skip weekends)."""
-    next_d = d + timedelta(days=1)
-    while next_d.weekday() >= 5:  # Skip weekends
-        next_d += timedelta(days=1)
-    return next_d
-
-
 def page_pre_market(selected_date: date):
-    """Pre-market page - shows pre-market for the NEXT trading day after selected daily report date."""
-    # Compute the pre-market date (next trading day after the daily report date)
-    pre_market_date = next_trading_day(selected_date)
+    """Pre-market page - shows pre-market for the selected date."""
+    st.header(f"🌅 Pre-market Report — {selected_date}")
 
-    st.header(f"🌅 Pre-market Report — {pre_market_date}")
-    st.caption(f"Based on daily report from {selected_date}")
-
-    # Load pre-market for the computed date
-    pre = load_pre_market(pre_market_date)
+    # Load pre-market for the selected date
+    pre = load_pre_market(selected_date)
     if pre:
         render_pre_market(pre)
     else:
-        st.info(f"No pre-market notes generated for {pre_market_date}.")
+        st.info(f"No pre-market notes generated for {selected_date}.")
         st.caption("Pre-market notes are generated from the PREVIOUS day's daily report during daily_sync.")
 
-        # Check if we have a daily report for the selected date (which is the prior trading day)
+        # Find prior daily report (trading day before selected_date)
+        prior_date = selected_date - timedelta(days=1)
+        while prior_date.weekday() >= 5:  # Skip weekends
+            prior_date -= timedelta(days=1)
+
         reports = load_daily_reports()
-        prior_report = next((r for r in reports if r.date == selected_date), None)
+        prior_report = next((r for r in reports if r.date == prior_date), None)
 
         if prior_report:
             if st.button("📊 Generate Pre-market Report", key="gen_premarket", type="primary", use_container_width=False):
-                generate_pre_market_from_daily(pre_market_date, prior_report)
+                generate_pre_market_from_daily(selected_date, prior_report)
                 st.rerun()
         else:
-            st.warning(f"⚠️ No daily report found for {selected_date}.")
+            st.warning(f"⚠️ No daily report found for previous trading day ({prior_date}).")
             st.caption("You can still generate a pre-market report with just economic events/earnings.")
             if st.button("📊 Generate Pre-market (Economic Events Only)", key="gen_premarket_no_prior", type="secondary", use_container_width=False):
-                generate_pre_market_from_daily(pre_market_date, None)
+                generate_pre_market_from_daily(selected_date, None)
                 st.rerun()
 
 
