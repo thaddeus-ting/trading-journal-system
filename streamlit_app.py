@@ -1427,19 +1427,17 @@ def render_sidebar():
                 # Check if prior daily report exists
                 prior_report = next((r for r in reports if r.date == prior_date), None)
 
-                if prior_report:
-                    # Prior daily exists - can generate pre-market
-                    st.sidebar.warning(f"No pre-market for {selected_date}.")
-                    if st.sidebar.button("📊 Generate Pre-Market", key="gen_premarket_missing", use_container_width=True):
-                        generate_pre_market_from_daily(selected_date, prior_report)
-                        st.rerun()
-                else:
-                    # No prior daily - need to create daily report first
+                if not prior_report:
+                    # No prior daily - offer to create daily report first
                     st.sidebar.warning(f"No daily report for prior trading day ({prior_date}).")
                     if st.sidebar.button("📝 Create Daily Report", key="create_daily_for_premarket", use_container_width=True):
                         create_daily_report(prior_date)
                         st.rerun()
-                    st.sidebar.caption("Pre-market needs prior daily report.")
+                    st.sidebar.caption("Create prior daily report first, then generate pre-market from the page.")
+                else:
+                    # Prior daily exists - pre-market can be generated from the page
+                    st.sidebar.info(f"Pre-market for {selected_date} not generated yet.")
+                    st.sidebar.caption("Use 'Generate Pre-market' button on the page.")
             else:
                 # Daily Report page
                 st.sidebar.warning(f"No report for {selected_date}.")
