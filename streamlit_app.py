@@ -1927,43 +1927,44 @@ def page_settings():
 
     active_rules = current_settings.get("active_rules", [])
 
-    # Display current rules with move up/down and inline delete confirmation
+    # Display current rules with drag-and-drop reordering (text area) and inline delete
     if active_rules:
+        st.caption("Drag-and-drop reordering: edit the text area below — each line is a rule. Cut/paste lines to reorder, then click **Save Order**.")
+
+        # Text area for reordering
+        rules_text = "\n".join(active_rules)
+        edited_rules_text = st.text_area(
+            "Active Rules (one per line — reorder by moving lines)",
+            value=rules_text,
+            height=min(100 + len(active_rules) * 30, 400),
+            key="active_rules_editor",
+            label_visibility="collapsed"
+        )
+
+        col_save, col_cancel = st.columns([1, 5])
+        with col_save:
+            if st.button("💾 Save Order", type="primary", key="save_rules_order"):
+                new_rules = [line.strip() for line in edited_rules_text.split("\n") if line.strip()]
+                if new_rules != active_rules:
+                    save_active_rules(new_rules)
+                    st.success("Rule order saved!")
+                    st.rerun()
+                else:
+                    st.info("No changes detected.")
+
+        st.markdown("---")
+
+        # Individual delete buttons with inline confirmation (kept below for granular control)
+        st.caption("Or delete individual rules:")
         for i, rule in enumerate(active_rules):
-            cols = st.columns([0.55, 0.1, 0.1, 0.1, 0.15])
+            cols = st.columns([0.7, 0.15, 0.15])
             with cols[0]:
                 st.markdown(f"• {rule}")
-
-            # Move Up
             with cols[1]:
-                if i > 0:
-                    if st.button("⬆", key=f"move_up_{i}", help="Move up", use_container_width=True):
-                        new_rules = active_rules.copy()
-                        new_rules[i], new_rules[i-1] = new_rules[i-1], new_rules[i]
-                        save_active_rules(new_rules)
-                        st.rerun()
-                else:
-                    st.write("")  # placeholder
-
-            # Move Down
-            with cols[2]:
-                if i < len(active_rules) - 1:
-                    if st.button("⬇", key=f"move_down_{i}", help="Move down", use_container_width=True):
-                        new_rules = active_rules.copy()
-                        new_rules[i], new_rules[i+1] = new_rules[i+1], new_rules[i]
-                        save_active_rules(new_rules)
-                        st.rerun()
-                else:
-                    st.write("")  # placeholder
-
-            # Delete with inline confirmation
-            with cols[3]:
                 if st.button("🗑", key=f"del_rule_{i}", help="Delete this rule", use_container_width=True):
                     st.session_state[f"confirm_del_rule_{i}"] = True
                     st.rerun()
-
-            # Inline confirmation
-            with cols[4]:
+            with cols[2]:
                 if st.session_state.get(f"confirm_del_rule_{i}", False):
                     if st.button("✓ Yes", key=f"confirm_yes_{i}", type="primary", use_container_width=True):
                         new_rules = active_rules[:i] + active_rules[i+1:]
