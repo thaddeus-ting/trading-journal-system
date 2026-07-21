@@ -1927,17 +1927,52 @@ def page_settings():
 
     active_rules = current_settings.get("active_rules", [])
 
-    # Display current rules with delete buttons
+    # Display current rules with move up/down and inline delete confirmation
     if active_rules:
         for i, rule in enumerate(active_rules):
-            col1, col2 = st.columns([0.9, 0.1])
-            with col1:
+            cols = st.columns([0.55, 0.1, 0.1, 0.1, 0.15])
+            with cols[0]:
                 st.markdown(f"• {rule}")
-            with col2:
-                if st.button("✕", key=f"del_rule_{i}", help="Remove this rule"):
-                    new_rules = active_rules[:i] + active_rules[i+1:]
-                    save_active_rules(new_rules)
+
+            # Move Up
+            with cols[1]:
+                if i > 0:
+                    if st.button("⬆", key=f"move_up_{i}", help="Move up", use_container_width=True):
+                        new_rules = active_rules.copy()
+                        new_rules[i], new_rules[i-1] = new_rules[i-1], new_rules[i]
+                        save_active_rules(new_rules)
+                        st.rerun()
+                else:
+                    st.write("")  # placeholder
+
+            # Move Down
+            with cols[2]:
+                if i < len(active_rules) - 1:
+                    if st.button("⬇", key=f"move_down_{i}", help="Move down", use_container_width=True):
+                        new_rules = active_rules.copy()
+                        new_rules[i], new_rules[i+1] = new_rules[i+1], new_rules[i]
+                        save_active_rules(new_rules)
+                        st.rerun()
+                else:
+                    st.write("")  # placeholder
+
+            # Delete with inline confirmation
+            with cols[3]:
+                if st.button("🗑", key=f"del_rule_{i}", help="Delete this rule", use_container_width=True):
+                    st.session_state[f"confirm_del_rule_{i}"] = True
                     st.rerun()
+
+            # Inline confirmation
+            with cols[4]:
+                if st.session_state.get(f"confirm_del_rule_{i}", False):
+                    if st.button("✓ Yes", key=f"confirm_yes_{i}", type="primary", use_container_width=True):
+                        new_rules = active_rules[:i] + active_rules[i+1:]
+                        save_active_rules(new_rules)
+                        st.session_state.pop(f"confirm_del_rule_{i}", None)
+                        st.rerun()
+                    if st.button("✗ No", key=f"confirm_no_{i}", use_container_width=True):
+                        st.session_state.pop(f"confirm_del_rule_{i}", None)
+                        st.rerun()
     else:
         st.caption("No active rules set. Add rules below from your weekly review.")
 
@@ -2023,19 +2058,50 @@ def page_settings():
     st.markdown("**Daily Reports**")
     reports = load_daily_reports()
     if reports:
-        available_dates = sorted([r.date for r in reports])
+        # Reverse chronological - newest first
+        available_dates = sorted([r.date for r in reports], reverse=True)
         c1, _ = st.columns([2, 5])
         with c1:
             date_to_delete = st.selectbox(
                 "Select daily report to delete",
                 available_dates,
-                format_func=lambda d: d.isoformat(),
+                format_func=lambda d: f"{d.isoformat()} (newest first)",
                 key="delete_daily_date"
             )
-            confirm_daily = st.checkbox(f"Confirm: delete {date_to_delete.isoformat()} daily report", key="confirm_delete_daily")
-            if st.button("🗑️ Delete Daily Report", type="secondary", key="delete_daily_btn", disabled=not confirm_daily):
-                delete_daily_report(date_to_delete)
-                st.rerun()
+            # Inline confirmation instead of checkbox
+            if st.session_state.get("confirm_delete_daily", False):
+                col_yes, col_no = st.columns(2)
+                with col_yes:
+                    if st.button("✓ Confirm Delete", key="confirm_daily_yes", type="primary", use_container_width=True):
+                        delete_daily_report(date_to_delete)
+                        st.session_state.pop("confirm_delete_daily", None)
+                        st.rerun()
+                with col_no:
+                    if st.button("✗ Cancel", key="confirm_daily_no", use_container_width=True):
+                        st.session_state.pop("confirm_delete_daily", None)
+                        st.rerun()
+            else:
+                if st.button("🗑️ Delete Daily Report", type="secondary", key="delete_daily_btn", use_container_width=True):
+                    st.session_state["confirm_delete_daily"] = True
+                    st.rerun()
+
+        # Bulk delete by date range
+        with st.expander("🗑️ Bulk Delete by Date Range", expanded=False):
+            st.caption("Delete multiple daily reports between two dates (inclusive)")
+            br_col1, br_col2 = st.columns(2)
+            with br_col1:
+                start_date = st.date_input("Start date", value=available_dates[-1] if available_dates else None, key="bulk_daily_start")
+            with br_col2:
+                end_date = st.date_input("End date", value=available_dates[0] if available_dates else None, key="bulk_daily_end")
+            if st.button("🗑️ Bulk Delete Range", type="secondary", key="bulk_daily_delete"):
+                dates_to_delete = [d for d in available_dates if start_date <= d <= end_date]
+                if dates_to_delete:
+                    for d in dates_to_delete:
+                        delete_daily_report(d)
+                    st.success(f"Deleted {len(dates_to_delete)} daily report(s)")
+                    st.rerun()
+                else:
+                    st.warning("No dates in selected range")
     else:
         st.caption("No daily reports to delete.")
 
@@ -2045,20 +2111,50 @@ def page_settings():
     st.markdown("**Pre-Market Notes**")
     pre_files = sorted(PRE_DIR.glob("*.json"))
     if pre_files:
-        pre_dates = sorted([date.fromisoformat(f.stem) for f in pre_files if f.stem.count("-") == 2])
+        pre_dates = sorted([date.fromisoformat(f.stem) for f in pre_files if f.stem.count("-") == 2], reverse=True)
         if pre_dates:
             c2, _ = st.columns([2, 5])
             with c2:
                 pre_date_to_delete = st.selectbox(
                     "Select pre-market to delete",
                     pre_dates,
-                    format_func=lambda d: d.isoformat(),
+                    format_func=lambda d: f"{d.isoformat()} (newest first)",
                     key="delete_pre_date"
                 )
-                confirm_pre = st.checkbox(f"Confirm: delete {pre_date_to_delete.isoformat()} pre-market", key="confirm_delete_pre")
-                if st.button("🗑️ Delete Pre-Market", type="secondary", key="delete_pre_btn", disabled=not confirm_pre):
-                    delete_pre_market(pre_date_to_delete)
-                    st.rerun()
+                # Inline confirmation
+                if st.session_state.get("confirm_delete_pre", False):
+                    col_yes, col_no = st.columns(2)
+                    with col_yes:
+                        if st.button("✓ Confirm Delete", key="confirm_pre_yes", type="primary", use_container_width=True):
+                            delete_pre_market(pre_date_to_delete)
+                            st.session_state.pop("confirm_delete_pre", None)
+                            st.rerun()
+                    with col_no:
+                        if st.button("✗ Cancel", key="confirm_pre_no", use_container_width=True):
+                            st.session_state.pop("confirm_delete_pre", None)
+                            st.rerun()
+                else:
+                    if st.button("🗑️ Delete Pre-Market", type="secondary", key="delete_pre_btn", use_container_width=True):
+                        st.session_state["confirm_delete_pre"] = True
+                        st.rerun()
+
+            # Bulk delete by date range
+            with st.expander("🗑️ Bulk Delete by Date Range", expanded=False):
+                st.caption("Delete multiple pre-market notes between two dates (inclusive)")
+                br_col1, br_col2 = st.columns(2)
+                with br_col1:
+                    pre_start = st.date_input("Start date", value=pre_dates[-1] if pre_dates else None, key="bulk_pre_start")
+                with br_col2:
+                    pre_end = st.date_input("End date", value=pre_dates[0] if pre_dates else None, key="bulk_pre_end")
+                if st.button("🗑️ Bulk Delete Range", type="secondary", key="bulk_pre_delete"):
+                    dates_to_delete = [d for d in pre_dates if pre_start <= d <= pre_end]
+                    if dates_to_delete:
+                        for d in dates_to_delete:
+                            delete_pre_market(d)
+                        st.success(f"Deleted {len(dates_to_delete)} pre-market note(s)")
+                        st.rerun()
+                    else:
+                        st.warning("No dates in selected range")
         else:
             st.caption("No pre-market notes to delete.")
     else:
@@ -2071,17 +2167,53 @@ def page_settings():
     reviews = load_weekly_reviews()
     if reviews:
         week_labels = [r.week for r in reviews]
+        # Reverse chronological (newest first) - weeks are like "W27-2026"
+        week_labels_desc = sorted(week_labels, reverse=True)
         c3, _ = st.columns([2, 5])
         with c3:
             week_to_delete = st.selectbox(
                 "Select weekly review to delete",
-                week_labels,
+                week_labels_desc,
+                format_func=lambda w: f"{w} (newest first)",
                 key="delete_weekly_week"
             )
-            confirm_weekly = st.checkbox(f"Confirm: delete {week_to_delete} weekly review", key="confirm_delete_weekly")
-            if st.button("🗑️ Delete Weekly Review", type="secondary", key="delete_weekly_btn", disabled=not confirm_weekly):
-                delete_weekly_review(week_to_delete)
-                st.rerun()
+            # Inline confirmation
+            if st.session_state.get("confirm_delete_weekly", False):
+                col_yes, col_no = st.columns(2)
+                with col_yes:
+                    if st.button("✓ Confirm Delete", key="confirm_weekly_yes", type="primary", use_container_width=True):
+                        delete_weekly_review(week_to_delete)
+                        st.session_state.pop("confirm_delete_weekly", None)
+                        st.rerun()
+                with col_no:
+                    if st.button("✗ Cancel", key="confirm_weekly_no", use_container_width=True):
+                        st.session_state.pop("confirm_delete_weekly", None)
+                        st.rerun()
+            else:
+                if st.button("🗑️ Delete Weekly Review", type="secondary", key="delete_weekly_btn", use_container_width=True):
+                    st.session_state["confirm_delete_weekly"] = True
+                    st.rerun()
+
+        # Bulk delete by week range
+        with st.expander("🗑️ Bulk Delete by Week Range", expanded=False):
+            st.caption("Delete multiple weekly reviews between two weeks (inclusive)")
+            # Sort weeks properly for range selection
+            week_start = st.selectbox("Start week", week_labels_desc, key="bulk_weekly_start")
+            week_end = st.selectbox("End week", week_labels_desc, key="bulk_weekly_end")
+            if st.button("🗑️ Bulk Delete Range", type="secondary", key="bulk_weekly_delete"):
+                # Find indices and delete range
+                start_idx = week_labels.index(week_start)
+                end_idx = week_labels.index(week_end)
+                if start_idx > end_idx:
+                    start_idx, end_idx = end_idx, start_idx
+                weeks_to_delete = week_labels[start_idx:end_idx+1]
+                if weeks_to_delete:
+                    for w in weeks_to_delete:
+                        delete_weekly_review(w)
+                    st.success(f"Deleted {len(weeks_to_delete)} weekly review(s)")
+                    st.rerun()
+                else:
+                    st.warning("No weeks in selected range")
     else:
         st.caption("No weekly reviews to delete.")
 
