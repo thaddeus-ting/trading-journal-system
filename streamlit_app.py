@@ -1959,11 +1959,11 @@ def page_settings():
 
         for i, rule in enumerate(active_rules):
             if reorder_mode:
-                # With reorder: rule text | move up | move down | delete
+                # With reorder: rule text | move up | move down | spacer | delete (far right)
                 cols = st.columns([0.6, 0.1, 0.1, 0.1, 0.1])
             else:
-                # Minimal: rule text | (spacer) | delete
-                cols = st.columns([0.7, 0.15, 0.15])
+                # Minimal: rule text | spacer | delete (far right)
+                cols = st.columns([0.75, 0.1, 0.15])
 
             with cols[0]:
                 st.markdown(f"• {rule}")
@@ -1991,15 +1991,19 @@ def page_settings():
                     else:
                         st.write("")
 
-                # Delete (moved right)
+                # Spacer
                 with cols[3]:
+                    st.write("")
+
+                # Delete (far right - last column)
+                with cols[4]:
                     if st.button("✕", key=f"del_rule_{i}", help="Delete this rule"):
                         st.session_state[f"confirm_del_rule_{i}"] = True
                         st.rerun()
 
-                # Inline confirmation
-                with cols[4]:
-                    if st.session_state.get(f"confirm_del_rule_{i}", False):
+                # Inline confirmation (also far right)
+                if st.session_state.get(f"confirm_del_rule_{i}", False):
+                    with cols[4]:
                         c_yes, c_no = st.columns(2)
                         with c_yes:
                             if st.button("✓", key=f"confirm_yes_{i}", type="primary", help="Yes, delete"):
@@ -2012,7 +2016,7 @@ def page_settings():
                                 st.session_state.pop(f"confirm_del_rule_{i}", None)
                                 st.rerun()
             else:
-                # Minimal mode: spacer + delete
+                # Minimal mode: spacer + delete (far right - last column)
                 with cols[1]:
                     st.write("")
                 with cols[2]:
@@ -2264,10 +2268,10 @@ def page_settings():
                     st.session_state["confirm_delete_weekly"] = True
                     st.rerun()
 
-        # Bulk delete button - match width of single delete button
-        if st.button("🗑️ Bulk Delete", type="secondary", key="bulk_weekly_delete", help="Delete by week range", use_container_width=True):
-            st.session_state["show_bulk_weekly"] = not st.session_state.get("show_bulk_weekly", False)
-            st.rerun()
+            # Bulk delete button - match width of single delete button (inside c3 column)
+            if st.button("🗑️ Bulk Delete", type="secondary", key="bulk_weekly_delete", help="Delete by week range", use_container_width=True):
+                st.session_state["show_bulk_weekly"] = not st.session_state.get("show_bulk_weekly", False)
+                st.rerun()
 
         # Bulk delete by week range - expandable section (inside if reviews block)
         if st.session_state.get("show_bulk_weekly", False):
