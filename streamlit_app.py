@@ -1390,6 +1390,9 @@ def render_sidebar():
     if "pre_market_date" not in st.session_state:
         st.session_state.pre_market_date = None
 
+    # Load reviews early for sync logic
+    reviews = load_weekly_reviews()
+
     # Date selector - use daily report dates for Daily Report page, pre-market dates for Pre-Market page
     reports = load_daily_reports()
     daily_dates = sorted([r.date for r in reports])
@@ -1430,6 +1433,14 @@ def render_sidebar():
         # This ensures switching tabs preserves the selected date
         st.session_state.daily_report_date = selected_date
         st.session_state.pre_market_date = selected_date
+
+        # Sync date → week for Weekly Review tab (when not on Weekly Review page)
+        if page != "Weekly Review" and reviews:
+            week_num = selected_date.isocalendar()[1]
+            week_label = f"W{week_num:02d}"
+            if week_label in [r.week for r in reviews]:
+                # Store the synced week in session state so Weekly Review tab picks it up
+                st.session_state["synced_week_from_date"] = week_label
 
         # Check if selected date has a report
         if page == "Pre-Market":
@@ -1474,15 +1485,65 @@ def render_sidebar():
         st.sidebar.warning("No data found. Run historical ingestion first.")
 
     # Week selector for weekly review (show in sidebar)
-    reviews = load_weekly_reviews()
     if reviews:
         week_labels = [r.week for r in reviews]
-        selected_week = st.sidebar.selectbox(
-            "Select Week",
-            week_labels,
-            index=len(week_labels) - 1,
-            key="week_selector_sidebar"
-        )
+        # Reverse chronological (newest first)
+        week_labels_desc = sorted(week_labels, reverse=True)
+
+        # Helper: convert week label to a representative date (Friday of that week)
+        def week_to_date(week_label: str) -> date | None:
+            for r in reviews:
+                if r.week == week_label:
+                    monday, sunday = r.date_range
+                    # Return Friday (weekday 4) of that week
+                    friday = monday + timedelta(days=4)
+                    return friday if friday <= sunday else monday  # fallback to Monday if week < 5 days
+            return None
+
+        # Helper: convert date to week label
+        def date_to_week(d: date) -> str | None:
+            week_num = d.isocalendar()[1]
+            return f"W{week_num:02d}"
+
+        # Sync logic: when on Weekly Review, sync week → dates; when on Daily/Pre-Market, sync date → week
+        if page == "Weekly Review":
+            # On Weekly Review: use week selector as source of truth, but check for synced week first
+            synced_week = st.session_state.get("synced_week_from_date")
+            if synced_week in week_labels:
+                week_idx = week_labels.index(synced_week)
+                # Clear the synced week so it doesn't persist incorrectly
+                st.session_state.pop("synced_week_from_date", None)
+            else:
+                week_idx = 0  # default to latest
+            selected_week = st.sidebar.selectbox(
+                "Select Week",
+                week_labels_desc,
+                index=week_idx,
+                key="week_selector_sidebar"
+            )
+            # Sync week to both date states (use Friday of that week as representative)
+            sync_date = week_to_date(selected_week)
+            if sync_date:
+                st.session_state.daily_report_date = sync_date
+                st.session_state.pre_market_date = sync_date
+        else:
+            selected_week = week_labels_desc[0]  # default to latest for return value
+            # On Daily/Pre-Market tab, also show week selector for convenience but dates drive it
+            if st.sidebar.checkbox("Show week selector", value=False, key="show_week_selector"):
+                # Select week that corresponds to current date state
+                current_date = st.session_state.daily_report_date or date.today()
+                current_week = date_to_week(current_date)
+                if current_week in week_labels:
+                    week_idx = week_labels.index(current_week)
+                else:
+                    week_idx = 0
+                st.sidebar.selectbox(
+                    "Week (synced from date)",
+                    week_labels_desc,
+                    index=week_idx,
+                    disabled=True,
+                    key="week_synced_display"
+                )
     else:
         selected_week = None
         st.sidebar.caption("No weekly reviews found. Run weekly synthesis first.")
