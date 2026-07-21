@@ -1957,23 +1957,6 @@ def page_settings():
 
     st.subheader("Quick Actions")
 
-
-def save_active_rules(rules: list[str]):
-    """Save active rules to settings.yaml."""
-    SETTINGS_FILE = Path("config/settings.yaml")
-    if SETTINGS_FILE.exists():
-        current_settings = yaml.safe_load(SETTINGS_FILE.read_text())
-    else:
-        current_settings = {}
-
-    current_settings["active_rules"] = rules
-
-    SETTINGS_FILE.write_text(yaml.dump(current_settings, default_flow_style=False, sort_keys=False))
-
-    # Reload the global settings variable
-    global settings
-    settings = current_settings
-
     # Use raw HTML buttons instead of st.columns to have full control
     st.markdown("""
     <style>
@@ -2130,6 +2113,23 @@ def save_active_rules(rules: list[str]):
 
 **Quick Actions from this page** (buttons above) clear cache or show CLI commands for daily/weekly sync.
 """)
+
+
+def save_active_rules(rules: list[str]):
+    """Save active rules to settings.yaml."""
+    SETTINGS_FILE = Path("config/settings.yaml")
+    if SETTINGS_FILE.exists():
+        current_settings = yaml.safe_load(SETTINGS_FILE.read_text())
+    else:
+        current_settings = {}
+
+    current_settings["active_rules"] = rules
+
+    SETTINGS_FILE.write_text(yaml.dump(current_settings, default_flow_style=False, sort_keys=False))
+
+    # Reload the global settings variable
+    global settings
+    settings = current_settings
 
 
 # ================================
