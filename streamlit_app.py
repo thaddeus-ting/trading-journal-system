@@ -1900,6 +1900,7 @@ def generate_pre_market_from_daily(target_date: date, prior_report: DailyReport 
 
     st.sidebar.success(f"Generated pre-market for {target_date}")
     load_pre_market.clear()
+    load_pre_market_list.clear()
 
 
 def page_weekly_review(selected_week: str, reviews: list[WeeklyReview]):
