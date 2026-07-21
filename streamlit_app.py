@@ -1959,11 +1959,11 @@ def page_settings():
 
         for i, rule in enumerate(active_rules):
             if reorder_mode:
-                # With reorder: rule text | move up | move down | spacer | delete (far right)
-                cols = st.columns([0.6, 0.1, 0.1, 0.1, 0.1])
+                # With reorder: rule text | move up | move down | spacer | delete (far right - tiny column)
+                cols = st.columns([0.72, 0.08, 0.08, 0.07, 0.05])
             else:
-                # Minimal: rule text | spacer | delete (far right)
-                cols = st.columns([0.75, 0.1, 0.15])
+                # Minimal: rule text | spacer | delete (far right - tiny column)
+                cols = st.columns([0.85, 0.1, 0.05])
 
             with cols[0]:
                 st.markdown(f"• {rule}")
@@ -1995,7 +1995,7 @@ def page_settings():
                 with cols[3]:
                     st.write("")
 
-                # Delete (far right - last column)
+                # Delete (far right - tiny column)
                 with cols[4]:
                     if st.button("✕", key=f"del_rule_{i}", help="Delete this rule"):
                         st.session_state[f"confirm_del_rule_{i}"] = True
@@ -2016,7 +2016,7 @@ def page_settings():
                                 st.session_state.pop(f"confirm_del_rule_{i}", None)
                                 st.rerun()
             else:
-                # Minimal mode: spacer + delete (far right - last column)
+                # Minimal mode: spacer + delete (far right - tiny column)
                 with cols[1]:
                     st.write("")
                 with cols[2]:
