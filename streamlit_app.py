@@ -150,7 +150,7 @@ def load_pre_market_list() -> list:
     for f in sorted(PRE_DIR.glob("*.json")):
         try:
             data = json.loads(f.read_text(encoding="utf-8"))
-            result.append(type("PreMarketMeta", (), {
+            result.append({
                 "date": date.fromisoformat(data["date"]),
                 "carry_forward": data.get("carry_forward", []),
                 "economic_events": [],
@@ -158,7 +158,7 @@ def load_pre_market_list() -> list:
                 "active_rules": data.get("active_rules", []),
                 "watchlist_candidates": data.get("watchlist_candidates", []),
                 "earnings_data": data.get("earnings", [])
-            })())
+            })
         except Exception:
             continue
     return result
@@ -1393,7 +1393,7 @@ def render_sidebar():
     daily_dates = sorted([r.date for r in reports])
 
     pre_markets = load_pre_market_list()
-    pre_market_dates = sorted([p.date for p in pre_markets])
+    pre_market_dates = sorted([p["date"] for p in pre_markets])
 
     reviews = load_weekly_reviews()
 
@@ -1520,30 +1520,6 @@ def render_sidebar():
     st.session_state.pre_market_date = st.session_state.selected_date
 
     return page, st.session_state.selected_date, selected_week, reports, reviews
-
-
-def load_pre_market_list() -> list:
-    """Load list of all pre-market notes (just metadata)."""
-    from src.core.models import PreMarketNotes
-    pre_dir = PRE_DIR
-    if not pre_dir.exists():
-        return []
-    result = []
-    for f in pre_dir.glob("*.json"):
-        try:
-            data = json.loads(f.read_text(encoding="utf-8"))
-            result.append(PreMarketNotes(
-                date=date.fromisoformat(data["date"]),
-                carry_forward=data.get("carry_forward", []),
-                economic_events=[],
-                earnings=[],
-                active_rules=data.get("active_rules", []),
-                watchlist_candidates=data.get("watchlist_candidates", []),
-                earnings_data=data.get("earnings", [])
-            ))
-        except Exception:
-            continue
-    return result
 
 
 def create_daily_report(target_date: date):
