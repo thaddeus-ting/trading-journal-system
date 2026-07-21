@@ -5,16 +5,16 @@
   "earnings": [],
   "active_rules": [],
   "watchlist_candidates": [
-    "Watch GE",
-    "Watch JPM",
-    "Watch TRV",
     "Watch BAC",
-    "Watch PANW",
-    "Watch MRK",
-    "Watch CSCO",
-    "Watch FTNT",
+    "Watch JPM",
     "Watch XLF",
-    "Watch CHASE"
+    "Watch MRK",
+    "Watch GE",
+    "Watch CSCO",
+    "Watch JNJ",
+    "Watch PANW",
+    "Watch TRV",
+    "Watch FTNT"
   ],
-  "generated_at": "2026-07-18T23:07:37.692275"
+  "generated_at": "2026-07-21T14:27:08.773985"
 }
