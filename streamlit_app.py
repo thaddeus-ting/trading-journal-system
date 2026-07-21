@@ -1399,11 +1399,15 @@ def render_sidebar():
         available_dates = daily_dates
 
     if available_dates:
+        # Use a reasonable date range: min from available dates, max as today or latest available (whichever is greater)
+        min_date = min(available_dates)
+        max_date = max(date.today(), max(available_dates))
+
         selected_date = st.sidebar.date_input(
             "Select Date",
             value=available_dates[-1],
-            min_value=min(available_dates),
-            max_value=date.today()  # Future dates greyed out/unclickable
+            min_value=min_date,
+            max_value=max_date
         )
 
         # Check if selected date has a report
