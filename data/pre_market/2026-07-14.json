@@ -1,28 +1,16 @@
 {
   "date": "2026-07-14",
   "carry_forward": [],
-  "economic_events": [
-    {
-      "time": "08:30 ET",
-      "event": "CPI MoM/YoY",
-      "impact": "HIGH"
-    },
-    {
-      "time": "08:30 ET",
-      "event": "Core CPI MoM/YoY",
-      "impact": "HIGH"
-    }
-  ],
+  "economic_events": [],
+  "earnings": [],
   "active_rules": [],
   "watchlist_candidates": [
-    "Watch XLC",
-    "Watch XLE",
-    "Watch FTNT",
     "Watch CVS",
-    "Watch RS",
     "Watch ORCL",
+    "Watch XLE",
+    "Watch XLC",
+    "Watch FTNT",
     "Watch XLF"
   ],
-  "generated_at": "2026-07-16T18:29:22.356271",
-  "earnings": []
+  "generated_at": "2026-07-18T23:13:24.482583"
 }

@@ -11,7 +11,8 @@
       ],
       "category": "observation",
       "key_levels_mentioned": [],
-      "tags": []
+      "tags": [],
+      "flag_context": 0
     },
     {
       "timestamp": "9:51",
@@ -21,18 +22,19 @@
       ],
       "category": "entry",
       "key_levels_mentioned": [],
-      "tags": []
+      "tags": [],
+      "flag_context": 0
     },
     {
       "timestamp": "10:07",
       "text": " long CVS @ 106.10, 5 shares - nice RS and new HOD [TRADE: long CVS @ 106.1 x5]",
       "tickers": [
-        "CVS",
-        "RS"
+        "CVS"
       ],
       "category": "entry",
       "key_levels_mentioned": [],
-      "tags": []
+      "tags": [],
+      "flag_context": 0
     },
     {
       "timestamp": "10:20",
@@ -42,7 +44,8 @@
       ],
       "category": "entry",
       "key_levels_mentioned": [],
-      "tags": []
+      "tags": [],
+      "flag_context": 0
     }
   ],
   "trades": [
@@ -56,7 +59,8 @@
       "outcome": "open",
       "exit_timestamp": null,
       "exit_price": null,
-      "exit_reason": null
+      "exit_reason": null,
+      "exited_direction": null
     },
     {
       "timestamp": "10:07",
@@ -68,7 +72,8 @@
       "outcome": "open",
       "exit_timestamp": null,
       "exit_price": null,
-      "exit_reason": null
+      "exit_reason": null,
+      "exited_direction": null
     },
     {
       "timestamp": "10:20",
@@ -80,7 +85,8 @@
       "outcome": "open",
       "exit_timestamp": null,
       "exit_price": null,
-      "exit_reason": null
+      "exit_reason": null,
+      "exited_direction": null
     }
   ],
   "highlights_for_carry_forward": [],
@@ -91,5 +97,5 @@
     "key_levels": []
   },
   "raw_market_notes": "- 9:41 XLE XLF XLC strong, tech quite weak \n- 9:51 short ORCL @ 136.81, 3 shares - nice stacked reds on heavy volume \n- 10:07 long CVS @ 106.10, 5 shares - nice RS and new HOD \n- 10:20 long FTNT @ 158.40, 2 shares - might swing depending on market conditions",
-  "source_file": "C:\\Users\\Thaddeus\\Claude Code Test\\trading-journal-system\\Vaulted\\!Journalit\\2026\\Q3\\07\\W29\\DRC-130726.md"
+  "source_file": "C:\\Users\\Thaddeus\\OneDrive\\Desktop\\Vaulted\\!Journalit\\2026\\Q3\\07\\W29\\DRC-130726.md"
 }

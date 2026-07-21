@@ -1,0 +1,289 @@
+{
+  "date": "2026-07-17",
+  "organized_notes": [
+    {
+      "timestamp": "10:02",
+      "text": " keep TRV long on the watchlist next week",
+      "tickers": [
+        "TRV"
+      ],
+      "category": "decision",
+      "key_levels_mentioned": [],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "10:03",
+      "text": " watching MRK CSCO long",
+      "tickers": [
+        "CSCO",
+        "MRK"
+      ],
+      "category": "decision",
+      "key_levels_mentioned": [],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "10:06",
+      "text": " pharma sector price action looking really nice - watching MRK JNJ long closely #sector",
+      "tickers": [
+        "JNJ",
+        "MRK"
+      ],
+      "category": "decision",
+      "key_levels_mentioned": [],
+      "tags": [
+        "sector"
+      ],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "10:20",
+      "text": " CSCO looks really good here -",
+      "tickers": [
+        "CSCO"
+      ],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "10:21",
+      "text": " long CSCO @ 112.10, 4 shares - beautiful wimpy pullback continuing higher breaking HOD, supported by SPY on a nice strong gap reversal - just note that CSCO is not strong on the D1 and is below 8/15 EMA [TRADE: long CSCO @ 112.1 x4]",
+      "tickers": [
+        "CSCO"
+      ],
+      "category": "entry",
+      "key_levels_mentioned": [
+        "D1 15 EMA"
+      ],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "10:28",
+      "text": " PANW really strong, FTNT nice long above PDH",
+      "tickers": [
+        "FTNT",
+        "PANW"
+      ],
+      "category": "observation",
+      "key_levels_mentioned": [
+        "PDH"
+      ],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "10:33",
+      "text": " watching GE long for a swing above 8 EMA - consider for a swing tmr if it closes above 8/15",
+      "tickers": [
+        "GE"
+      ],
+      "category": "decision",
+      "key_levels_mentioned": [
+        "D1 8 EMA"
+      ],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "10:33",
+      "text": " SPY has a much stronger trend today than yesterday so i can expect more follow thru for my trades",
+      "tickers": [],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "10:36",
+      "text": " XLF strong today - BAC JPM long",
+      "tickers": [
+        "BAC",
+        "JPM",
+        "XLF"
+      ],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "10:38",
+      "text": " was bidding for JPM but got greedy and missed the fill before it popped - be patient and DO NOT CHASE - you will have a chance if it pulls back to enter at a better price or with more confirmation",
+      "tickers": [
+        "CHASE",
+        "JPM"
+      ],
+      "category": "emotion",
+      "key_levels_mentioned": [],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "10:43",
+      "text": " long JPM @ 344.97, 1 share - patience paid off - got in with more confirmation as JPM pulled back and found support before moving higher [TRADE: long JPM @ 344.97 x1]",
+      "tickers": [
+        "JPM"
+      ],
+      "category": "entry",
+      "key_levels_mentioned": [],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "10:44",
+      "text": " watch SPY - starting to transition sideways",
+      "tickers": [],
+      "category": "decision",
+      "key_levels_mentioned": [],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "10:57",
+      "text": " CSCO showing signs of resistance with many upper wicks",
+      "tickers": [
+        "CSCO"
+      ],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "11:01",
+      "text": " MRK looks really nice for a long but i am hesitating because of the low volume and SPY pulling back",
+      "tickers": [
+        "MRK"
+      ],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "11:06",
+      "text": " review CSCO vs JPM - why did CSCO pullback while JPM continued higher? #flag",
+      "tickers": [
+        "CSCO",
+        "JPM"
+      ],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": [
+        "flag"
+      ],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "11:09",
+      "text": " TRV strong",
+      "tickers": [
+        "TRV"
+      ],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "11:09",
+      "text": " SPY trying to bounce off the 50 SMA",
+      "tickers": [],
+      "category": "observation",
+      "key_levels_mentioned": [
+        "D1 50 SMA"
+      ],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "11:28",
+      "text": " ![[Pasted image 20260717233036.png]]",
+      "tickers": [],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "11:29",
+      "text": " Dan - it's very rare that momentum in relation to the 50 sma re accelerates without that. You can see how all the easy swing money happens fast out of those dips below the 50, one the peak happens and lower highs starts establishing, the buying strength gets weaker and weaker until some kind of event or a ranging/topping then a reset. on the downslopes from peak, price still creeps up, but gets choppier with more dips. You then get a ~2adr or a ~4 adr or a ~5-6+ adr (big market scare) flush below the 50. the ~4 ish adr ones are the ones that most likely set up a nice low adr grindy bull trend again. pic is ~5 years of d1 #flag2",
+      "tickers": [],
+      "category": "observation",
+      "key_levels_mentioned": [
+        "D1 50 SMA"
+      ],
+      "tags": [
+        "flag"
+      ],
+      "flag_context": 2
+    },
+    {
+      "timestamp": "11:40",
+      "text": " so far SPY looks good - it was crucial that we bounced off here and the long greens held",
+      "tickers": [],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "11:50",
+      "text": " exit orders set for CSCO",
+      "tickers": [
+        "CSCO"
+      ],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": [],
+      "flag_context": 0
+    }
+  ],
+  "trades": [
+    {
+      "timestamp": "10:21",
+      "direction": "long",
+      "ticker": "CSCO",
+      "price": 112.1,
+      "size": 4,
+      "reason": "just note that CSCO is not strong on the D1 and is below 8/15 EMA [TRADE: long CSCO @ 112.1 x4]",
+      "outcome": "open",
+      "exit_timestamp": null,
+      "exit_price": null,
+      "exit_reason": null,
+      "exited_direction": null
+    },
+    {
+      "timestamp": "10:43",
+      "direction": "long",
+      "ticker": "JPM",
+      "price": 344.97,
+      "size": 1,
+      "reason": "got in with more confirmation as JPM pulled back and found support before moving higher [TRADE: long JPM @ 344.97 x1]",
+      "outcome": "open",
+      "exit_timestamp": null,
+      "exit_price": null,
+      "exit_reason": null,
+      "exited_direction": null
+    }
+  ],
+  "highlights_for_carry_forward": [],
+  "market_bias": {
+    "direction": "bullish",
+    "confidence": "high",
+    "regime": "transitional",
+    "key_levels": [
+      "D1 15 EMA",
+      "D1 50 SMA",
+      "D1 8 EMA",
+      "PDH"
+    ]
+  },
+  "raw_market_notes": "- 10:02 keep TRV long on the watchlist next week \n- 10:03 watching MRK CSCO long \n- 10:06 pharma sector price action looking really nice - watching MRK JNJ long closely #sector  \n- 10:20 CSCO looks really good here -\n- 10:21 long CSCO @ 112.10, 4 shares - beautiful wimpy pullback continuing higher breaking HOD, supported by SPY on a nice strong gap reversal - just note that CSCO is not strong on the D1 and is below 8/15 EMA\n- 10:28 PANW really strong, FTNT nice long above PDH \n- 10:33 watching GE long for a swing above 8 EMA - consider for a swing tmr if it closes above 8/15\n- 10:33 SPY has a much stronger trend today than yesterday so i can expect more follow thru for my trades \n- 10:36 XLF strong today - BAC JPM long \n- 10:38 was bidding for JPM but got greedy and missed the fill before it popped - be patient and DO NOT CHASE - you will have a chance if it pulls back to enter at a better price or with more confirmation \n- 10:43 long JPM @ 344.97, 1 share - patience paid off - got in with more confirmation as JPM pulled back and found support before moving higher \n- 10:44 watch SPY - starting to transition sideways \n- 10:57 CSCO showing signs of resistance with many upper wicks \n- 11:01 MRK looks really nice for a long but i am hesitating because of the low volume and SPY pulling back \n- 11:06 review CSCO vs JPM - why did CSCO pullback while JPM continued higher? #flag \n- 11:09 TRV strong \n- 11:09 SPY trying to bounce off the 50 SMA \n- 11:28 ![[Pasted image 20260717233036.png]]\n- 11:29 Dan - it's very rare that momentum in relation to the 50 sma re accelerates without that.\n\nYou can see how all the easy swing money happens fast out of those dips below the 50, one the peak happens and lower highs starts establishing, the buying strength gets weaker and weaker until some kind of event or a ranging/topping then a reset. on the downslopes from peak, price still creeps up, but gets choppier with more dips. You then get a ~2adr or a ~4 adr or a ~5-6+ adr (big market scare) flush below the 50. \n\nthe ~4 ish adr ones are the ones that most likely set up a nice low adr grindy bull trend again. pic is ~5 years of d1 #flag2  \n11:40 so far SPY looks good - it was crucial that we bounced off here and the long greens held \n11:50 exit orders set for CSCO",
+  "source_file": "C:\\Users\\Thaddeus\\OneDrive\\Desktop\\Vaulted\\!Journalit\\2026\\Q3\\07\\W29\\DRC-170726.md"
+}

@@ -37,8 +37,8 @@ class LLMExtractor:
 
         # Load prompts
         prompts_dir = Path("config/prompts")
-        self.daily_report_prompt = (prompts_dir / "daily_report.txt").read_text()
-        self.pre_market_prompt = (prompts_dir / "pre_market.txt").read_text()
+        self.daily_report_prompt = (prompts_dir / "daily_report.txt").read_text(encoding="utf-8")
+        self.pre_market_prompt = (prompts_dir / "pre_market.txt").read_text(encoding="utf-8")
 
         # Initialize client
         self._init_client()
@@ -285,7 +285,8 @@ def extract_daily_report_fallback(raw_report: DailyReport) -> dict:
             tickers=note.tickers,
             category=category,
             key_levels_mentioned=note.key_levels_mentioned,
-            tags=note.tags
+            tags=note.tags,
+            flag_context=note.flag_context
         ))
 
     # Use parser's inferred market bias

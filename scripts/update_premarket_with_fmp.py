@@ -33,7 +33,7 @@ def update_premarket(target_date: date) -> bool:
         return False
 
     # Load existing
-    data = json.loads(path.read_text())
+    data = json.loads(path.read_text(encoding="utf-8"))
 
     # Fetch live FMP data
     fmp_data = fetch_pre_market_data(target_date)
@@ -59,7 +59,7 @@ def update_premarket(target_date: date) -> bool:
     data["watchlist_candidates"] = watchlist[:15]
 
     # Save
-    path.write_text(json.dumps(data, indent=2))
+    path.write_text(json.dumps(data, indent=2), encoding="utf-8")
     print(f"  [OK] {target_date}: {len(econ_formatted)} econ, {len(earn_raw)} earnings, {len(earn_watchlist)} watchlist")
     return True
 

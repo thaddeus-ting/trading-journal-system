@@ -9,7 +9,7 @@ import yaml
 # Load settings
 SETTINGS_FILE = Path("config/settings.yaml")
 if SETTINGS_FILE.exists():
-    settings = yaml.safe_load(SETTINGS_FILE.read_text())
+    settings = yaml.safe_load(SETTINGS_FILE.read_text(encoding="utf-8"))
 else:
     settings = {}
 

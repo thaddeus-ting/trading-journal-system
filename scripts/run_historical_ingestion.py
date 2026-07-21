@@ -23,7 +23,7 @@ import json
 # Read settings
 SETTINGS_FILE = Path("config/settings.yaml")
 if SETTINGS_FILE.exists():
-    settings = yaml.safe_load(SETTINGS_FILE.read_text())
+    settings = yaml.safe_load(SETTINGS_FILE.read_text(encoding="utf-8"))
 else:
     settings = {}
 
@@ -55,7 +55,7 @@ def save_daily_report(report: DailyReport) -> Path:
     data = report.model_dump()
     # Add a nice header comment
     json_str = json.dumps(data, indent=2, default=str)
-    path.write_text(json_str)
+    path.write_text(json_str, encoding="utf-8")
     return path
 
 
@@ -171,14 +171,14 @@ def load_daily_report(target_date: date) -> DailyReport | None:
     path = DAILY_REPORTS_DIR / f"{target_date.isoformat()}.json"
     if not path.exists():
         return None
-    data = json.loads(path.read_text())
+    data = json.loads(path.read_text(encoding="utf-8"))
     return DailyReport.model_validate(data)
 
 
 def save_pre_market(pre_market: PreMarketNotes) -> Path:
     """Save pre-market notes to JSON."""
     path = PRE_MARKET_DIR / f"{pre_market.date.isoformat()}.json"
-    path.write_text(pre_market.model_dump_json(indent=2))
+    path.write_text(pre_market.model_dump_json(indent=2), encoding="utf-8")
     return path
 
 

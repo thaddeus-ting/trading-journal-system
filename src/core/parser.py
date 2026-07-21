@@ -34,11 +34,11 @@ INLINE_ENTRY_PATTERN2 = re.compile(
     r"(?i)(long|short)\s+([A-Z]{1,5})\b\s*(.+)"
 )
 EXIT_PATTERN = re.compile(
-    r"(?i)exit\s+([A-Z]{1,5})(?:\s+(long|short))?\s*[@\$]\s*([\d.]+)(?:\s+on\s+\d+x)?(?:\s*[-–—]\s*(.+))?"
+    r"(?i)exit\s+([A-Z]{1,5})(?:\s+(long|short))?\s*[@\$]\s*([\d.]+)(?:(?:\s+on\s+(\d+)x)|(?:,\s*(\d+)\s*shares?))?(?:\s*[-–—]\s*(.+))?"
 )
-# Inline exit: "exit NKE @ 54.97 - reason" (text portion) - also without @, with optional direction, "on 2x" suffix
+# Inline exit: "exit NKE @ 54.97 - reason" (text portion) - also without @, with optional direction, "on 2x" or ", N shares" suffix
 INLINE_EXIT_PATTERN = re.compile(
-    r"(?i)exit\s+([A-Z]{1,5})(?:\s+(long|short))?\s*[@\$]?\s*([\d.]+)(?:\s+on\s+\d+x)?(?:\s*[-–—]\s*(.+))?"
+    r"(?i)exit\s+([A-Z]{1,5})(?:\s+(long|short))?\s*[@\$]?\s*([\d.]+)(?:(?:\s+on\s+(\d+)x)|(?:,\s*(\d+)\s*shares?))?(?:\s*[-–—]\s*(.+))?"
 )
 TICKER_PATTERN = re.compile(r"\b([A-Z]{1,5})\b")
 # Timestamp pattern: handles "10:33 text" (with space) and "10:33Stext" (without space)
@@ -172,11 +172,66 @@ def categorize_note(text: str, is_trade: bool, trade_direction: Optional[TradeDi
 
 def parse_trade_line(line: str, timestamp: str) -> Optional[ExtractedTrade]:
     """Try to parse a line as a trade entry or exit."""
+    # Try exit patterns FIRST (before entry patterns) since exit lines can match entry patterns too
+    # Try inline exit pattern: "exit NKE @ 54.97 - reason"
+    inline_exit = INLINE_EXIT_PATTERN.search(line)
+    if inline_exit:
+        groups = inline_exit.groups()
+        # Groups: ticker, dir_opt, price_str, size_on_x, size_shares, reason
+        ticker, dir_opt, price_str, size_on_x, size_shares, reason = groups
+        ticker = ticker.upper()
+        if ticker in EXCLUDE_TICKERS:
+            return None
+
+        # Parse exited direction if present
+        exited_direction = None
+        if dir_opt and dir_opt.lower() in ("long", "short"):
+            exited_direction = TradeDirection(dir_opt.lower())
+
+        # Extract size from either "on Nx" or ", N shares" format
+        size = int(size_on_x) if size_on_x else (int(size_shares) if size_shares else 0)
+
+        return ExtractedTrade(
+            timestamp=timestamp,
+            direction=TradeDirection.EXIT,
+            ticker=ticker,
+            price=float(price_str),
+            size=size,
+            reason=reason.strip() if reason else "",
+            exited_direction=exited_direction,
+        )
+
+    # Try formal exit pattern
+    exit_match = EXIT_PATTERN.search(line)
+    if exit_match:
+        groups = exit_match.groups()
+        # Groups: ticker, dir_opt, price_str, size_on_x, size_shares, reason
+        ticker, dir_opt, price_str, size_on_x, size_shares, reason = groups
+        ticker = ticker.upper()
+        if ticker in EXCLUDE_TICKERS:
+            return None
+
+        # Parse exited direction if present
+        exited_direction = None
+        if dir_opt and dir_opt.lower() in ("long", "short"):
+            exited_direction = TradeDirection(dir_opt.lower())
+
+        # Extract size
+        size = int(size_on_x) if size_on_x else (int(size_shares) if size_shares else 0)
+
+        return ExtractedTrade(
+            timestamp=timestamp,
+            direction=TradeDirection.EXIT,
+            ticker=ticker,
+            price=float(price_str),
+            size=size,
+            reason=reason.strip() if reason else "",
+            exited_direction=exited_direction,
+        )
+
     # Try formal entry pattern
     entry_match = ENTRY_PATTERN.search(line)
     if entry_match:
-        # Groups: ticker1, dir1, dir2, ticker2, price, size, reason
-        # One of (ticker1, dir1) or (dir2, ticker2) will be non-None
         ticker1, dir1, dir2, ticker2, price_str, size_str, reason = entry_match.groups()
         if ticker1:
             ticker, direction_str = ticker1, dir1
@@ -206,7 +261,7 @@ def parse_trade_line(line: str, timestamp: str) -> Optional[ExtractedTrade]:
             timestamp=timestamp,
             direction=TradeDirection(direction_str.lower()),
             ticker=ticker,
-            price=0.0,  # Unknown
+            price=0.0,
             size=0,
             reason=reason.strip(),
         )
@@ -219,7 +274,7 @@ def parse_trade_line(line: str, timestamp: str) -> Optional[ExtractedTrade]:
         if ticker in EXCLUDE_TICKERS:
             return None
         # Skip if it's a continuation like "short NKE - reason already captured"
-        if " - " not in reason[:20]:  # Not a dash format
+        if " - " not in reason[:20]:
             return ExtractedTrade(
                 timestamp=timestamp,
                 direction=TradeDirection(direction_str.lower()),
@@ -228,56 +283,6 @@ def parse_trade_line(line: str, timestamp: str) -> Optional[ExtractedTrade]:
                 size=0,
                 reason=reason.strip(),
             )
-
-    # Try inline exit pattern: "exit NKE @ 54.97 - reason"
-    inline_exit = INLINE_EXIT_PATTERN.search(line)
-    if inline_exit:
-        # Groups: ticker, direction (optional), price, reason
-        groups = inline_exit.groups()
-        if len(groups) == 4:
-            ticker, dir_opt, price_str, reason = groups
-        else:
-            ticker, price_str, reason = groups
-            dir_opt = None
-        ticker = ticker.upper()
-        if ticker in EXCLUDE_TICKERS:
-            return None
-
-        # Parse exited direction if present
-        exited_direction = None
-        if dir_opt and dir_opt.lower() in ("long", "short"):
-            exited_direction = TradeDirection(dir_opt.lower())
-
-        return ExtractedTrade(
-            timestamp=timestamp,
-            direction=TradeDirection.EXIT,
-            ticker=ticker,
-            price=float(price_str),
-            size=0,
-            reason=reason.strip() if reason else "",
-            exited_direction=exited_direction,
-        )
-
-    # Try formal exit pattern
-    exit_match = EXIT_PATTERN.search(line)
-    if exit_match:
-        # Groups: ticker, direction (optional), price, reason
-        groups = exit_match.groups()
-        if len(groups) == 4:
-            ticker, dir_opt, price_str, reason = groups
-        else:
-            ticker, price_str, reason = groups
-        ticker = ticker.upper()
-        if ticker in EXCLUDE_TICKERS:
-            return None
-        return ExtractedTrade(
-            timestamp=timestamp,
-            direction=TradeDirection.EXIT,
-            ticker=ticker,
-            price=float(price_str),
-            size=0,
-            reason=reason.strip() if reason else "",
-        )
 
     return None
 
@@ -397,30 +402,15 @@ def parse_market_notes_section(content: str) -> list[OrganizedNote]:
 
 def extract_flag_context(notes: list[OrganizedNote]) -> list[OrganizedNote]:
     """
-    Expand notes with #flagN context - include N prior notes for context.
-    This should be called after all notes are parsed and sorted.
+    Validate and preserve #flagN context information.
+    The flag_context count is already set during parsing; this function
+    just ensures it's correctly preserved. The actual context display
+    should be computed on-demand in the UI (flags/tags section).
     """
-    # Store original texts before any modifications
-    original_texts = [n.text for n in notes]
-
-    expanded_notes = []
-    for i, note in enumerate(notes):
-        expanded_notes.append(note)
-
-        # Check if this note has flag_context > 0
-        if note.flag_context > 0:
-            # Get the N preceding notes (including timestamped messages)
-            context_count = note.flag_context
-            start_idx = max(0, i - context_count)
-            context_notes = notes[start_idx:i]
-
-            if context_notes:
-                # Build context string using ORIGINAL texts
-                context_text = "\n  ".join(f"{n.timestamp} {original_texts[j][:100]}" for j, n in enumerate(context_notes, start=start_idx))
-                # Append context to the flagged note's text for display
-                note.text = f"{note.text}\n  ⚠️ FLAG CONTEXT ({context_count} prior):\n  {context_text}"
-
-    return expanded_notes
+    # The flag_context is already set during parse_market_notes_section
+    # via extract_tags(). We just return the notes unchanged to preserve
+    # the original text. UI will compute context from the notes list.
+    return notes
 
 
 def extract_raw_market_notes(content: str) -> str:
@@ -609,7 +599,7 @@ def parse_drc_file(filepath: Path) -> Optional[DailyReport]:
         if "[TRADE:" in note.text:
             # Extract trade info from appended text
             # Format: [TRADE: DIRECTION TICKER @ PRICE xSIZE] or [TRADE: EXIT TICKER long/short @ PRICE xSIZE]
-            trade_match = re.search(r"\[TRADE: (\w+) (\w+) (?:(\w+) @ )?@?([\d.]+) x(\d+)\]", note.text)
+            trade_match = re.search(r"\[TRADE: (\w+) (\w+) (?:(\w+) )?@ ([\d.]+) x(\d+)\]", note.text)
             if trade_match:
                 groups = trade_match.groups()
                 # Groups: direction, ticker, exited_direction (optional), price, size
@@ -674,9 +664,10 @@ def parse_drc_file(filepath: Path) -> Optional[DailyReport]:
 
 def find_all_drc_files(vault_path: Path) -> list[Path]:
     """Find all DRC markdown files in vault."""
-    drc_files = []
-    for pattern in ["DRC-*.md", "drc-*.md", "DRC-*.markdown", "drc-*.markdown"]:
-        drc_files.extend(vault_path.rglob(pattern))
+    # Use set to deduplicate (case-insensitive filesystem may match both DRC- and drc-)
+    drc_files = set()
+    for pattern in ["DRC-*.md", "DRC-*.markdown"]:
+        drc_files.update(vault_path.rglob(pattern))
     return sorted(drc_files, key=lambda p: p.name)
 
 

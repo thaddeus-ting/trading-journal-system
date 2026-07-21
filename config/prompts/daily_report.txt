@@ -68,6 +68,14 @@ RULES:
 5. Market bias = your stated or implied view from the notes
 6. If Market Notes empty, return empty arrays
 
+HIGHLIGHTS GENERATION (highlights_for_carry_forward):
+- ONLY include points from notes that have tags (#flag, #gold, #sector, #watch, #review, #todo, #ptrade, #mistake, #good, #bad, #emotion, #setup)
+- For EACH tagged note, create ONE brief sentence (max 1 sentence) capturing the key point
+- Prioritize #flag, #gold, #sector tags - they MUST be included
+- Keep highlights concise and action-oriented
+- Format: "TICKER/TOPIC: 1-sentence summary of the tagged point"
+- Order highlights by TIME (earliest timestamp first) as a bullet list
+
 EXAMPLE INPUT:
 - 9:40 TEAM really strong open, blew thru the prior day high. I'll exit If TEAM closes above the D1 8 EMA.
 - 9:48 short NKE - we poked lower on SPY, NKE short looks really good D1 too

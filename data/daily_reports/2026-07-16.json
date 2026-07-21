@@ -1,0 +1,449 @@
+{
+  "date": "2026-07-16",
+  "organized_notes": [
+    {
+      "timestamp": "1:39",
+      "text": " exit CSCO short @ 109 - stop hit, stock broke above a prior relative high",
+      "tickers": [
+        "CSCO"
+      ],
+      "category": "exit",
+      "key_levels_mentioned": [],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "9:49",
+      "text": " do not feel bad about UNH gapping up 10% on earnings - if you stayed in, it would only have reinforced bad behaviours. It is important to remember that earnings are binary events and that we only trade if we have an edge #flag",
+      "tickers": [
+        "UNH"
+      ],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": [
+        "flag"
+      ],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "9:50",
+      "text": " do not judge a decision by its outcome #flag",
+      "tickers": [],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": [
+        "flag"
+      ],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "9:51",
+      "text": " SPY bouncing off D1 8 EMA here - as Pete said, it's important not to read too much into the early consecutive red candles as we are in a tight range - we should expect two-sided action as neither side has conviction",
+      "tickers": [],
+      "category": "observation",
+      "key_levels_mentioned": [
+        "D1 8 EMA"
+      ],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "9:59",
+      "text": " space stocks are really weak and breaking major D1 support - RKLB ASTS PL #sector",
+      "tickers": [
+        "ASTS",
+        "PL",
+        "RKLB"
+      ],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": [
+        "sector"
+      ],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "10:01",
+      "text": " Hari - There is a psychological dissonance that occurs - on the one hand everything between major technicals is \"noise\" (i.e. if it is still above X line then it remains a good trade) - on the other hand that \"noise\" is much of what we trade day-to-day.  So in one sense it is unimportant and on the other it is exactly what we trade.",
+      "tickers": [
+        "X"
+      ],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "10:01",
+      "text": " regarding Hari's comment, I think it is very important to realise that the intraday noise we ignore when swing trading is what we trade when we day trade - the difference between 'reading price action' and 'ignoring noise' -  all depends on your timeframe",
+      "tickers": [],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "10:04",
+      "text": " this is why it is so critical to be clear of your timeframe to avoid reading too much into noise (using the M5 for swing trades) #flag3",
+      "tickers": [],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": [
+        "flag"
+      ],
+      "flag_context": 3
+    },
+    {
+      "timestamp": "10:05",
+      "text": " SPY nice bounce and back at HOD but I don't have enough confidence to go long - there's a good chance SPY just reverses back into the range",
+      "tickers": [],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "10:31",
+      "text": " LCID nice long here",
+      "tickers": [
+        "LCID"
+      ],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "10:35",
+      "text": " GOOGL breaking back above 50 SMA, could be nice if it rallies past HOD",
+      "tickers": [
+        "GOOGL"
+      ],
+      "category": "observation",
+      "key_levels_mentioned": [
+        "D1 50 SMA"
+      ],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "10:39",
+      "text": " AAPL looks good even on the D1 but sharp pullback on the M5 all the way to VWAP-",
+      "tickers": [
+        "AAPL"
+      ],
+      "category": "observation",
+      "key_levels_mentioned": [
+        "VWAP",
+        "VWAP+",
+        "VWAP-"
+      ],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "10:43",
+      "text": " if AAPL can close above HOD on this candle i will go long",
+      "tickers": [
+        "AAPL"
+      ],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "10:56",
+      "text": " USAR really nice short setup - but market is bouncing rn",
+      "tickers": [
+        "USAR"
+      ],
+      "category": "entry",
+      "key_levels_mentioned": [],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "11:06",
+      "text": " CSCO long looked really good for a swing on 10/7 what happened??? sector weakness? #flag #sector",
+      "tickers": [
+        "CSCO"
+      ],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": [
+        "flag",
+        "sector"
+      ],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "11:08",
+      "text": " Khorn - I’m down again on my tech longs, thoughts start creeping in like, “I can oversize this day trade to erase my losses today”. This is how accounts get blown, you deal with a drawdown, average down, over leverage, try to trade out of it on emotion. I’m experienced enough now to know what not to do. You can have a great few months and erase it plus more in days if you let a drawdown mess with your mental. Keep this in mind when dealing with drawdowns. This is what makes great traders, not the wins but managing the losses.",
+      "tickers": [],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "11:09",
+      "text": " this is a really important point on the mental aspect of trading and a form of revenge trading - could be a completely valid setup but oversized due to urge to 'make back the loss' #flag2",
+      "tickers": [],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": [
+        "flag"
+      ],
+      "flag_context": 2
+    },
+    {
+      "timestamp": "11:10",
+      "text": " CSCO nice short here",
+      "tickers": [
+        "CSCO"
+      ],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "11:13",
+      "text": " short CSCO @ 107.76, 3 shares - CSCO breaking LOD on heavy volume, market struggling to bounce off this compression low - targetting ATRL with a stop just above VWAP",
+      "tickers": [
+        "CSCO"
+      ],
+      "category": "entry",
+      "key_levels_mentioned": [
+        "VWAP",
+        "VWAP+",
+        "ATRL"
+      ],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "11:22",
+      "text": " Pete - AMAT needs to close above yesterday's open to be considered long",
+      "tickers": [
+        "AMAT"
+      ],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "11:23",
+      "text": " urgency is an important component when reading price action other than where the D1 candle closes #flag2",
+      "tickers": [],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": [
+        "flag"
+      ],
+      "flag_context": 2
+    },
+    {
+      "timestamp": "11:25",
+      "text": " Pete - long green and red candles are landmarks. If they are instantly erased, that is a sign of aggressive buying or selling in the opposite direction. Ideally, they are consistent with the trend and we are trading a continuation and not a reversal #gold",
+      "tickers": [],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": [
+        "gold"
+      ],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "11:27",
+      "text": " ![[Pasted image 20260716233224.png]]",
+      "tickers": [],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "11:35",
+      "text": " getting ready to stop out on CSCO if this green candle is not erased - market is bouncing and CSCO is losing RS",
+      "tickers": [
+        "CSCO"
+      ],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "11:36",
+      "text": " it is important to notice that it is still LPTE right now - even as SPY looks nice it will make a new high, it has not made one yet and has PDH overhead resistance - do not load up on longs!!! #flag2",
+      "tickers": [],
+      "category": "observation",
+      "key_levels_mentioned": [
+        "PDH"
+      ],
+      "tags": [
+        "flag"
+      ],
+      "flag_context": 2
+    },
+    {
+      "timestamp": "11:37",
+      "text": " ![[Pasted image 20260716233739.png]]",
+      "tickers": [],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "11:40",
+      "text": " long AAPL @ 331.40, 4 shares - AAPL has clear RS and is breaking above HOD - note SPY is still not through resistance yet so we are still trading in LPTE - this was a FOMO entry #flag",
+      "tickers": [
+        "AAPL"
+      ],
+      "category": "entry",
+      "key_levels_mentioned": [],
+      "tags": [
+        "flag"
+      ],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "11:46",
+      "text": " zoom out and realise that we are stuck in a range and this rejection off the HOD was likely",
+      "tickers": [],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "11:47",
+      "text": " this is also where we can see how my RS long - AAPL is giving me an edge over trading",
+      "tickers": [
+        "AAPL"
+      ],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "11:48",
+      "text": " ![[Pasted image 20260716235441.png]] ![[Pasted image 20260716235501.png]]![[Pasted image 20260716235518.png]]![[Pasted image 20260716235530.png]]![[Pasted image 20260716235544.png]]![[Pasted image 20260716235608.png]]![[Pasted image 20260716235705.png]]![[Pasted image 20260716235713.png]]",
+      "tickers": [],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "11:51",
+      "text": " in choppy conditions, trades often move instantly against you - that's why it's important to size down and give trades a chance to move around - you need staying power in choppy conditions whereas in HPTE, stops can be tight which is what gives us aggressive trades with larger size #flag #gold",
+      "tickers": [],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": [
+        "flag",
+        "gold"
+      ],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "12:06",
+      "text": " exit AAPL long @ 331.46 - chased it on a dip so got a bad fill - exit on SPY weakness while AAPL held its gains, but should have stayed patient when AAPL pulled back",
+      "tickers": [
+        "AAPL"
+      ],
+      "category": "exit",
+      "key_levels_mentioned": [],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "12:07",
+      "text": " orders set for CSCO short",
+      "tickers": [
+        "CSCO"
+      ],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": [],
+      "flag_context": 0
+    }
+  ],
+  "trades": [
+    {
+      "timestamp": "1:39",
+      "direction": "exit",
+      "ticker": "CSCO",
+      "price": 109.0,
+      "size": 0,
+      "reason": "",
+      "outcome": "open",
+      "exit_timestamp": null,
+      "exit_price": null,
+      "exit_reason": null,
+      "exited_direction": "short"
+    },
+    {
+      "timestamp": "11:40",
+      "direction": "long",
+      "ticker": "AAPL",
+      "price": 331.4,
+      "size": 4,
+      "reason": "",
+      "outcome": "closed",
+      "exit_timestamp": "12:06",
+      "exit_price": 331.46,
+      "exit_reason": "",
+      "exited_direction": null
+    },
+    {
+      "timestamp": "10:56",
+      "direction": "short",
+      "ticker": "SETUP",
+      "price": 0.0,
+      "size": 0,
+      "reason": "",
+      "outcome": "open",
+      "exit_timestamp": null,
+      "exit_price": null,
+      "exit_reason": null,
+      "exited_direction": null
+    },
+    {
+      "timestamp": "11:13",
+      "direction": "short",
+      "ticker": "CSCO",
+      "price": 107.76,
+      "size": 3,
+      "reason": "",
+      "outcome": "open",
+      "exit_timestamp": null,
+      "exit_price": null,
+      "exit_reason": null,
+      "exited_direction": null
+    }
+  ],
+  "highlights_for_carry_forward": [],
+  "market_bias": {
+    "direction": "bullish",
+    "confidence": "high",
+    "regime": "HPTE",
+    "key_levels": [
+      "ATRL",
+      "D1 50 SMA",
+      "D1 8 EMA",
+      "PDH",
+      "VWAP",
+      "VWAP+",
+      "VWAP-"
+    ]
+  },
+  "raw_market_notes": "- 9:49 do not feel bad about UNH gapping up 10% on earnings - if you stayed in, it would only have reinforced bad behaviours. It is important to remember that earnings are binary events and that we only trade if we have an edge #flag \n- 9:50 do not judge a decision by its outcome #flag \n- 9:51 SPY bouncing off D1 8 EMA here - as Pete said, it's important not to read too much into the early consecutive red candles as we are in a tight range - we should expect two-sided action as neither side has conviction \n- 9:59 space stocks are really weak and breaking major D1 support - RKLB ASTS PL #sector\n- 10:01 Hari - There is a psychological dissonance that occurs - on the one hand everything between major technicals is \"noise\" (i.e. if it is still above X line then it remains a good trade) - on the other hand that \"noise\" is much of what we trade day-to-day.  So in one sense it is unimportant and on the other it is exactly what we trade.\n- 10:01 regarding Hari's comment, I think it is very important to realise that the intraday noise we ignore when swing trading is what we trade when we day trade - the difference between 'reading price action' and 'ignoring noise' -  all depends on your timeframe \n- 10:04 this is why it is so critical to be clear of your timeframe to avoid reading too much into noise (using the M5 for swing trades) #flag3 \n- 10:05 SPY nice bounce and back at HOD but I don't have enough confidence to go long - there's a good chance SPY just reverses back into the range \n- 10:31 LCID nice long here \n- 10:35 GOOGL breaking back above 50 SMA, could be nice if it rallies past HOD \n- 10:39 AAPL looks good even on the D1 but sharp pullback on the M5 all the way to VWAP-\n- 10:43 if AAPL can close above HOD on this candle i will go long \n- 10:56 USAR really nice short setup - but market is bouncing rn \n- 11:06 CSCO long looked really good for a swing on 10/7 what happened??? sector weakness? #flag #sector \n- 11:08 Khorn - I’m down again on my tech longs, thoughts start creeping in like, “I can oversize this day trade to erase my losses today”. This is how accounts get blown, you deal with a drawdown, average down, over leverage, try to trade out of it on emotion. I’m experienced enough now to know what not to do. You can have a great few months and erase it plus more in days if you let a drawdown mess with your mental. Keep this in mind when dealing with drawdowns. This is what makes great traders, not the wins but managing the losses.\n- 11:09 this is a really important point on the mental aspect of trading and a form of revenge trading - could be a completely valid setup but oversized due to urge to 'make back the loss' #flag2\n- 11:10 CSCO nice short here \n- 11:13 short CSCO @ 107.76, 3 shares - CSCO breaking LOD on heavy volume, market struggling to bounce off this compression low - targetting ATRL with a stop just above VWAP\n- 11:22 Pete - AMAT needs to close above yesterday's open to be considered long \n- 11:23 urgency is an important component when reading price action other than where the D1 candle closes #flag2 \n- 11:25 Pete - long green and red candles are landmarks. If they are instantly erased, that is a sign of aggressive buying or selling in the opposite direction. Ideally, they are consistent with the trend and we are trading a continuation and not a reversal #gold \n- 11:27 ![[Pasted image 20260716233224.png]]\n\n- 11:35 getting ready to stop out on CSCO if this green candle is not erased - market is bouncing and CSCO is losing RS \n- 11:37 ![[Pasted image 20260716233739.png]]\n\n- 11:36 it is important to notice that it is still LPTE right now - even as SPY looks nice it will make a new high, it has not made one yet and has PDH overhead resistance - do not load up on longs!!! #flag2 \n- 11:40 long AAPL @ 331.40, 4 shares - AAPL has clear RS and is breaking above HOD - note SPY is still not through resistance yet so we are still trading in LPTE - this was a FOMO entry #flag \n- 11:46 zoom out and realise that we are stuck in a range and this rejection off the HOD was likely \n- 11:47 this is also where we can see how my RS long - AAPL is giving me an edge over trading \n- 11:48 ![[Pasted image 20260716235441.png]]\n![[Pasted image 20260716235501.png]]![[Pasted image 20260716235518.png]]![[Pasted image 20260716235530.png]]![[Pasted image 20260716235544.png]]![[Pasted image 20260716235608.png]]![[Pasted image 20260716235705.png]]![[Pasted image 20260716235713.png]]\n- 11:51 in choppy conditions, trades often move instantly against you - that's why it's important to size down and give trades a chance to move around - you need staying power in choppy conditions whereas in HPTE, stops can be tight which is what gives us aggressive trades with larger size #flag #gold \n- 12:06 exit AAPL long @ 331.46 - chased it on a dip so got a bad fill - exit on SPY weakness while AAPL held its gains, but should have stayed patient when AAPL pulled back \n- 12:07 orders set for CSCO short \n- 1:39 exit CSCO short @ 109 - stop hit, stock broke above a prior relative high \n-",
+  "source_file": "C:\\Users\\Thaddeus\\OneDrive\\Desktop\\Vaulted\\!Journalit\\2026\\Q3\\07\\W29\\DRC-160726.md"
+}

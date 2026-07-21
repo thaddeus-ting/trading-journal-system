@@ -7,7 +7,6 @@ from pathlib import Path
 import sys
 import pandas as pd
 import plotly.express as px
-import plotly.graph_objects as go
 import yaml
 
 # Add src to path
@@ -22,9 +21,9 @@ except ImportError:
 
 from src.core.models import (
     DailyReport, PreMarketNotes, OrganizedNote, ExtractedTrade,
-    MarketBias, WeeklyReview, PatternSuggestion, SetupPerformance,
+    MarketBias, WeeklyReview, PatternSuggestion,
     NoteCategory, TradeDirection, TradeStatus, MarketBiasDirection,
-    PatternType, MarketConditionTracking
+    PatternType
 )
 
 # LLM extractor for AI summary
@@ -82,7 +81,7 @@ def load_daily_reports() -> list[DailyReport]:
         if f.name.endswith("_pretty.json"):
             continue
         try:
-            data = json.loads(f.read_text())
+            data = json.loads(f.read_text(encoding="utf-8"))
             reports.append(DailyReport.model_validate(data))
         except Exception as e:
             st.error(f"Error loading {f.name}: {e}")
@@ -94,7 +93,7 @@ def load_pre_market(target_date: date) -> PreMarketNotes | None:
     path = PRE_DIR / f"{target_date.isoformat()}.json"
     if not path.exists():
         return None
-    data = json.loads(path.read_text())
+    data = json.loads(path.read_text(encoding="utf-8"))
     # Ensure all fields exist with defaults (Pydantic v2 handles this automatically)
     return PreMarketNotes.model_validate(data)
 
@@ -104,7 +103,7 @@ def load_weekly_reviews() -> list[WeeklyReview]:
     reviews = []
     for f in sorted(WEEKLY_DIR.glob("W*.json")):
         try:
-            data = json.loads(f.read_text())
+            data = json.loads(f.read_text(encoding="utf-8"))
             reviews.append(WeeklyReview.model_validate(data))
         except Exception as e:
             st.error(f"Error loading {f.name}: {e}")
@@ -156,7 +155,7 @@ def render_daily_report(report: DailyReport):
             MarketBiasDirection.UNCLEAR: "⚪"
         }.get(bias.direction, "⚪")
 
-    st.header(f"📊 Daily Report - {report.date}  {bias_emoji}")
+    st.header(f"📊 Daily Report — {report.date}  {bias_emoji}")
     st.markdown('<div style="margin-top: 2.5rem;"></div>', unsafe_allow_html=True)
 
     # Session Summary - AI/rule-based synthesis
@@ -286,7 +285,11 @@ def render_ai_summary(report: DailyReport):
     # Build context from report
     # Only include non-trade-execution notes (exclude entry/exit categories)
     filtered_notes = [n for n in report.organized_notes if n.category.value not in ("entry", "exit")]
-    notes_text = "\n".join([f"[{n.timestamp}] {n.category.value}: {n.text}" for n in filtered_notes])
+    notes_lines = []
+    for n in filtered_notes:
+        tags_str = f" [tags: {', '.join(n.tags)}]" if getattr(n, 'tags', None) else ""
+        notes_lines.append(f"[{n.timestamp}] {n.category.value}: {n.text}{tags_str}")
+    notes_text = "\n".join(notes_lines)
     bias_text = ""
     if report.market_bias:
         b = report.market_bias
@@ -364,18 +367,22 @@ PREVIOUS DAY PRE-MARKET CONTEXT (reference only):
 TODAY'S NOTES:
 {notes_text if notes_text else "No notes"}
 
-Write ONE paragraph (max 4 sentences) covering:
-- One key observation from the notes
-- One action item for tomorrow using "you should"
+CRITICAL: ONLY use notes that have tags in [tags: ...]. Ignore ALL untagged notes completely.
+Priority tags (highest to lowest): #flag > #gold > #ptrade > #mistake > #impt > #qn > #setup > #emotion > #watch > #task > #todo > #review > #note > #idea > #sector > #bad > #good
+
+Write a summary (max 6 sentences) covering:
+- The 2-3 most important observations from today (using ONLY tagged notes)
+- One concise, specific action for tomorrow as a direct command
 
 Rules:
-- ONLY use facts from today's data above
+- ONLY use facts from TAGGED notes above — completely ignore untagged content
 - NO inferences, NO assumptions, NO generic advice
-- If something isn't in the data, skip it
-- Be specific: cite tickers, times, or exact behaviors from notes
+- If no tagged notes exist, output: "No tagged notes to review."
+- Be specific: cite tickers, times, or exact behaviors from tagged notes
+- Tag prioritization: #flag > #gold > #ptrade > #mistake > #impt > #qn > others
 - Do NOT use headers, bullet points, or ANY markdown formatting (no bold, italics, code blocks, backticks)
 - Output plain text only
-- Use second person for the action item: "you should [action]" """
+- Action must be ONE short imperative sentence (e.g., "Set max 1R risk on NVDA trades" or "Stop chasing entries after 10am") """
 
     try:
         if extractor.provider == "groq":
@@ -606,59 +613,122 @@ def render_notes_tab(report: DailyReport):
                 """, unsafe_allow_html=True)
 
 
+def find_existing_trade_file(trade: ExtractedTrade, target_date: date, vault_base: Path) -> Path | None:
+    """Find existing Journalit trade file for this trade."""
+    year = target_date.year
+    quarter = (target_date.month - 1) // 3 + 1
+    week_num = target_date.isocalendar()[1]
+    week_folder = f"W{week_num:02d}"
+    month = target_date.month
+
+    trades_dir = vault_base / str(year) / f"Q{quarter}" / f"{month:02d}" / week_folder / "trades"
+    if not trades_dir.exists():
+        return None
+
+    # Look for matching file: TICKER-DDMMYY-T#.md
+    date_str = target_date.strftime('%d%m%y')
+    pattern = f"{trade.ticker}-{date_str}-T*.md"
+    matches = list(trades_dir.glob(pattern))
+    return matches[0] if matches else None
+
+
 def render_trades_tab(report: DailyReport):
-    """Render trades table."""
+    """Render trades DataFrame with action buttons."""
     if not report.trades:
         st.info("No trades extracted for this day.")
         return
 
+    # Load settings for vault path
+    config_path = Path("config/settings.yaml")
+    vault_base = Path("C:/Users/Thaddeus/OneDrive/Desktop/Vaulted/!Journalit")
+    if config_path.exists():
+        settings = yaml.safe_load(config_path.read_text())
+        vault_path = settings.get("vault_path", "")
+        if vault_path:
+            vault_base = Path(vault_path)
+
+    st.markdown("**📋 Trades for this session**")
+
     df_data = []
+    trade_objects = []
     for t in report.trades:
         pnl = 0
+        pnl_pct = 0
         if t.exit_price and t.price > 0:
             if t.direction == TradeDirection.LONG:
                 pnl = (t.exit_price - t.price) / t.price * 100
             elif t.direction == TradeDirection.SHORT:
                 pnl = (t.price - t.exit_price) / t.price * 100
 
+        existing_file = find_existing_trade_file(t, report.date, vault_base)
+
+        # Format trade like comment for dropdown: "11:22 long CSCO @ 122, 2 shares" or "12:20 exit CSCO @ 120, 1 share"
+        if t.exit_price:
+            trade_display = f"{t.timestamp} exit {t.ticker} @ {t.exit_price:.2f}, {int(t.size)} share{'s' if t.size != 1 else ''}"
+        else:
+            dir_str = t.direction.value.lower()
+            trade_display = f"{t.timestamp} {dir_str} {t.ticker} @ {t.price:.2f}, {int(t.size)} share{'s' if t.size != 1 else ''}"
+
+        dir_cap = t.direction.value.capitalize()  # "Long" / "Short"
+
         df_data.append({
             "Time": t.timestamp,
-            "Direction": t.direction.value.upper(),
+            "Direction": dir_cap,
             "Ticker": t.ticker,
             "Entry": f"${t.price:.2f}" if t.price > 0 else "—",
             "Exit": f"${t.exit_price:.2f}" if t.exit_price else "—",
-            "Size": t.size if t.size > 0 else "—",
-            "P&L %": f"{pnl:.2f}%" if pnl != 0 else "—",
-            "Reason": re.sub(r'\s*\[TRADE:[^\]]*\]\s*', ' ', t.reason).strip(),
-            "Status": t.outcome.value
+            "Size": int(t.size) if t.size > 0 else "—",
+            "P&L %": f"{pnl:+.2f}%" if pnl != 0 else "—",
+            "Status": f"{t.outcome.value}{' @ ' + t.exit_timestamp if t.exit_timestamp else ''}",
+            "HasFile": "✅" if existing_file else "❌",
         })
+        trade_objects.append((t, existing_file, trade_display))
 
     df = pd.DataFrame(df_data)
-    # Configure column widths
+
+    # Display table
     st.dataframe(
         df,
         use_container_width=True,
         hide_index=True,
         column_config={
             "Time": st.column_config.TextColumn(width="small"),
-            "Direction": st.column_config.TextColumn(width="small", help="Trade direction"),
+            "Direction": st.column_config.TextColumn(width="small"),
             "Ticker": st.column_config.TextColumn(width="small"),
             "Entry": st.column_config.TextColumn(width="small"),
             "Exit": st.column_config.TextColumn(width="small"),
             "Size": st.column_config.TextColumn(width="small"),
             "P&L %": st.column_config.TextColumn(width="small"),
-            "Reason": st.column_config.TextColumn(width="large"),
-            "Status": st.column_config.TextColumn(width="small"),
+            "Status": st.column_config.TextColumn(width="medium"),
+            "HasFile": st.column_config.TextColumn(width="small"),
         }
     )
 
-    # Center the table content with CSS
+    # Center table content
     st.markdown("""
     <style>
-    [data-testid="stDataFrame"] td { text-align: center; }
-    [data-testid="stDataFrame"] th { text-align: center; }
+    [data-testid="stDataFrame"] td, [data-testid="stDataFrame"] th { text-align: center; }
     </style>
     """, unsafe_allow_html=True)
+
+    # Action buttons below table
+    if trade_objects:
+        st.markdown("---")
+        st.markdown("**Add Trade to Journalit:**")
+        col1, col2 = st.columns([3, 1])
+        with col1:
+            trade_labels = [td for _, _, td in trade_objects]
+            selected_idx = st.selectbox("Select trade:", range(len(trade_labels)), format_func=lambda i: trade_labels[i], key="trade_select")
+        with col2:
+            st.write("")  # vertical align
+            st.write("")
+            selected_trade, selected_file, _ = trade_objects[selected_idx]
+            if selected_trade.direction in (TradeDirection.LONG, TradeDirection.SHORT):
+                label = "✏️ Update Trade File" if selected_file else "➕ Create Trade File"
+                if st.button(label, key="trade_action_btn", use_container_width=True, type="primary"):
+                    create_or_update_trade_file(selected_trade, report.date)
+                    st.success(f"Trade file {'updated' if selected_file else 'created'}!")
+                    st.rerun()
 
     # Trade summary
     closed = [t for t in report.trades if t.outcome == TradeStatus.CLOSED]
@@ -1219,19 +1289,33 @@ def render_sidebar():
         ["Daily Report", "Pre-Market", "Weekly Review", "Settings"]
     )
 
-    # Date selector for daily/pre-market
+    # Date selector for daily/pre-market - native st.date_input in sidebar
     reports = load_daily_reports()
     available_dates = sorted([r.date for r in reports])
 
     if available_dates:
         selected_date = st.sidebar.date_input(
             "Select Date",
-            value=available_dates[-1] if available_dates else date.today(),
+            value=available_dates[-1],
             min_value=min(available_dates),
-            max_value=max(available_dates)
+            max_value=date.today()  # Future dates greyed out/unclickable
         )
 
-        if selected_date not in available_dates:
+        # Check if selected date has a report
+        has_report = selected_date in available_dates
+
+        if not has_report and selected_date <= date.today():
+            # Past date without report - offer to create
+            st.sidebar.warning(f"No report for {selected_date}.")
+            if st.sidebar.button("📝 Create Daily Report", key="create_daily_report", use_container_width=True):
+                create_daily_report(selected_date)
+                st.rerun()
+        elif not has_report and selected_date > date.today():
+            # Future date - already unclickable due to max_value, but handle edge case
+            st.sidebar.info("Future dates cannot be selected.")
+            selected_date = available_dates[-1]
+        elif selected_date not in available_dates:
+            # This handles edge case where min_value > available_dates[-1] somehow
             st.sidebar.warning(f"No report for {selected_date}. Showing latest.")
             selected_date = available_dates[-1]
     else:
@@ -1255,6 +1339,263 @@ def render_sidebar():
     return page, selected_date, selected_week, reports, reviews
 
 
+def create_daily_report(target_date: date):
+    """Create a new daily report for the given date by parsing DRC file from vault."""
+    from src.core.parser import parse_drc_file, find_all_drc_files
+    from src.core.extractor import extract_daily_report_fallback
+    from src.core.models import (
+        DailyReport, MarketBias, MarketBiasDirection, MarketBiasConfidence,
+        MarketRegime, OrganizedNote, ExtractedTrade, NoteCategory,
+        TradeDirection, TradeStatus
+    )
+    import yaml
+
+    # Load vault path from settings
+    SETTINGS_FILE = Path("config/settings.yaml")
+    if SETTINGS_FILE.exists():
+        settings = yaml.safe_load(SETTINGS_FILE.read_text(encoding="utf-8"))
+    else:
+        settings = {}
+
+    vault_path = Path(settings.get("vault_path", "C:/Users/Thaddeus/OneDrive/Desktop/Vaulted/!Journalit"))
+
+    # Find all DRC files
+    drc_files = find_all_drc_files(vault_path)
+
+    # Find matching DRC file (DDMMYY format in filename)
+    drc_file = None
+    for f in drc_files:
+        stem = f.stem
+        import re
+        match = re.search(r"DRC-(\d{6})", stem)
+        if match:
+            d_str = match.group(1)
+            try:
+                f_date = datetime.strptime(d_str, "%d%m%y").date()
+                if f_date == target_date:
+                    drc_file = f
+                    break
+            except ValueError:
+                continue
+
+    if not drc_file:
+        # Fallback: create empty report if no DRC file found
+        report = DailyReport(
+            date=target_date,
+            market_bias=MarketBias(
+                direction=MarketBiasDirection.UNCLEAR,
+                confidence=MarketBiasConfidence.LOW,
+                regime=MarketRegime.TRANSITIONAL,
+                key_levels=[]
+            ),
+            organized_notes=[],
+            trades=[],
+            highlights_for_carry_forward=[],
+            raw_market_notes="",
+            source_file=f"Manual entry via UI ({date.today().isoformat()}) - No DRC file found"
+        )
+    else:
+        # Parse DRC file
+        raw_report = parse_drc_file(drc_file)
+        if not raw_report:
+            # Fallback empty report
+            report = DailyReport(
+                date=target_date,
+                market_bias=MarketBias(
+                    direction=MarketBiasDirection.UNCLEAR,
+                    confidence=MarketBiasConfidence.LOW,
+                    regime=MarketRegime.TRANSITIONAL,
+                    key_levels=[]
+                ),
+                organized_notes=[],
+                trades=[],
+                highlights_for_carry_forward=[],
+                raw_market_notes="",
+                source_file=f"Manual entry via UI ({date.today().isoformat()}) - DRC parse failed"
+            )
+        else:
+            # Extract with fallback logic
+            extracted = extract_daily_report_fallback(raw_report)
+
+            organized_notes = [OrganizedNote.model_validate(n) for n in extracted["organized_notes"]]
+            trades = [ExtractedTrade.model_validate(t) for t in extracted["trades"]]
+
+            bias_data = extracted.get("market_bias", {})
+            market_bias = MarketBias(
+                direction=MarketBiasDirection(bias_data.get("direction", "unclear")),
+                confidence=MarketBiasConfidence(bias_data.get("confidence", "low")),
+                regime=MarketRegime(bias_data.get("regime", "transitional")),
+                key_levels=bias_data.get("key_levels", [])
+            )
+
+            report = DailyReport(
+                date=target_date,
+                organized_notes=organized_notes,
+                trades=trades,
+                highlights_for_carry_forward=extracted["highlights_for_carry_forward"],
+                market_bias=market_bias,
+                raw_market_notes=raw_report.raw_market_notes,
+                source_file=str(drc_file)
+            )
+
+    # Save to JSON
+    path = Path("data/daily_reports") / f"{target_date.isoformat()}.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(report.model_dump_json(indent=2), encoding="utf-8")
+    st.sidebar.success(f"Created daily report for {target_date}")
+    # Clear cache so it reloads
+    load_daily_reports.clear()
+
+
+def create_or_update_trade_file(trade: ExtractedTrade, target_date: date) -> Path:
+    """
+    Create or update a journalit trade YAML file for a given trade.
+    Creates YAML frontmatter in the journalit trade format.
+    """
+    from src.core.models import TradeDirection, TradeStatus
+
+    # Determine trade direction from ExtractedTrade.direction
+    direction = trade.direction.value if trade.direction else "long"
+
+    # Determine trade status
+    if trade.outcome == TradeStatus.CLOSED:
+        trade_status = "CLOSED"
+    elif trade.outcome in (TradeStatus.STOPPED, TradeStatus.STOPPED_OUT):
+        trade_status = "STOPPED"
+    else:
+        trade_status = "OPEN"
+
+    # Build entries
+    entries = [
+        {
+            "time": f"{target_date}T{trade.timestamp}:00",
+            "price": float(trade.price),
+            "size": int(trade.size) if trade.size else 1
+        }
+    ]
+
+    # Build exits
+    exits = []
+    if trade.exit_timestamp and trade.exit_price:
+        exits.append({
+            "time": f"{target_date}T{trade.exit_timestamp}:00",
+            "price": float(trade.exit_price),
+            "size": int(trade.size) if trade.size else 1
+        })
+
+    # YAML frontmatter content
+    import uuid
+    trade_id = f"trade_{uuid.uuid4().hex[:12]}"
+
+    yaml_content = f"""---
+lastSync: '{datetime.now().isoformat()}'
+type: trade
+tradeStatus: {trade_status}
+direction: {direction}
+pnl: 0.0
+rMultiple: 0.0
+entries:
+- time: '{target_date}T{trade.timestamp}:00'
+  price: {trade.price}
+  size: {trade.size if trade.size else 1}
+exits: {exits if exits else '[]'}
+commission: 0
+commissionType: fixed
+swap: 0
+fees: 0
+setupIds:
+- Long Setup - Intraday
+mistakeIds: []
+accountIds:
+- 'Goal: 75% WR, 2.0 PF'
+instrument: {trade.ticker}
+assetType: stock
+setup: Long Setup - Intraday
+mistake: []
+account:
+- 'Goal: 75% WR, 2.0 PF'
+images: []
+tags:
+- Day Trade
+- Market Condition - Bullish Trend Day
+thesis: '{trade.reason}'
+useDirectPnLInput: false
+directPnL: 0
+reviewed: false
+reviewedAt: null
+tradeId: {trade_id}
+schemaVersion: 1
+canonicalExecutionMigrationVersion: 2026-05-canonical-execution-v2
+---
+
+# Trade Notes
+
+<!-- Add your trade notes here -->
+
+## Trade Review
+
+### What worked?
+<!-- journalit-trade-review:question id="win-what-worked" -->
+
+### What didn't work?
+<!-- journalit-trade-review:question id="win-what-failed" -->
+
+### What will I do differently?
+<!-- journalit-trade-review:question id="win-next-time" -->
+
+---
+_End Trade Review_
+"""
+
+    # Load vault path from settings
+    import yaml
+    SETTINGS_FILE = Path("config/settings.yaml")
+    if SETTINGS_FILE.exists():
+        settings_local = yaml.safe_load(SETTINGS_FILE.read_text(encoding="utf-8"))
+    else:
+        settings_local = {}
+
+    vault_path = Path(settings_local.get("vault_path", "C:/Users/Thaddeus/OneDrive/Desktop/Vaulted/!Journalit"))
+
+    # Determine trade directory path
+    # Format: Vault/!Journalit/YYYY/QQ/MM/WNN/trades/TICKER-DDMMYY-T#.md
+    year = target_date.year
+    quarter = (target_date.month - 1) // 3 + 1
+    month = target_date.month
+    week = (target_date.day - 1) // 7 + 1
+
+    trades_dir = vault_path / str(year) / f"Q{quarter}" / f"{month:02d}" / f"W{week}" / "trades"
+    trades_dir.mkdir(parents=True, exist_ok=True)
+
+    # Find existing trade file for this ticker/date
+    date_str = target_date.strftime("%d%m%y")
+    existing_file = None
+    for f in trades_dir.glob(f"{trade.ticker}-{date_str}-T*.md"):
+        existing_file = f
+        break
+
+    if existing_file:
+        trade_file = existing_file
+    else:
+        # Find next trade number
+        existing = list(trades_dir.glob(f"{trade.ticker}-{date_str}-T*.md"))
+        trade_num = 1
+        if existing:
+            nums = []
+            for f in existing:
+                match = re.search(rf"{trade.ticker}-{date_str}-T(\d+)", f.name)
+                if match:
+                    nums.append(int(match.group(1)))
+            if nums:
+                trade_num = max(nums) + 1
+
+        trade_file = trades_dir / f"{trade.ticker}-{date_str}-T{trade_num}.md"
+
+    # Write the trade file
+    trade_file.write_text(yaml_content, encoding="utf-8")
+    return trade_file
+
+
 # ================================
 # Main Pages
 # ================================
@@ -1268,9 +1609,39 @@ def page_daily_report(selected_date: date, reports: list[DailyReport]):
         st.error(f"No report found for {selected_date}")
 
 
+def delete_daily_report(target_date: date):
+    """Delete a daily report JSON file."""
+    path = Path("data/daily_reports") / f"{target_date.isoformat()}.json"
+    pretty_path = Path("data/daily_reports") / f"{target_date.isoformat()}_report.md"
+    if path.exists():
+        path.unlink()
+    if pretty_path.exists():
+        pretty_path.unlink()
+    st.sidebar.success(f"Deleted daily report for {target_date}")
+    load_daily_reports.clear()
+
+
+def delete_pre_market(target_date: date):
+    """Delete pre-market notes JSON file."""
+    path = Path("data/pre_market") / f"{target_date.isoformat()}.json"
+    if path.exists():
+        path.unlink()
+    st.sidebar.success(f"Deleted pre-market for {target_date}")
+    load_pre_market.clear()
+
+
+def delete_weekly_review(target_week: str):
+    """Delete weekly review JSON file."""
+    path = Path("data/weekly_reviews") / f"{target_week}.json"
+    if path.exists():
+        path.unlink()
+    st.sidebar.success(f"Deleted weekly review {target_week}")
+    load_weekly_reviews.clear()
+
+
 def page_pre_market(selected_date: date):
     """Pre-market page - shows pre-market for selected date AND next trading day."""
-    st.header(f"🌅 Pre-Market for {selected_date}")
+    st.header(f"🌅 Pre-market Report — {selected_date}")
 
     # Load pre-market for this date
     pre = load_pre_market(selected_date)
@@ -1279,6 +1650,70 @@ def page_pre_market(selected_date: date):
     else:
         st.info(f"No pre-market notes generated for {selected_date}.")
         st.caption("Pre-market notes are generated from the PREVIOUS day's daily report during daily_sync.")
+
+        # Check if previous day's daily report exists
+        prior_date = selected_date - timedelta(days=1)
+        while prior_date.weekday() >= 5:  # Skip weekends
+            prior_date -= timedelta(days=1)
+
+        # Check if we have a daily report for the prior date
+        reports = load_daily_reports()
+        prior_report = next((r for r in reports if r.date == prior_date), None)
+
+        if prior_report:
+            if st.button("📊 Generate Pre-market Report", key="gen_premarket", type="primary", use_container_width=False):
+                generate_pre_market_from_daily(selected_date, prior_report)
+                st.rerun()
+        else:
+            st.warning(f"⚠️ No daily report found for previous trading day ({prior_date}). Cannot generate pre-market.")
+
+
+def generate_pre_market_from_daily(target_date: date, prior_report: DailyReport):
+    """Generate pre-market notes from previous day's daily report."""
+    from src.core.extractor import generate_pre_market_fallback
+    from src.data.fetchers.economic_earnings import fetch_pre_market_data, format_economic_for_pre_market, format_earnings_for_watchlist
+    from src.core.models import EconomicEvent, PreMarketNotes
+    import yaml
+
+    # Get economic events for target date
+    events = fetch_pre_market_data(target_date)
+    econ_formatted = format_economic_for_pre_market(events.get("economic_events", []))
+    earn_watchlist = format_earnings_for_watchlist(events.get("earnings", []))
+
+    # Generate pre-market using fallback
+    pre_market_data = generate_pre_market_fallback(prior_report, econ_formatted)
+
+    # Merge earnings into watchlist
+    watchlist = pre_market_data.get("watchlist_candidates", [])
+    for ew in earn_watchlist:
+        if ew not in str(watchlist):
+            watchlist.append(ew)
+    watchlist = watchlist[:15]
+
+    # Build PreMarketNotes
+    econ_events = [EconomicEvent(
+        date=target_date,
+        time=e["time"],
+        event=e["event"],
+        impact=e["impact"]
+    ) for e in econ_formatted]
+
+    pre_market = PreMarketNotes(
+        date=target_date,
+        carry_forward=pre_market_data.get("carry_forward", []),
+        economic_events=econ_events,
+        active_rules=pre_market_data.get("active_rules", []),
+        watchlist_candidates=watchlist,
+        earnings_data=events.get("earnings", [])
+    )
+
+    # Save
+    path = Path("data/pre_market") / f"{target_date.isoformat()}.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(pre_market.model_dump_json(indent=2), encoding="utf-8")
+
+    st.sidebar.success(f"Generated pre-market for {target_date}")
+    load_pre_market.clear()
 
 
 def page_weekly_review(selected_week: str, reviews: list[WeeklyReview]):
@@ -1311,24 +1746,7 @@ def page_settings():
     # Use raw HTML buttons instead of st.columns to have full control
     st.markdown("""
     <style>
-    /* Target Streamlit button structure - button has inner div/p/span */
-    .stButton > button {
-        width: 10rem !important;
-        min-width: 10rem !important;
-        max-width: 10rem !important;
-        padding: 0.25rem 0.5rem !important;
-        font-size: 0.6rem !important;
-        line-height: 1.2 !important;
-        white-space: nowrap !important;
-        text-align: center !important;
-        flex: 0 0 10rem !important;
-    }
-    .stButton > button > * {
-        white-space: nowrap !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-    }
-    /* Target columns containing quick action buttons */
+    /* Target columns containing quick action buttons ONLY */
     div[data-testid="column"]:has(.stButton > button[key="qa_reload"]),
     div[data-testid="column"]:has(.stButton > button[key="qa_daily"]),
     div[data-testid="column"]:has(.stButton > button[key="qa_weekly"]) {
@@ -1343,6 +1761,27 @@ def page_settings():
         width: 10rem !important;
         min-width: 10rem !important;
         max-width: 10rem !important;
+    }
+    /* Quick action buttons themselves */
+    .stButton > button[key="qa_reload"],
+    .stButton > button[key="qa_daily"],
+    .stButton > button[key="qa_weekly"] {
+        width: 10rem !important;
+        min-width: 10rem !important;
+        max-width: 10rem !important;
+        padding: 0.25rem 0.5rem !important;
+        font-size: 0.6rem !important;
+        line-height: 1.2 !important;
+        white-space: nowrap !important;
+        text-align: center !important;
+        flex: 0 0 10rem !important;
+    }
+    .stButton > button[key="qa_reload"] > *,
+    .stButton > button[key="qa_daily"] > *,
+    .stButton > button[key="qa_weekly"] > * {
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -1361,6 +1800,76 @@ def page_settings():
         if st.button("🔄 Reload Data", help="Clear all cached data and reload from JSON files", use_container_width=False, key="qa_reload"):
             st.cache_data.clear()
             st.success("Cache cleared!")
+
+    st.markdown("---")
+
+    st.subheader("🗑️ Delete Data")
+
+    # --- Daily Reports ---
+    st.markdown("**Daily Reports**")
+    reports = load_daily_reports()
+    if reports:
+        available_dates = sorted([r.date for r in reports])
+        c1, _ = st.columns([2, 5])
+        with c1:
+            date_to_delete = st.selectbox(
+                "Select daily report to delete",
+                available_dates,
+                format_func=lambda d: d.isoformat(),
+                key="delete_daily_date"
+            )
+            confirm_daily = st.checkbox(f"Confirm: delete {date_to_delete.isoformat()} daily report", key="confirm_delete_daily")
+            if st.button("🗑️ Delete Daily Report", type="secondary", key="delete_daily_btn", disabled=not confirm_daily):
+                delete_daily_report(date_to_delete)
+                st.rerun()
+    else:
+        st.caption("No daily reports to delete.")
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # --- Pre-Market Notes ---
+    st.markdown("**Pre-Market Notes**")
+    pre_files = sorted(PRE_DIR.glob("*.json"))
+    if pre_files:
+        pre_dates = sorted([date.fromisoformat(f.stem) for f in pre_files if f.stem.count("-") == 2])
+        if pre_dates:
+            c2, _ = st.columns([2, 5])
+            with c2:
+                pre_date_to_delete = st.selectbox(
+                    "Select pre-market to delete",
+                    pre_dates,
+                    format_func=lambda d: d.isoformat(),
+                    key="delete_pre_date"
+                )
+                confirm_pre = st.checkbox(f"Confirm: delete {pre_date_to_delete.isoformat()} pre-market", key="confirm_delete_pre")
+                if st.button("🗑️ Delete Pre-Market", type="secondary", key="delete_pre_btn", disabled=not confirm_pre):
+                    delete_pre_market(pre_date_to_delete)
+                    st.rerun()
+        else:
+            st.caption("No pre-market notes to delete.")
+    else:
+        st.caption("No pre-market notes to delete.")
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # --- Weekly Reviews ---
+    st.markdown("**Weekly Reviews**")
+    reviews = load_weekly_reviews()
+    if reviews:
+        week_labels = [r.week for r in reviews]
+        c3, _ = st.columns([2, 5])
+        with c3:
+            week_to_delete = st.selectbox(
+                "Select weekly review to delete",
+                week_labels,
+                key="delete_weekly_week"
+            )
+            confirm_weekly = st.checkbox(f"Confirm: delete {week_to_delete} weekly review", key="confirm_delete_weekly")
+            if st.button("🗑️ Delete Weekly Review", type="secondary", key="delete_weekly_btn", disabled=not confirm_weekly):
+                delete_weekly_review(week_to_delete)
+                st.rerun()
+    else:
+        st.caption("No weekly reviews to delete.")
 
     st.markdown("---")
 

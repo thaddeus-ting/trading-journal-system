@@ -23,16 +23,16 @@ from src.core.models import (
     MarketRegime, TradeStatus, PreMarketNotes, EconomicEvent
 )
 from src.core.extractor import LLMExtractor, extract_daily_report_fallback, generate_pre_market_fallback
+from src.core.journalit_trades import generate_journalit_trades_from_report
 from src.data.fetchers.economic_earnings import (
     fetch_pre_market_data, format_economic_for_pre_market, format_earnings_for_watchlist
 )
-# from src.core.extractor import LLMExtractor  # We'll implement simple fallback for now
 
 # Read settings
 import yaml
 SETTINGS_FILE = Path("config/settings.yaml")
 if SETTINGS_FILE.exists():
-    settings = yaml.safe_load(SETTINGS_FILE.read_text())
+    settings = yaml.safe_load(SETTINGS_FILE.read_text(encoding="utf-8"))
 else:
     settings = {}
 
@@ -85,7 +85,7 @@ def load_pre_market(target_date: date) -> Optional[PreMarketNotes]:
     path = PRE_MARKET_DIR / f"{target_date.isoformat()}.json"
     if not path.exists():
         return None
-    data = json.loads(path.read_text())
+    data = json.loads(path.read_text(encoding="utf-8"))
     return PreMarketNotes.model_validate(data)
 
 
@@ -285,6 +285,8 @@ def run(
     report_path = save_daily_report(daily_report)
     console.print(f"[green]Saved Daily Report:[/green] {report_path}")
 
+    # Note: Trade file generation is now manual via Streamlit Trades tab buttons
+
     # Generate pre-market for NEXT trading day
     next_date = target_date + timedelta(days=1)
     while next_date.weekday() >= 5:  # Skip weekends
@@ -381,7 +383,7 @@ def list():
     table.add_column("Highlights")
 
     for r in reports:
-        data = json.loads(r.read_text())
+        data = json.loads(r.read_text(encoding="utf-8"))
         table.add_row(
             data["date"],
             str(len(data.get("organized_notes", []))),
