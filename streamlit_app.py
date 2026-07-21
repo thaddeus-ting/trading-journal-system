@@ -1400,8 +1400,14 @@ def render_sidebar():
     if page == "Pre-Market":
         # Use pre-market dates for Pre-Market page
         available_dates = pre_market_dates if pre_market_dates else daily_dates
-        # Use session state date if available, otherwise default to latest
-        default_date = st.session_state.pre_market_date if st.session_state.pre_market_date in available_dates else available_dates[-1]
+        # Use session state date if available; if first visit, try to sync from daily_report_date, else default to latest
+        if st.session_state.pre_market_date in available_dates:
+            default_date = st.session_state.pre_market_date
+        elif st.session_state.daily_report_date in available_dates:
+            default_date = st.session_state.daily_report_date
+            st.session_state.pre_market_date = st.session_state.daily_report_date  # Sync for future visits
+        else:
+            default_date = available_dates[-1]
     else:
         # Use daily report dates for Daily Report page
         available_dates = daily_dates
@@ -1420,11 +1426,10 @@ def render_sidebar():
             max_value=max_date
         )
 
-        # Store selected date in session state for this page type
-        if page == "Pre-Market":
-            st.session_state.pre_market_date = selected_date
-        else:
-            st.session_state.daily_report_date = selected_date
+        # Store selected date in session state for BOTH page types to keep tabs in sync
+        # This ensures switching tabs preserves the selected date
+        st.session_state.daily_report_date = selected_date
+        st.session_state.pre_market_date = selected_date
 
         # Check if selected date has a report
         if page == "Pre-Market":
