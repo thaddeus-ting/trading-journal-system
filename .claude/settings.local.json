@@ -24,7 +24,14 @@
       "Bash(curl -s http://localhost:8503/_stcore/health)",
       "Bash(timeout 15 python -m streamlit run streamlit_app.py --server.headless true --server.port 8503)",
       "Bash(curl -s \"http://localhost:8503/_stcore/health\")",
-      "Bash(git commit -m 'fix: pre-market page shows correct dates in sidebar *)"
+      "Bash(git commit -m 'fix: pre-market page shows correct dates in sidebar *)",
+      "Bash(python -m streamlit run streamlit_app.py --server.headless true --server.port 8504)",
+      "Bash(curl -s http://localhost:8504/_stcore/health)",
+      "Bash(git commit -m 'fix: date range for pre-market date selector *)",
+      "Bash(python -m streamlit run streamlit_app.py --server.headless true --server.port 8505)",
+      "Bash(curl -s http://localhost:8505/_stcore/health)",
+      "Bash(timeout 15 python -m streamlit run streamlit_app.py --server.headless true --server.port 8504)",
+      "Bash(git commit -m 'fix: sidebar logic for Pre-Market page *)"
     ]
   }
 }
