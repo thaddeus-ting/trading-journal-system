@@ -1730,11 +1730,15 @@ def page_pre_market(selected_date: date):
                 generate_pre_market_from_daily(selected_date, prior_report)
                 st.rerun()
         else:
-            st.warning(f"⚠️ No daily report found for previous trading day ({prior_date}). Cannot generate pre-market.")
+            st.warning(f"⚠️ No daily report found for previous trading day ({prior_date}).")
+            st.caption("You can still generate a pre-market report with just economic events/earnings.")
+            if st.button("📊 Generate Pre-market (Economic Events Only)", key="gen_premarket_no_prior", type="secondary", use_container_width=False):
+                generate_pre_market_from_daily(selected_date, None)
+                st.rerun()
 
 
-def generate_pre_market_from_daily(target_date: date, prior_report: DailyReport):
-    """Generate pre-market notes from previous day's daily report."""
+def generate_pre_market_from_daily(target_date: date, prior_report: DailyReport = None):
+    """Generate pre-market notes from previous day's daily report (optional)."""
     from src.core.extractor import generate_pre_market_fallback
     from src.data.fetchers.economic_earnings import fetch_pre_market_data, format_economic_for_pre_market, format_earnings_for_watchlist
     from src.core.models import EconomicEvent, PreMarketNotes
@@ -1747,6 +1751,14 @@ def generate_pre_market_from_daily(target_date: date, prior_report: DailyReport)
 
     # Generate pre-market using fallback
     pre_market_data = generate_pre_market_fallback(prior_report, econ_formatted)
+
+    # If no prior daily report, add a note
+    if prior_report is None:
+        prior_date = target_date - timedelta(days=1)
+        while prior_date.weekday() >= 5:
+            prior_date -= timedelta(days=1)
+        no_prior_note = f"No prior daily journal for {prior_date.isoformat()} — showing economic events only"
+        pre_market_data["carry_forward"].insert(0, no_prior_note)
 
     # Merge earnings into watchlist
     watchlist = pre_market_data.get("watchlist_candidates", [])
