@@ -322,13 +322,13 @@ def generate_pre_market_fallback(daily_report: Optional[DailyReport], economic_e
         if ":" in h and not h.startswith(("Rule:", "Bias:", "Improve:", "Strength:", "Focus:")):
             watchlist.append(h.split(":")[0].strip())
 
-    # Add SPY key levels from market bias
-    if daily_report.market_bias and daily_report.market_bias.key_levels:
+    # Add SPY key levels from market bias (only if daily_report exists)
+    if daily_report and daily_report.market_bias and daily_report.market_bias.key_levels:
         levels_str = " | ".join(daily_report.market_bias.key_levels)
         watchlist.append(f"SPY key levels: {levels_str}")
 
     return {
-        "date": str(daily_report.date),
+        "date": str(daily_report.date) if daily_report else "",
         "carry_forward": carry_forward,
         "economic_events": economic_events,
         "active_rules": active_rules,
