@@ -384,8 +384,9 @@ def render_ai_summary(report: DailyReport):
     # Check disk cache first (persists across restarts)
     cached = get_cached_summary(report)
     if cached:
-        st.subheader("🤖 AI-Generated Summary (cached)")
+        st.subheader("🤖 AI-Generated Summary")
         st.write(cached)
+        st.caption("💾 Cached")
         return
 
     # API key present - generate AI summary
@@ -421,9 +422,9 @@ TODAY'S NOTES:
 CRITICAL: ONLY use notes that have tags in [tags: ...]. Ignore ALL untagged notes completely.
 Priority tags (highest to lowest): #flag > #gold > #ptrade > #mistake > #impt > #qn > #setup > #emotion > #watch > #task > #todo > #review > #note > #idea > #sector > #bad > #good
 
-Write a summary (max 6 sentences) covering:
-- The 2-3 most important observations from today (using ONLY tagged notes)
-- One concise, specific action for tomorrow as a direct command
+Write a summary as BULLET POINTS covering:
+• The 2-3 most important observations from today (using ONLY tagged notes)
+• One concise, specific action for tomorrow as a direct command
 
 Rules:
 - ONLY use facts from TAGGED notes above — completely ignore untagged content
@@ -431,9 +432,10 @@ Rules:
 - If no tagged notes exist, output: "No tagged notes to review."
 - Be specific: cite tickers, times, or exact behaviors from tagged notes
 - Tag prioritization: #flag > #gold > #ptrade > #mistake > #impt > #qn > others
-- Do NOT use headers, bullet points, or ANY markdown formatting (no bold, italics, code blocks, backticks)
-- Output plain text only
-- Action must be ONE short imperative sentence (e.g., "Set max 1R risk on NVDA trades" or "Stop chasing entries after 10am") """
+- Output as plain text bullet points only (no headers, no markdown, no bold/italic)
+- Each bullet = one observation or action
+- Action bullet must start with "Action: " followed by ONE short imperative sentence
+  (e.g., "Action: Set max 1R risk on NVDA trades" or "Action: Stop chasing entries after 10am") """
 
     try:
         if extractor.provider == "groq":
