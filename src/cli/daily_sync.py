@@ -515,11 +515,6 @@ def generate_pre_market(
     # Generate base pre-market data
     pre_market_data = generate_pre_market_fallback(daily_report, econ_events)
 
-    # If no prior daily report, add a note
-    if daily_report is None:
-        no_prior_note = f"No prior daily journal for {prev_date.isoformat()} — showing economic events only"
-        pre_market_data["carry_forward"].insert(0, no_prior_note)
-
     watchlist = pre_market_data["watchlist_candidates"]
     for ew in earnings_watchlist:
         if ew not in str(watchlist):

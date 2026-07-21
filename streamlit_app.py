@@ -1893,13 +1893,8 @@ def generate_pre_market_from_daily(target_date: date, prior_report: DailyReport 
     # Generate pre-market using fallback
     pre_market_data = generate_pre_market_fallback(prior_report, econ_formatted)
 
-    # If no prior daily report, add a note
-    if prior_report is None:
-        prior_date = target_date - timedelta(days=1)
-        while prior_date.weekday() >= 5:
-            prior_date -= timedelta(days=1)
-        no_prior_note = f"No prior daily journal for {prior_date.isoformat()} — showing economic events only"
-        pre_market_data["carry_forward"].insert(0, no_prior_note)
+    # If no prior daily report, don't add any note - just show economic events
+    pass
 
     # Merge earnings into watchlist
     watchlist = pre_market_data.get("watchlist_candidates", [])
