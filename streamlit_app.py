@@ -59,7 +59,7 @@ import hashlib
 CACHE_DIR = DATA_DIR / "cache" / "summaries"
 CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
-PROMPT_VERSION = "v3"  # Increment when you edit the LLM prompt in generate_llm_summary()
+PROMPT_VERSION = "v4"  # Increment when you edit the LLM prompt in generate_llm_summary()
 
 def _semantic_key(report: DailyReport) -> str:
     """Generate a deterministic cache key from TAGGED notes + market bias + prompt version.
@@ -409,33 +409,45 @@ def render_ai_summary(report: DailyReport):
 
 def generate_llm_summary(extractor: LLMExtractor, notes_text: str, bias_text: str, pre_market_context: str = "") -> str:
     """Call LLM to generate structured session summary."""
-    prompt = f"""You are a trading performance coach. Write a concise summary of THIS trading session.
+    prompt = f"""You are a trading performance coach. Write a concise, synthesized summary of THIS trading session.
 
 {bias_text}
 
 PREVIOUS DAY PRE-MARKET CONTEXT (reference only):
 {pre_market_context if pre_market_context else "None provided"}
 
-TODAY'S NOTES:
-{notes_text if notes_text else "No notes"}
+TODAY'S TAGGED NOTES:
+{notes_text if notes_text else "No tagged notes"}
 
 CRITICAL: ONLY use notes that have tags in [tags: ...]. Ignore ALL untagged notes completely.
 Priority tags (highest to lowest): #flag > #gold > #ptrade > #mistake > #impt > #qn > #setup > #emotion > #watch > #task > #todo > #review > #note > #idea > #sector > #bad > #good
 
 Write a summary as BULLET POINTS covering:
-• The 2-3 most important observations from today (using ONLY tagged notes)
-• One concise, specific action for tomorrow as a direct command
+• 2-3 synthesized observations grouping related tagged notes by theme
+• ONE specific, actionable command for tomorrow
 
 Rules:
-- ONLY use facts from TAGGED notes above — completely ignore untagged content
-- NO inferences, NO assumptions, NO generic advice
+- SYNTHESIZE: Combine related notes into themes. Don't just copy each note verbatim.
+- If multiple notes mention the same ticker/theme (e.g., PANW, sector rotation), merge them into ONE bullet citing the key insight.
+- Cite tickers, times, or exact behaviors from the notes as evidence.
+- Be specific and actionable — avoid generic statements like "review trades" or "manage risk."
 - If no tagged notes exist, output: "No tagged notes to review."
-- Be specific: cite tickers, times, or exact behaviors from tagged notes
-- Tag prioritization: #flag > #gold > #ptrade > #mistake > #impt > #qn > others
 - Output as plain text bullet points only (no headers, no markdown, no bold/italic)
 - Each bullet = one observation or action
-- Action bullet must start with "Action: " followed by ONE short imperative sentence
-  (e.g., "Action: Set max 1R risk on NVDA trades" or "Action: Stop chasing entries after 10am") """
+- Action bullet MUST start with "Action: " followed by ONE short imperative sentence
+
+EXAMPLE — Good output:
+• Sector rotation: Big-money flows shifted from cybersecurity (PANW lagging RDDT/AAPL) to new themes every 4-5 days (#flag #impt at 10:05, #flag #qn at 11:11)
+• FOMO entries on LPTE days without pullback confirmation led to quick stops (#flag at 11:40)
+
+Action: Wait for M5 pullback close before entering longs on range-bound days
+
+EXAMPLE — Bad output (what to avoid):
+• 10:05 observation: Big-money flows shift every 4-5 days... #flag #impt
+• 11:11 observation: PANW is underperforming relative to RDDT and AAPL... #flag #qn
+• Action: Review PANW's recent price and news data versus RDDT and AAPL before taking any related trades tomorrow.
+
+"""
 
     try:
         if extractor.provider == "groq":
