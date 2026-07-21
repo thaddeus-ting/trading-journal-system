@@ -1384,107 +1384,82 @@ def render_sidebar():
         ["Daily Report", "Pre-Market", "Weekly Review", "Settings"]
     )
 
-    # Initialize session state for separate dates per page
-    if "daily_report_date" not in st.session_state:
-        st.session_state.daily_report_date = None
-    if "pre_market_date" not in st.session_state:
-        st.session_state.pre_market_date = None
+    # Initialize SINGLE canonical date in session state
+    if "selected_date" not in st.session_state:
+        st.session_state.selected_date = None
 
-    # Load reviews early for sync logic
-    reviews = load_weekly_reviews()
-
-    # Date selector - use daily report dates for Daily Report page, pre-market dates for Pre-Market page
+    # Load all data needed for selectors
     reports = load_daily_reports()
     daily_dates = sorted([r.date for r in reports])
 
     pre_markets = load_pre_market_list()
     pre_market_dates = sorted([p.date for p in pre_markets])
 
-    if page == "Pre-Market":
-        # Use pre-market dates for Pre-Market page
-        available_dates = pre_market_dates if pre_market_dates else daily_dates
-        # Use session state date if available; if first visit, try to sync from daily_report_date, else default to latest
-        if st.session_state.pre_market_date in available_dates:
-            default_date = st.session_state.pre_market_date
-        elif st.session_state.daily_report_date in available_dates:
-            default_date = st.session_state.daily_report_date
-            st.session_state.pre_market_date = st.session_state.daily_report_date  # Sync for future visits
-        else:
-            default_date = available_dates[-1]
-    else:
-        # Use daily report dates for Daily Report page
-        available_dates = daily_dates
-        # Use session state date if available, otherwise default to latest
-        default_date = st.session_state.daily_report_date if st.session_state.daily_report_date in available_dates else available_dates[-1]
+    reviews = load_weekly_reviews()
 
-    if available_dates:
-        # Use a reasonable date range: min from available dates, max as today or latest available (whichever is greater)
-        min_date = min(available_dates)
-        max_date = max(date.today(), max(available_dates))
+    # Build unified available dates: union of all dates that have ANY report
+    all_available_dates = sorted(set(daily_dates) | set(pre_market_dates))
 
+    if all_available_dates:
+        # Determine min/max for date picker
+        min_date = min(all_available_dates)
+        max_date = max(date.today(), max(all_available_dates))
+
+        # Initialize canonical date from session state or default to latest available
+        if st.session_state.selected_date not in all_available_dates:
+            st.session_state.selected_date = all_available_dates[-1]
+
+        # Render date picker - THIS IS THE SINGLE SOURCE OF TRUTH
+        # Use key to make it stable across page changes
         selected_date = st.sidebar.date_input(
             "Select Date",
-            value=default_date,
+            value=st.session_state.selected_date,
             min_value=min_date,
-            max_value=max_date
+            max_value=max_date,
+            key="global_date_selector"
         )
 
-        # Store selected date in session state for BOTH page types to keep tabs in sync
-        # This ensures switching tabs preserves the selected date
-        st.session_state.daily_report_date = selected_date
-        st.session_state.pre_market_date = selected_date
+        # Update canonical date immediately on change
+        if selected_date != st.session_state.selected_date:
+            st.session_state.selected_date = selected_date
 
-        # Sync date → week for Weekly Review tab (when not on Weekly Review page)
-        if page != "Weekly Review" and reviews:
-            week_num = selected_date.isocalendar()[1]
-            week_label = f"W{week_num:02d}"
-            if week_label in [r.week for r in reviews]:
-                # Store the synced week in session state so Weekly Review tab picks it up
-                st.session_state["synced_week_from_date"] = week_label
-
-        # Check if selected date has a report
+        # For current page, check if selected date has the relevant report
         if page == "Pre-Market":
-            has_report = selected_date in pre_market_dates
+            has_report = st.session_state.selected_date in pre_market_dates
+        elif page == "Daily Report":
+            has_report = st.session_state.selected_date in daily_dates
         else:
-            has_report = selected_date in daily_dates
+            has_report = True  # Weekly Review doesn't need daily report
 
-        if not has_report and selected_date <= date.today():
-            # Past date without report - offer to create/generate
+        # Show generation prompts for past dates without report
+        if not has_report and st.session_state.selected_date <= date.today():
             if page == "Pre-Market":
                 # Find prior trading day
-                prior_date = selected_date - timedelta(days=1)
+                prior_date = st.session_state.selected_date - timedelta(days=1)
                 while prior_date.weekday() >= 5:
                     prior_date -= timedelta(days=1)
 
-                # Check if prior daily report exists
                 prior_report = next((r for r in reports if r.date == prior_date), None)
 
                 if not prior_report:
-                    # No prior daily - offer to create daily report first
                     st.sidebar.warning(f"No daily report for prior trading day ({prior_date}).")
                     if st.sidebar.button("📝 Create Daily Report", key="create_daily_for_premarket", use_container_width=True):
                         create_daily_report(prior_date)
                         st.rerun()
                     st.sidebar.caption("Create prior daily report first, then generate pre-market from the page.")
                 else:
-                    # Prior daily exists - pre-market can be generated from the page
-                    st.sidebar.info(f"Pre-market for {selected_date} not generated yet.")
+                    st.sidebar.info(f"Pre-market for {st.session_state.selected_date} not generated yet.")
                     st.sidebar.caption("Use 'Generate Pre-market' button on the page.")
-            else:
-                # Daily Report page
-                st.sidebar.warning(f"No report for {selected_date}.")
+            elif page == "Daily Report":
+                st.sidebar.warning(f"No report for {st.session_state.selected_date}.")
                 if st.sidebar.button("📝 Create Daily Report", key="create_daily_report", use_container_width=True):
-                    create_daily_report(selected_date)
+                    create_daily_report(st.session_state.selected_date)
                     st.rerun()
-        elif not has_report and selected_date > date.today():
-            # Future date - already unclickable due to max_value, but handle edge case
-            st.sidebar.info("Future dates cannot be selected.")
-            selected_date = available_dates[-1]
     else:
-        selected_date = date.today()
+        st.session_state.selected_date = date.today()
         st.sidebar.warning("No data found. Run historical ingestion first.")
 
-    # Week selector for weekly review (show in sidebar)
+    # Week selector for Weekly Review - SYNCED FROM canonical date
     if reviews:
         week_labels = [r.week for r in reviews]
         # Reverse chronological (newest first)
@@ -1505,50 +1480,46 @@ def render_sidebar():
             week_num = d.isocalendar()[1]
             return f"W{week_num:02d}"
 
-        # Sync logic: when on Weekly Review, sync week → dates; when on Daily/Pre-Market, sync date → week
+        # Sync logic: canonical date drives week selector on Weekly Review
         if page == "Weekly Review":
-            # On Weekly Review: use week selector as source of truth, but check for synced week first
-            synced_week = st.session_state.get("synced_week_from_date")
-            if synced_week in week_labels:
-                week_idx = week_labels.index(synced_week)
-                # Clear the synced week so it doesn't persist incorrectly
-                st.session_state.pop("synced_week_from_date", None)
+            # Compute week from canonical date
+            canonical_week = date_to_week(st.session_state.selected_date)
+            if canonical_week in week_labels:
+                week_idx = week_labels.index(canonical_week)
             else:
                 week_idx = 0  # default to latest
+
             selected_week = st.sidebar.selectbox(
                 "Select Week",
                 week_labels_desc,
                 index=week_idx,
                 key="week_selector_sidebar"
             )
-            # Sync week to both date states (use Friday of that week as representative)
-            sync_date = week_to_date(selected_week)
-            if sync_date:
-                st.session_state.daily_report_date = sync_date
-                st.session_state.pre_market_date = sync_date
+
+            # If user changes week, update canonical date (Friday of that week)
+            if selected_week != canonical_week:
+                sync_date = week_to_date(selected_week)
+                if sync_date:
+                    st.session_state.selected_date = sync_date
+                    st.rerun()
         else:
-            selected_week = week_labels_desc[0]  # default to latest for return value
-            # On Daily/Pre-Market tab, also show week selector for convenience but dates drive it
-            if st.sidebar.checkbox("Show week selector", value=False, key="show_week_selector"):
-                # Select week that corresponds to current date state
-                current_date = st.session_state.daily_report_date or date.today()
-                current_week = date_to_week(current_date)
-                if current_week in week_labels:
-                    week_idx = week_labels.index(current_week)
-                else:
-                    week_idx = 0
-                st.sidebar.selectbox(
-                    "Week (synced from date)",
-                    week_labels_desc,
-                    index=week_idx,
-                    disabled=True,
-                    key="week_synced_display"
-                )
+            # On Daily/Pre-Market tabs, show week as read-only reference
+            canonical_week = date_to_week(st.session_state.selected_date)
+            if canonical_week in week_labels:
+                st.sidebar.caption(f"📅 Week: {canonical_week}")
+            else:
+                st.sidebar.caption(f"📅 Week: {week_labels_desc[0]} (latest)")
+
+        selected_week = date_to_week(st.session_state.selected_date) or week_labels_desc[0]
     else:
         selected_week = None
         st.sidebar.caption("No weekly reviews found. Run weekly synthesis first.")
 
-    return page, selected_date, selected_week, reports, reviews
+    # Keep backward compatibility for any code using these session state keys
+    st.session_state.daily_report_date = st.session_state.selected_date
+    st.session_state.pre_market_date = st.session_state.selected_date
+
+    return page, st.session_state.selected_date, selected_week, reports, reviews
 
 
 def load_pre_market_list() -> list:
