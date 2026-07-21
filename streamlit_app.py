@@ -51,6 +51,49 @@ DAILY_DIR = DATA_DIR / data_locations.get("daily_reports_dir", "daily_reports")
 PRE_DIR = DATA_DIR / data_locations.get("pre_market_dir", "pre_market")
 WEEKLY_DIR = DATA_DIR / data_locations.get("weekly_reviews_dir", "weekly_reviews")
 
+# ================================
+# AI Summary Disk Cache
+# ================================
+import hashlib
+
+CACHE_DIR = DATA_DIR / "cache" / "summaries"
+CACHE_DIR.mkdir(parents=True, exist_ok=True)
+
+PROMPT_VERSION = "v3"  # Increment when you edit the LLM prompt in generate_llm_summary()
+
+def _semantic_key(report: DailyReport) -> str:
+    """Generate a deterministic cache key from TAGGED notes + market bias + prompt version.
+    Changes to untagged notes do NOT invalidate the cache."""
+    tagged = []
+    for n in sorted(report.organized_notes, key=lambda x: x.timestamp):
+        tags = getattr(n, 'tags', None) or []
+        if tags:
+            tagged.append((n.timestamp, n.category.value, n.text, tuple(sorted(tags))))
+    bias = report.market_bias
+    bias_data = (bias.direction.value, bias.confidence.value, bias.regime.value, tuple(bias.key_levels)) if bias else None
+    data = json.dumps((PROMPT_VERSION, tagged, bias_data), sort_keys=True).encode()
+    return hashlib.md5(data).hexdigest()
+
+def get_cached_summary(report: DailyReport) -> str | None:
+    """Return cached summary if exists, else None."""
+    key = _semantic_key(report)
+    cache_file = CACHE_DIR / f"{key}.txt"
+    if cache_file.exists():
+        try:
+            return cache_file.read_text(encoding="utf-8")
+        except Exception:
+            return None
+    return None
+
+def save_summary_cache(report: DailyReport, summary: str):
+    """Save summary to disk cache."""
+    key = _semantic_key(report)
+    cache_file = CACHE_DIR / f"{key}.txt"
+    try:
+        cache_file.write_text(summary, encoding="utf-8")
+    except Exception:
+        pass  # Cache write failures are non-fatal
+
 # Tag color constants (module-level to avoid duplication)
 TAG_COLORS = {
     "watch": "#1f77b4", "flag": "#d62728", "qn": "#ff7f0e",
@@ -277,7 +320,7 @@ def render_tags_tab(report: DailyReport):
 # ================================
 
 def render_ai_summary(report: DailyReport):
-    """Generate AI summary using LLM (Groq/Ollama/Google) - force AI when key available."""
+    """Generate AI summary using LLM (Groq/Ollama/Google) - force AI when key available. Uses cache to avoid repeated calls."""
     if not report.organized_notes and not report.trades:
         st.caption("No data to summarize")
         return
@@ -338,13 +381,21 @@ def render_ai_summary(report: DailyReport):
         render_rule_based_summary(report, notes_text, bias_text)
         return
 
-    # API key present - force AI generation
+    # Check disk cache first (persists across restarts)
+    cached = get_cached_summary(report)
+    if cached:
+        st.subheader("🤖 AI-Generated Summary (cached)")
+        st.write(cached)
+        return
+
+    # API key present - generate AI summary
     with st.spinner("Generating AI summary..."):
         try:
             extractor = LLMExtractor(settings)
             summary = generate_llm_summary(extractor, notes_text, bias_text, pre_market_context)
 
             if summary:
+                save_summary_cache(report, summary)
                 st.subheader("🤖 AI-Generated Summary")
                 st.write(summary)
             else:
