@@ -1939,8 +1939,10 @@ def page_settings():
         # CSS for smaller delete button on rules - square with centered X
         st.markdown("""
         <style>
-        /* Make rule delete buttons square with centered content */
-        .stButton > button[key^="del_rule_"] {
+        /* Make rule delete buttons square with centered content - higher specificity */
+        div[data-testid="stButton"] > button[key^="del_rule_"],
+        div[data-testid="stButton"] > button[key^="confirm_yes_"],
+        div[data-testid="stButton"] > button[key^="confirm_no_"] {
             padding: 0 !important;
             font-size: 0.7rem !important;
             min-width: 1.6rem !important;
@@ -1953,7 +1955,10 @@ def page_settings():
             align-items: center !important;
             justify-content: center !important;
         }
-        .stButton > button[key^="confirm_yes_"], .stButton > button[key^="confirm_no_"] {
+        /* Also target by key attribute directly */
+        button[key^="del_rule_"],
+        button[key^="confirm_yes_"],
+        button[key^="confirm_no_"] {
             padding: 0 !important;
             font-size: 0.7rem !important;
             min-width: 1.6rem !important;
@@ -1972,10 +1977,10 @@ def page_settings():
         for i, rule in enumerate(active_rules):
             if reorder_mode:
                 # With reorder: rule text | move up | move down | spacer | delete (far right - tiny column)
-                cols = st.columns([0.72, 0.08, 0.08, 0.07, 0.05])
+                cols = st.columns([0.7, 0.08, 0.08, 0.08, 0.06])
             else:
                 # Minimal: rule text | spacer | delete (far right - tiny column)
-                cols = st.columns([0.85, 0.1, 0.05])
+                cols = st.columns([0.83, 0.1, 0.07])
 
             with cols[0]:
                 st.markdown(f"• {rule}")
