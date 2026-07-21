@@ -10,14 +10,15 @@
       "organized_notes": [
         {
           "timestamp": "1:30",
-          "text": " long UNH @ 426.31, 1 share - very steady price action, nice PBO",
+          "text": " long UNH @ 426.31, 1 share - very steady price action, nice PBO [TRADE: long UNH @ 426.31 x1]",
           "tickers": [
             "PBO",
             "UNH"
           ],
           "category": "entry",
           "key_levels_mentioned": [],
-          "tags": []
+          "tags": [],
+          "flag_context": 0
         },
         {
           "timestamp": "8:30",
@@ -27,7 +28,8 @@
           ],
           "category": "decision",
           "key_levels_mentioned": [],
-          "tags": []
+          "tags": [],
+          "flag_context": 0
         },
         {
           "timestamp": "9:43",
@@ -37,7 +39,8 @@
           ],
           "category": "observation",
           "key_levels_mentioned": [],
-          "tags": []
+          "tags": [],
+          "flag_context": 0
         },
         {
           "timestamp": "9:49",
@@ -47,7 +50,8 @@
           "key_levels_mentioned": [],
           "tags": [
             "flag"
-          ]
+          ],
+          "flag_context": 0
         },
         {
           "timestamp": "9:59",
@@ -61,7 +65,8 @@
           "key_levels_mentioned": [],
           "tags": [
             "watch"
-          ]
+          ],
+          "flag_context": 0
         },
         {
           "timestamp": "10:02",
@@ -71,11 +76,12 @@
           ],
           "category": "decision",
           "key_levels_mentioned": [],
-          "tags": []
+          "tags": [],
+          "flag_context": 0
         },
         {
           "timestamp": "10:05",
-          "text": " long NU @ 13.53, 30 shares - M5 bull flag with brief M5 compression - stop right below VWAP",
+          "text": " long NU @ 13.53, 30 shares - M5 bull flag with brief M5 compression - stop right below VWAP [TRADE: long NU @ 13.53 x30]",
           "tickers": [
             "NU"
           ],
@@ -85,11 +91,12 @@
             "VWAP+",
             "VWAP-"
           ],
-          "tags": []
+          "tags": [],
+          "flag_context": 0
         },
         {
           "timestamp": "10:12",
-          "text": " long TSLA @ 427.24, 1 share - nice strength yesterday and breakout above PDH and HOD on volume - potential H- above but ill watch what happens at that level before exiting",
+          "text": " long TSLA @ 427.24, 1 share - nice strength yesterday and breakout above PDH and HOD on volume - potential H- above but ill watch what happens at that level before exiting [TRADE: long TSLA @ 427.24 x1]",
           "tickers": [
             "TSLA"
           ],
@@ -97,17 +104,19 @@
           "key_levels_mentioned": [
             "PDH"
           ],
-          "tags": []
+          "tags": [],
+          "flag_context": 0
         },
         {
           "timestamp": "10:19",
-          "text": " exit NU long @ 13.67, missed out some profits for getting greedy and hoping for more strength and ended up exiting for a pullback - exiting as this rally is really steep and reached measured move - this second leg also does not have high volume candles",
+          "text": " exit NU long @ 13.67, missed out some profits for getting greedy and hoping for more strength and ended up exiting for a pullback - exiting as this rally is really steep and reached measured move - this second leg also does not have high volume candles [TRADE: exit NU @ 13.67 x0]",
           "tickers": [
             "NU"
           ],
           "category": "exit",
           "key_levels_mentioned": [],
-          "tags": []
+          "tags": [],
+          "flag_context": 0
         },
         {
           "timestamp": "10:23",
@@ -118,38 +127,41 @@
           ],
           "category": "observation",
           "key_levels_mentioned": [],
-          "tags": []
+          "tags": [],
+          "flag_context": 0
         },
         {
           "timestamp": "10:28",
-          "text": " long PANW @ 353.54, 1 share - nice break to new HOD with retest, SPY very nice and tight price action - if we do get a red candle i'm expecting it to instantly reverse",
+          "text": " long PANW @ 353.54, 1 share - nice break to new HOD with retest, SPY very nice and tight price action - if we do get a red candle i'm expecting it to instantly reverse [TRADE: long PANW @ 353.54 x1]",
           "tickers": [
             "PANW"
           ],
           "category": "entry",
           "key_levels_mentioned": [],
-          "tags": []
+          "tags": [],
+          "flag_context": 0
         },
         {
           "timestamp": "10:47",
           "text": " add PANW long @ 354.51, 1 share nice RS as SPY is testing the bid",
           "tickers": [
-            "PANW",
-            "RS"
+            "PANW"
           ],
           "category": "observation",
           "key_levels_mentioned": [],
-          "tags": []
+          "tags": [],
+          "flag_context": 0
         },
         {
           "timestamp": "11:07",
-          "text": " exit TSLA long @ 429.13, exit into strength at CH+ ceiling - TSLA is really choppy with sharp pullbacks",
+          "text": " exit TSLA long @ 429.13, exit into strength at CH+ ceiling - TSLA is really choppy with sharp pullbacks [TRADE: exit TSLA @ 429.13 x0]",
           "tickers": [
             "TSLA"
           ],
           "category": "exit",
           "key_levels_mentioned": [],
-          "tags": []
+          "tags": [],
+          "flag_context": 0
         },
         {
           "timestamp": "11:24",
@@ -161,17 +173,19 @@
           "key_levels_mentioned": [],
           "tags": [
             "qn"
-          ]
+          ],
+          "flag_context": 0
         },
         {
           "timestamp": "11:31",
-          "text": " partial exit PANW long @ 356.21, 1 sahrere, holding the other half in case of continuation - market is really strong today",
+          "text": " partial exit PANW long @ 356.21, 1 sahrere, holding the other half in case of continuation - market is really strong today [TRADE: exit PANW @ 356.21 x0]",
           "tickers": [
             "PANW"
           ],
           "category": "exit",
           "key_levels_mentioned": [],
-          "tags": []
+          "tags": [],
+          "flag_context": 0
         },
         {
           "timestamp": "11:36",
@@ -184,17 +198,19 @@
           "tags": [
             "flag",
             "impt"
-          ]
+          ],
+          "flag_context": 0
         },
         {
           "timestamp": "11:48",
-          "text": " exit PANW long @ 357.97, 1 share",
+          "text": " exit PANW long @ 357.97, 1 share [TRADE: exit PANW @ 357.97 x0]",
           "tickers": [
             "PANW"
           ],
           "category": "exit",
           "key_levels_mentioned": [],
-          "tags": []
+          "tags": [],
+          "flag_context": 0
         },
         {
           "timestamp": "11:49",
@@ -206,7 +222,8 @@
           "key_levels_mentioned": [],
           "tags": [
             "flag"
-          ]
+          ],
+          "flag_context": 0
         }
       ],
       "trades": [
@@ -216,11 +233,12 @@
           "ticker": "NU",
           "price": 13.53,
           "size": 30,
-          "reason": "",
+          "reason": "stop right below VWAP [TRADE: long NU @ 13.53 x30]",
           "outcome": "closed",
           "exit_timestamp": "10:19",
           "exit_price": 13.67,
-          "exit_reason": ""
+          "exit_reason": "this second leg also does not have high volume candles [TRADE: exit NU @ 13.67 x0]",
+          "exited_direction": null
         },
         {
           "timestamp": "10:12",
@@ -228,11 +246,12 @@
           "ticker": "TSLA",
           "price": 427.24,
           "size": 1,
-          "reason": "",
+          "reason": "potential H- above but ill watch what happens at that level before exiting [TRADE: long TSLA @ 427.24 x1]",
           "outcome": "closed",
           "exit_timestamp": "11:07",
           "exit_price": 429.13,
-          "exit_reason": ""
+          "exit_reason": "TSLA is really choppy with sharp pullbacks [TRADE: exit TSLA @ 429.13 x0]",
+          "exited_direction": null
         },
         {
           "timestamp": "10:28",
@@ -240,11 +259,12 @@
           "ticker": "PANW",
           "price": 353.54,
           "size": 1,
-          "reason": "",
+          "reason": "if we do get a red candle i'm expecting it to instantly reverse [TRADE: long PANW @ 353.54 x1]",
           "outcome": "closed",
           "exit_timestamp": "11:31",
           "exit_price": 356.21,
-          "exit_reason": ""
+          "exit_reason": "market is really strong today [TRADE: exit PANW @ 356.21 x0]",
+          "exited_direction": null
         },
         {
           "timestamp": "11:48",
@@ -252,11 +272,12 @@
           "ticker": "PANW",
           "price": 357.97,
           "size": 0,
-          "reason": "",
+          "reason": "From notes",
           "outcome": "open",
           "exit_timestamp": null,
           "exit_price": null,
-          "exit_reason": null
+          "exit_reason": null,
+          "exited_direction": null
         },
         {
           "timestamp": "1:30",
@@ -264,11 +285,12 @@
           "ticker": "UNH",
           "price": 426.31,
           "size": 1,
-          "reason": "",
+          "reason": "very steady price action, nice PBO [TRADE: long UNH @ 426.31 x1]",
           "outcome": "open",
           "exit_timestamp": null,
           "exit_price": null,
-          "exit_reason": null
+          "exit_reason": null,
+          "exited_direction": null
         }
       ],
       "highlights_for_carry_forward": [
@@ -293,13 +315,14 @@
       "organized_notes": [
         {
           "timestamp": "10:12",
-          "text": " long CRWD @ 198.64, 3 shares - nice bid check in the market and CRWD - instantly aggressively bought up - good confirmation",
+          "text": " long CRWD @ 198.64, 3 shares - nice bid check in the market and CRWD - instantly aggressively bought up - good confirmation [TRADE: long CRWD @ 198.64 x3]",
           "tickers": [
             "CRWD"
           ],
           "category": "entry",
           "key_levels_mentioned": [],
-          "tags": []
+          "tags": [],
+          "flag_context": 0
         },
         {
           "timestamp": "10:16",
@@ -309,17 +332,19 @@
           "key_levels_mentioned": [],
           "tags": [
             "flag"
-          ]
+          ],
+          "flag_context": 0
         },
         {
           "timestamp": "11:06",
-          "text": " exit CRWD long @ 195.95 - oversized, abit too overconfident too early - the HPTE that i predicted did not play out",
+          "text": " exit CRWD long @ 195.95 - oversized, abit too overconfident too early - the HPTE that i predicted did not play out [TRADE: long CRWD @ 195.95 x0]",
           "tickers": [
             "CRWD"
           ],
           "category": "entry",
           "key_levels_mentioned": [],
-          "tags": []
+          "tags": [],
+          "flag_context": 0
         },
         {
           "timestamp": "11:11",
@@ -332,7 +357,8 @@
           "tags": [
             "flag",
             "impt"
-          ]
+          ],
+          "flag_context": 0
         },
         {
           "timestamp": "11:13",
@@ -346,7 +372,8 @@
             "VWAP+",
             "VWAP-"
           ],
-          "tags": []
+          "tags": [],
+          "flag_context": 0
         },
         {
           "timestamp": "11:37",
@@ -356,7 +383,8 @@
           "key_levels_mentioned": [],
           "tags": [
             "task"
-          ]
+          ],
+          "flag_context": 0
         },
         {
           "timestamp": "11:46",
@@ -367,17 +395,19 @@
           ],
           "category": "decision",
           "key_levels_mentioned": [],
-          "tags": []
+          "tags": [],
+          "flag_context": 0
         },
         {
           "timestamp": "11:53",
-          "text": " exit USAR long @ 19.25 from really long ago - was a big winner turned into a bag and now taking the loss - these stocks have big spikes and crash really hard and don't spike again for a while",
+          "text": " exit USAR long @ 19.25 from really long ago - was a big winner turned into a bag and now taking the loss - these stocks have big spikes and crash really hard and don't spike again for a while [TRADE: long AGO @ 0.0 x0]",
           "tickers": [
             "USAR"
           ],
           "category": "entry",
           "key_levels_mentioned": [],
-          "tags": []
+          "tags": [],
+          "flag_context": 0
         }
       ],
       "trades": [
@@ -387,11 +417,12 @@
           "ticker": "CRWD",
           "price": 195.95,
           "size": 0,
-          "reason": "",
+          "reason": "the HPTE that i predicted did not play out [TRADE: long CRWD @ 195.95 x0]",
           "outcome": "open",
           "exit_timestamp": null,
           "exit_price": null,
-          "exit_reason": null
+          "exit_reason": null,
+          "exited_direction": null
         },
         {
           "timestamp": "11:53",
@@ -399,11 +430,12 @@
           "ticker": "AGO",
           "price": 0.0,
           "size": 0,
-          "reason": "",
+          "reason": "these stocks have big spikes and crash really hard and don't spike again for a while [TRADE: long AGO @ 0.0 x0]",
           "outcome": "open",
           "exit_timestamp": null,
           "exit_price": null,
-          "exit_reason": null
+          "exit_reason": null,
+          "exited_direction": null
         }
       ],
       "highlights_for_carry_forward": [],
@@ -431,7 +463,7 @@
       ],
       "evidence_quotes": [
         " watching NU closely for a D1 breakout - nice high volume rally on the open",
-        " long TSLA @ 427.24, 1 share - nice strength yesterday and breakout above PDH and HOD on volume - potential H- above but ill watch what happens at that level before exiting"
+        " long TSLA @ 427.24, 1 share - nice strength yesterday and breakout above PDH and HOD on volume - potential H- above but ill watch what happens at that level before exiting [TRADE: long TSLA @ 427.24 "
       ],
       "frequency": 2,
       "severity_hint": "low",
@@ -447,7 +479,7 @@
         "2026-07-02"
       ],
       "evidence_quotes": [
-        " long NU @ 13.53, 30 shares - M5 bull flag with brief M5 compression - stop right below VWAP",
+        " long NU @ 13.53, 30 shares - M5 bull flag with brief M5 compression - stop right below VWAP [TRADE: long NU @ 13.53 x30]",
         " CRWD was so choppy and many attempts probing below VWAP to flush out buyers"
       ],
       "frequency": 2,

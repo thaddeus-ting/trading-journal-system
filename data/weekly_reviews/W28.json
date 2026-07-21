@@ -10,13 +10,14 @@
       "organized_notes": [
         {
           "timestamp": "9:50",
-          "text": " long PANW @ 363.24, 1 share - decided to enter and GOT GREEDY and had to chase for the fill",
+          "text": " long PANW @ 363.24, 1 share - decided to enter and GOT GREEDY and had to chase for the fill [TRADE: long PANW @ 363.24 x1]",
           "tickers": [
             "PANW"
           ],
           "category": "entry",
           "key_levels_mentioned": [],
-          "tags": []
+          "tags": [],
+          "flag_context": 0
         },
         {
           "timestamp": "9:51",
@@ -24,7 +25,8 @@
           "tickers": [],
           "category": "observation",
           "key_levels_mentioned": [],
-          "tags": []
+          "tags": [],
+          "flag_context": 0
         },
         {
           "timestamp": "10:05",
@@ -35,7 +37,8 @@
           "tags": [
             "flag",
             "impt"
-          ]
+          ],
+          "flag_context": 0
         },
         {
           "timestamp": "10:06",
@@ -47,7 +50,8 @@
           ],
           "category": "observation",
           "key_levels_mentioned": [],
-          "tags": []
+          "tags": [],
+          "flag_context": 0
         },
         {
           "timestamp": "10:10",
@@ -58,11 +62,12 @@
           "tags": [
             "flag",
             "impt"
-          ]
+          ],
+          "flag_context": 0
         },
         {
           "timestamp": "10:15",
-          "text": " add PANW long @ 393.97, 1 share - pullback bounced nicely off 8 EMA - adding as SPY put in a nice green candle",
+          "text": " add PANW long @ 393.97, 1 share - pullback bounced nicely off 8 EMA - adding as SPY put in a nice green candle [TRADE: long PANW @ 393.97 x1]",
           "tickers": [
             "PANW"
           ],
@@ -70,7 +75,8 @@
           "key_levels_mentioned": [
             "D1 8 EMA"
           ],
-          "tags": []
+          "tags": [],
+          "flag_context": 0
         },
         {
           "timestamp": "10:17",
@@ -78,7 +84,8 @@
           "tickers": [],
           "category": "decision",
           "key_levels_mentioned": [],
-          "tags": []
+          "tags": [],
+          "flag_context": 0
         },
         {
           "timestamp": "10:27",
@@ -88,7 +95,8 @@
           ],
           "category": "decision",
           "key_levels_mentioned": [],
-          "tags": []
+          "tags": [],
+          "flag_context": 0
         },
         {
           "timestamp": "10:28",
@@ -100,7 +108,8 @@
           ],
           "category": "observation",
           "key_levels_mentioned": [],
-          "tags": []
+          "tags": [],
+          "flag_context": 0
         },
         {
           "timestamp": "10:59",
@@ -110,7 +119,8 @@
           ],
           "category": "observation",
           "key_levels_mentioned": [],
-          "tags": []
+          "tags": [],
+          "flag_context": 0
         },
         {
           "timestamp": "11:00",
@@ -120,7 +130,8 @@
           ],
           "category": "observation",
           "key_levels_mentioned": [],
-          "tags": []
+          "tags": [],
+          "flag_context": 0
         },
         {
           "timestamp": "11:00",
@@ -130,7 +141,8 @@
           ],
           "category": "observation",
           "key_levels_mentioned": [],
-          "tags": []
+          "tags": [],
+          "flag_context": 0
         },
         {
           "timestamp": "11:08",
@@ -140,7 +152,8 @@
           ],
           "category": "observation",
           "key_levels_mentioned": [],
-          "tags": []
+          "tags": [],
+          "flag_context": 0
         },
         {
           "timestamp": "11:11",
@@ -155,18 +168,20 @@
           "tags": [
             "flag",
             "qn"
-          ]
+          ],
+          "flag_context": 0
         },
         {
           "timestamp": "11:27",
-          "text": " Dave is going long DOUL and earlier AAPL which seems so extended",
+          "text": " Dave is going long DOUL and earlier AAPL which seems so extended [TRADE: long DOUL @ 0.0 x0]",
           "tickers": [
             "AAPL",
             "DOUL"
           ],
           "category": "entry",
           "key_levels_mentioned": [],
-          "tags": []
+          "tags": [],
+          "flag_context": 0
         },
         {
           "timestamp": "11:31",
@@ -176,17 +191,19 @@
           ],
           "category": "observation",
           "key_levels_mentioned": [],
-          "tags": []
+          "tags": [],
+          "flag_context": 0
         },
         {
           "timestamp": "11:32",
-          "text": " exit PANW @ 359.73, 2 shares - oversized",
+          "text": " exit PANW @ 359.73, 2 shares - oversized [TRADE: exit PANW @ 359.73 x0]",
           "tickers": [
             "PANW"
           ],
           "category": "exit",
           "key_levels_mentioned": [],
-          "tags": []
+          "tags": [],
+          "flag_context": 0
         },
         {
           "timestamp": "11:33",
@@ -196,7 +213,8 @@
           ],
           "category": "observation",
           "key_levels_mentioned": [],
-          "tags": []
+          "tags": [],
+          "flag_context": 0
         }
       ],
       "trades": [
@@ -206,11 +224,12 @@
           "ticker": "PANW",
           "price": 393.97,
           "size": 1,
-          "reason": "",
+          "reason": "adding as SPY put in a nice green candle [TRADE: long PANW @ 393.97 x1]",
           "outcome": "closed",
           "exit_timestamp": "11:32",
           "exit_price": 359.73,
-          "exit_reason": ""
+          "exit_reason": "oversized [TRADE: exit PANW @ 359.73 x0]",
+          "exited_direction": null
         },
         {
           "timestamp": "11:27",
@@ -218,11 +237,12 @@
           "ticker": "DOUL",
           "price": 0.0,
           "size": 0,
-          "reason": "",
+          "reason": "From notes",
           "outcome": "open",
           "exit_timestamp": null,
           "exit_price": null,
-          "exit_reason": null
+          "exit_reason": null,
+          "exited_direction": null
         }
       ],
       "highlights_for_carry_forward": [
@@ -253,7 +273,8 @@
           ],
           "category": "observation",
           "key_levels_mentioned": [],
-          "tags": []
+          "tags": [],
+          "flag_context": 0
         },
         {
           "timestamp": "10:34",
@@ -264,7 +285,8 @@
           ],
           "category": "observation",
           "key_levels_mentioned": [],
-          "tags": []
+          "tags": [],
+          "flag_context": 0
         },
         {
           "timestamp": "10:45",
@@ -274,7 +296,8 @@
           ],
           "category": "observation",
           "key_levels_mentioned": [],
-          "tags": []
+          "tags": [],
+          "flag_context": 0
         }
       ],
       "trades": [],
@@ -299,7 +322,8 @@
           ],
           "category": "observation",
           "key_levels_mentioned": [],
-          "tags": []
+          "tags": [],
+          "flag_context": 0
         }
       ],
       "trades": [],
@@ -318,7 +342,7 @@
       "organized_notes": [
         {
           "timestamp": "11:04",
-          "text": " #sim short ORCL @ 139.60",
+          "text": " #sim short ORCL @ 139.60 [TRADE: short ORCL @ 0.0 x0]",
           "tickers": [
             "ORCL"
           ],
@@ -326,7 +350,8 @@
           "key_levels_mentioned": [],
           "tags": [
             "sim"
-          ]
+          ],
+          "flag_context": 0
         },
         {
           "timestamp": "11:14",
@@ -338,22 +363,24 @@
           "key_levels_mentioned": [
             "PDH"
           ],
-          "tags": []
+          "tags": [],
+          "flag_context": 0
         },
         {
           "timestamp": "11:17",
-          "text": " long TGT @ 135.47, 1 share adding at EOD if TGT closes well",
+          "text": " long TGT @ 135.47, 1 share adding at EOD if TGT closes well [TRADE: long TGT @ 0.0 x0]",
           "tickers": [
             "EOD",
             "TGT"
           ],
           "category": "entry",
           "key_levels_mentioned": [],
-          "tags": []
+          "tags": [],
+          "flag_context": 0
         },
         {
           "timestamp": "11:25",
-          "text": " long CSCO @ 120.02, 10 shares tight stop using PDH support",
+          "text": " long CSCO @ 120.02, 10 shares tight stop using PDH support [TRADE: long CSCO @ 0.0 x0]",
           "tickers": [
             "CSCO"
           ],
@@ -361,7 +388,8 @@
           "key_levels_mentioned": [
             "PDH"
           ],
-          "tags": []
+          "tags": [],
+          "flag_context": 0
         },
         {
           "timestamp": "11:28",
@@ -371,7 +399,8 @@
           ],
           "category": "observation",
           "key_levels_mentioned": [],
-          "tags": []
+          "tags": [],
+          "flag_context": 0
         },
         {
           "timestamp": "11:30",
@@ -381,7 +410,8 @@
           ],
           "category": "observation",
           "key_levels_mentioned": [],
-          "tags": []
+          "tags": [],
+          "flag_context": 0
         },
         {
           "timestamp": "11:31",
@@ -389,7 +419,8 @@
           "tickers": [],
           "category": "observation",
           "key_levels_mentioned": [],
-          "tags": []
+          "tags": [],
+          "flag_context": 0
         },
         {
           "timestamp": "11:37",
@@ -402,7 +433,8 @@
           "key_levels_mentioned": [],
           "tags": [
             "flag"
-          ]
+          ],
+          "flag_context": 0
         },
         {
           "timestamp": "11:39",
@@ -412,7 +444,8 @@
           ],
           "category": "observation",
           "key_levels_mentioned": [],
-          "tags": []
+          "tags": [],
+          "flag_context": 0
         }
       ],
       "trades": [
@@ -422,11 +455,12 @@
           "ticker": "ORCL",
           "price": 0.0,
           "size": 0,
-          "reason": "",
+          "reason": "From notes",
           "outcome": "open",
           "exit_timestamp": null,
           "exit_price": null,
-          "exit_reason": null
+          "exit_reason": null,
+          "exited_direction": null
         },
         {
           "timestamp": "11:17",
@@ -434,11 +468,12 @@
           "ticker": "TGT",
           "price": 0.0,
           "size": 0,
-          "reason": "",
+          "reason": "From notes",
           "outcome": "open",
           "exit_timestamp": null,
           "exit_price": null,
-          "exit_reason": null
+          "exit_reason": null,
+          "exited_direction": null
         },
         {
           "timestamp": "11:25",
@@ -446,11 +481,12 @@
           "ticker": "CSCO",
           "price": 0.0,
           "size": 0,
-          "reason": "",
+          "reason": "From notes",
           "outcome": "open",
           "exit_timestamp": null,
           "exit_price": null,
-          "exit_reason": null
+          "exit_reason": null,
+          "exited_direction": null
         }
       ],
       "highlights_for_carry_forward": [],
