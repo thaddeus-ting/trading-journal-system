@@ -1407,11 +1407,13 @@ def render_sidebar():
 
         # Initialize canonical date from session state or default to latest
         # For Daily Report page, prefer latest daily report date; otherwise latest overall
-        if st.session_state.selected_date not in all_available_dates:
-            if page == "Daily Report" and daily_dates:
+        if page == "Daily Report" and daily_dates:
+            # On Daily Report page, default to latest DAILY report date
+            if st.session_state.selected_date not in daily_dates:
                 st.session_state.selected_date = daily_dates[-1]
-            else:
-                st.session_state.selected_date = all_available_dates[-1]
+        elif st.session_state.selected_date not in all_available_dates:
+            # Otherwise default to latest available date overall
+            st.session_state.selected_date = all_available_dates[-1]
 
         # Render date picker - THIS IS THE SINGLE SOURCE OF TRUTH
         # Use key to make it stable across page changes
