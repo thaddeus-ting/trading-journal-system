@@ -721,7 +721,7 @@ def find_existing_trade_file(trade: ExtractedTrade, target_date: date, vault_bas
 
 
 def render_trades_tab(report: DailyReport):
-    """Render trades DataFrame with action buttons."""
+    """Render trades DataFrame with action buttons. Separate paper trades from regular trades."""
     if not report.trades:
         st.info("No trades extracted for this day.")
         return
@@ -735,96 +735,123 @@ def render_trades_tab(report: DailyReport):
         if vault_path:
             vault_base = Path(vault_path)
 
-    st.markdown("**📋 Trades for this session**")
-
-    df_data = []
-    trade_objects = []
+    # Separate paper trades (ptrade) from regular trades
+    paper_trades = []
+    regular_trades = []
     for t in report.trades:
-        pnl = 0
-        pnl_pct = 0
-        if t.exit_price and t.price > 0:
-            if t.direction == TradeDirection.LONG:
-                pnl = (t.exit_price - t.price) / t.price * 100
-            elif t.direction == TradeDirection.SHORT:
-                pnl = (t.price - t.exit_price) / t.price * 100
-
-        existing_file = find_existing_trade_file(t, report.date, vault_base)
-
-        # Format trade like comment for dropdown: "11:22 long CSCO @ 122, 2 shares" or "12:20 exit CSCO @ 120, 1 share"
-        if t.exit_price:
-            trade_display = f"{t.timestamp} exit {t.ticker} @ {t.exit_price:.2f}, {int(t.size)} share{'s' if t.size != 1 else ''}"
+        reason_lower = t.reason.lower() if t.reason else ""
+        if "#ptrade" in reason_lower:
+            paper_trades.append(t)
         else:
-            dir_str = t.direction.value.lower()
-            trade_display = f"{t.timestamp} {dir_str} {t.ticker} @ {t.price:.2f}, {int(t.size)} share{'s' if t.size != 1 else ''}"
+            regular_trades.append(t)
 
-        dir_cap = t.direction.value.capitalize()  # "Long" / "Short"
+    # Helper function to render a trades table
+    def render_trades_table(trades: list, title: str, key_prefix: str):
+        if not trades:
+            st.caption(f"No {title.lower()}.")
+            return
 
-        df_data.append({
-            "Time": t.timestamp,
-            "Direction": dir_cap,
-            "Ticker": t.ticker,
-            "Entry": f"${t.price:.2f}" if t.price > 0 else "—",
-            "Exit": f"${t.exit_price:.2f}" if t.exit_price else "—",
-            "Size": int(t.size) if t.size > 0 else "—",
-            "P&L %": f"{pnl:+.2f}%" if pnl != 0 else "—",
-            "Status": f"{t.outcome.value}{' @ ' + t.exit_timestamp if t.exit_timestamp else ''}",
-            "HasFile": "✅" if existing_file else "❌",
-        })
-        trade_objects.append((t, existing_file, trade_display))
+        st.markdown(f"**📋 {title} ({len(trades)})**")
 
-    df = pd.DataFrame(df_data)
+        df_data = []
+        trade_objects = []
+        for t in trades:
+            pnl = 0
+            pnl_pct = 0
+            if t.exit_price and t.price > 0:
+                if t.direction == TradeDirection.LONG:
+                    pnl = (t.exit_price - t.price) / t.price * 100
+                elif t.direction == TradeDirection.SHORT:
+                    pnl = (t.price - t.exit_price) / t.price * 100
 
-    # Display table
-    st.dataframe(
-        df,
-        use_container_width=True,
-        hide_index=True,
-        column_config={
-            "Time": st.column_config.TextColumn(width="small"),
-            "Direction": st.column_config.TextColumn(width="small"),
-            "Ticker": st.column_config.TextColumn(width="small"),
-            "Entry": st.column_config.TextColumn(width="small"),
-            "Exit": st.column_config.TextColumn(width="small"),
-            "Size": st.column_config.TextColumn(width="small"),
-            "P&L %": st.column_config.TextColumn(width="small"),
-            "Status": st.column_config.TextColumn(width="medium"),
-            "HasFile": st.column_config.TextColumn(width="small"),
-        }
-    )
+            existing_file = find_existing_trade_file(t, report.date, vault_base)
 
-    # Center table content
-    st.markdown("""
-    <style>
-    [data-testid="stDataFrame"] td, [data-testid="stDataFrame"] th { text-align: center; }
-    </style>
-    """, unsafe_allow_html=True)
+            # Format trade like comment for dropdown: "11:22 long CSCO @ 122, 2 shares" or "12:20 exit CSCO @ 120, 1 share"
+            if t.exit_price:
+                trade_display = f"{t.timestamp} exit {t.ticker} @ {t.exit_price:.2f}, {int(t.size)} share{'s' if t.size != 1 else ''}"
+            else:
+                dir_str = t.direction.value.lower()
+                trade_display = f"{t.timestamp} {dir_str} {t.ticker} @ {t.price:.2f}, {int(t.size)} share{'s' if t.size != 1 else ''}"
 
-    # Action buttons below table
-    if trade_objects:
-        st.markdown("---")
-        st.markdown("**Add Trade to Journalit:**")
-        col1, col2 = st.columns([3, 1])
-        with col1:
-            trade_labels = [td for _, _, td in trade_objects]
-            selected_idx = st.selectbox("Select trade:", range(len(trade_labels)), format_func=lambda i: trade_labels[i], key="trade_select")
-        with col2:
-            st.write("")  # vertical align
-            st.write("")
-            selected_trade, selected_file, _ = trade_objects[selected_idx]
-            if selected_trade.direction in (TradeDirection.LONG, TradeDirection.SHORT):
-                label = "✏️ Update Trade File" if selected_file else "➕ Create Trade File"
-                if st.button(label, key="trade_action_btn", use_container_width=True, type="primary"):
-                    create_or_update_trade_file(selected_trade, report.date)
-                    st.success(f"Trade file {'updated' if selected_file else 'created'}!")
-                    st.rerun()
+            dir_cap = t.direction.value.capitalize()  # "Long" / "Short"
 
-    # Trade summary
-    closed = [t for t in report.trades if t.outcome == TradeStatus.CLOSED]
-    if closed:
-        wins = sum(1 for t in closed if t.exit_price and t.price > 0 and
-                   ((t.direction == TradeDirection.LONG and t.exit_price > t.price) or
-                    (t.direction == TradeDirection.SHORT and t.exit_price < t.price)))
-        st.metric("Win Rate", f"{wins}/{len(closed)} ({wins/len(closed)*100:.0f}%)")
+            df_data.append({
+                "Time": t.timestamp,
+                "Direction": dir_cap,
+                "Ticker": t.ticker,
+                "Entry": f"${t.price:.2f}" if t.price > 0 else "—",
+                "Exit": f"${t.exit_price:.2f}" if t.exit_price else "—",
+                "Size": int(t.size) if t.size > 0 else "—",
+                "P&L %": f"{pnl:+.2f}%" if pnl != 0 else "—",
+                "Status": f"{t.outcome.value}{' @ ' + t.exit_timestamp if t.exit_timestamp else ''}",
+                "HasFile": "✅" if existing_file else "❌",
+            })
+            trade_objects.append((t, existing_file, trade_display))
+
+        df = pd.DataFrame(df_data)
+
+        # Display table
+        st.dataframe(
+            df,
+            use_container_width=True,
+            hide_index=True,
+            column_config={
+                "Time": st.column_config.TextColumn(width="small"),
+                "Direction": st.column_config.TextColumn(width="small"),
+                "Ticker": st.column_config.TextColumn(width="small"),
+                "Entry": st.column_config.TextColumn(width="small"),
+                "Exit": st.column_config.TextColumn(width="small"),
+                "Size": st.column_config.TextColumn(width="small"),
+                "P&L %": st.column_config.TextColumn(width="small"),
+                "Status": st.column_config.TextColumn(width="medium"),
+                "HasFile": st.column_config.TextColumn(width="small"),
+            },
+            key=f"{key_prefix}_table"
+        )
+
+        # Center table content
+        st.markdown("""
+        <style>
+        [data-testid="stDataFrame"] td, [data-testid="stDataFrame"] th { text-align: center; }
+        </style>
+        """, unsafe_allow_html=True)
+
+        # Action buttons below table
+        if trade_objects:
+            st.markdown("**Add Trade to Journalit:**")
+            col1, col2 = st.columns([3, 1])
+            with col1:
+                trade_labels = [td for _, _, td in trade_objects]
+                selected_idx = st.selectbox("Select trade:", range(len(trade_labels)), format_func=lambda i: trade_labels[i], key=f"{key_prefix}_select")
+            with col2:
+                st.write("")  # vertical align
+                st.write("")
+                selected_trade, selected_file, _ = trade_objects[selected_idx]
+                if selected_trade.direction in (TradeDirection.LONG, TradeDirection.SHORT):
+                    label = "✏️ Update Trade File" if selected_file else "➕ Create Trade File"
+                    if st.button(label, key=f"{key_prefix}_btn", use_container_width=True, type="primary"):
+                        create_or_update_trade_file(selected_trade, report.date)
+                        st.success(f"Trade file {'updated' if selected_file else 'created'}!")
+                        st.rerun()
+
+        # Trade summary
+        closed = [t for t in trades if t.outcome == TradeStatus.CLOSED]
+        if closed:
+            wins = sum(1 for t in closed if t.exit_price and t.price > 0 and
+                       ((t.direction == TradeDirection.LONG and t.exit_price > t.price) or
+                        (t.direction == TradeDirection.SHORT and t.exit_price < t.price)))
+            st.metric("Win Rate", f"{wins}/{len(closed)} ({wins/len(closed)*100:.0f}%)", key=f"{key_prefix}_winrate")
+
+    # Render regular trades first, then paper trades
+    if regular_trades or paper_trades:
+        if regular_trades:
+            render_trades_table(regular_trades, "Regular Trades", "regular")
+        if paper_trades:
+            if regular_trades:
+                st.markdown("---")
+            render_trades_table(paper_trades, "Paper Trades (#ptrade)", "paper")
+    else:
+        st.info("No trades extracted for this day.")
 
 
 def render_highlights_tab(report: DailyReport):
