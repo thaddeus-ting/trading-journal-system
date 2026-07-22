@@ -34,7 +34,24 @@
       "Bash(git commit -m 'fix: sidebar logic for Pre-Market page *)",
       "Bash(curl -s \"http://localhost:8504/_stcore/health\")",
       "Bash(git commit -m 'fix: sidebar shows Create Daily Report for Pre-Market, generation buttons on page *)",
-      "Bash(git commit -m 'fix: sidebar date selection logic *)"
+      "Bash(git commit -m 'fix: sidebar date selection logic *)",
+      "Bash(git commit -m 'fix: fix Settings page structure - move save_active_rules to module level *)",
+      "Bash(git commit -m 'feat: Settings page - reorder rules, inline confirm, reverse dropdowns, bulk delete *)",
+      "Bash(git commit -m 'feat: Settings page improvements *)",
+      "Bash(git commit -m 'feat: Settings page - minimalist reorder + compact bulk delete *)",
+      "Bash(git commit -m 'fix: Settings page - compact bulk delete, remove \\(newest first\\), fix false empty messages *)",
+      "Bash(git commit -m 'fix: Settings page - smaller rule delete button, match bulk delete button widths *)",
+      "Bash(git commit -m 'fix: Settings page - smaller rule delete button, bulk delete widths consistent *)",
+      "Bash(git commit -m 'fix: Settings page - rule delete far right, weekly bulk delete aligned *)",
+      "Bash(git commit -m 'fix: Settings page - rule delete button flush right, weekly bulk delete width *)",
+      "Bash(git commit -m 'fix: Settings page - square rule delete button with centered X *)",
+      "Bash(git commit -m 'fix: Settings page - rule delete button square with centered X *)",
+      "Bash(python -c \"import streamlit_app; print\\('Syntax OK'\\)\")",
+      "Bash(python -c \"import streamlit_app; print\\('Import OK'\\)\")",
+      "Bash(streamlit run *)",
+      "Bash(python -m streamlit run streamlit_app.py --server.port=8501 --server.headless=true)",
+      "Bash(timeout 10 python -m streamlit run streamlit_app.py --server.port=8501)",
+      "Bash(python -c \"import streamlit_app; import src.cli.daily_sync; print\\('Imports OK'\\)\")"
     ]
   }
 }

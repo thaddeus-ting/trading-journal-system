@@ -1,8 +1,6 @@
 {
   "date": "2026-07-21",
-  "carry_forward": [
-    "No prior daily journal for 2026-07-20 — showing economic events only"
-  ],
+  "carry_forward": [],
   "economic_events": [],
   "earnings": [],
   "active_rules": [
@@ -11,5 +9,5 @@
     "NO short entries on gap days without M5 pullback confirmation"
   ],
   "watchlist_candidates": [],
-  "generated_at": "2026-07-21T16:02:31.626187"
+  "generated_at": "2026-07-22T00:29:25.281467"
 }
