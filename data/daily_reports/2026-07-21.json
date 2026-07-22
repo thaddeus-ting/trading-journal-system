@@ -1,0 +1,131 @@
+{
+  "date": "2026-07-21",
+  "organized_notes": [
+    {
+      "timestamp": "10:06",
+      "text": " SPY attempting to bounce off 50 SMA",
+      "tickers": [],
+      "category": "observation",
+      "key_levels_mentioned": [
+        "D1 50 SMA"
+      ],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "10:07",
+      "text": " note SPY 50 SMA is less significant as it has been broken many times recently",
+      "tickers": [],
+      "category": "observation",
+      "key_levels_mentioned": [
+        "D1 50 SMA"
+      ],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "10:40",
+      "text": " long AAPL @ 326.83, 2 shares - nice RS today and D1, strong bounce off D1 8 EMA, missed the entry as i got greedy, but did well to not chase and wait for a retest [TRADE: long AAPL @ 326.83 x2]",
+      "tickers": [
+        "AAPL"
+      ],
+      "category": "entry",
+      "key_levels_mentioned": [
+        "D1 8 EMA"
+      ],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "10:43",
+      "text": " i took a long as i am view this strong break above HOD on SPY as bullish and i am expecting this pullback to be reversed quickly - i did not notice SPY hitting D1 8/15 EMA resistance which was a mistake - watch closely for signs of resistance #flag",
+      "tickers": [],
+      "category": "decision",
+      "key_levels_mentioned": [
+        "D1 15 EMA"
+      ],
+      "tags": [
+        "flag"
+      ],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "12:13",
+      "text": " partial exit AAPL long @ 329.10, 1 share - this was an accidental exit intending to set a stop, but i am okay with taking the partial profits and swinging the rest [TRADE: exit AAPL long @ 329.1 x1]",
+      "tickers": [
+        "AAPL"
+      ],
+      "category": "exit",
+      "key_levels_mentioned": [],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "12:21",
+      "text": " banks strong - looks like a good time to enter if i wasn't already in JPM long #sector",
+      "tickers": [
+        "JPM"
+      ],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": [
+        "sector"
+      ],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "12:22",
+      "text": " long JPM @ 344.99, 1 share - #ptrade , paper trade, very visible sector strength here [TRADE: long JPM @ 344.99 x1]",
+      "tickers": [
+        "JPM"
+      ],
+      "category": "entry",
+      "key_levels_mentioned": [],
+      "tags": [
+        "ptrade"
+      ],
+      "flag_context": 0
+    }
+  ],
+  "trades": [
+    {
+      "timestamp": "10:40",
+      "direction": "long",
+      "ticker": "AAPL",
+      "price": 326.83,
+      "size": 2,
+      "reason": "nice RS today and D1, strong bounce off D1 8 EMA, missed the entry as i got greedy, but did well to not chase and wait for a retest [TRADE: long AAPL @ 326.83 x2]",
+      "outcome": "closed",
+      "exit_timestamp": "12:13",
+      "exit_price": 329.1,
+      "exit_reason": "this was an accidental exit intending to set a stop, but i am okay with taking the partial profits and swinging the rest [TRADE: exit AAPL long @ 329.1 x1]",
+      "exited_direction": null
+    },
+    {
+      "timestamp": "12:22",
+      "direction": "long",
+      "ticker": "JPM",
+      "price": 344.99,
+      "size": 1,
+      "reason": "#ptrade , paper trade, very visible sector strength here [TRADE: long JPM @ 344.99 x1]",
+      "outcome": "open",
+      "exit_timestamp": null,
+      "exit_price": null,
+      "exit_reason": null,
+      "exited_direction": null
+    }
+  ],
+  "highlights_for_carry_forward": [],
+  "market_bias": {
+    "direction": "bullish",
+    "confidence": "high",
+    "regime": "transitional",
+    "key_levels": [
+      "D1 15 EMA",
+      "D1 50 SMA",
+      "D1 8 EMA"
+    ]
+  },
+  "raw_market_notes": "- 10:06 SPY attempting to bounce off 50 SMA\n- 10:07 note SPY 50 SMA is less significant as it has been broken many times recently \n- 10:40 long AAPL @ 326.83, 2 shares - nice RS today and D1, strong bounce off D1 8 EMA, missed the entry as i got greedy, but did well to not chase and wait for a retest \n- 10:43 i took a long as i am view this strong break above HOD on SPY as bullish and i am expecting this pullback to be reversed quickly - i did not notice SPY hitting D1 8/15 EMA resistance which was a mistake - watch closely for signs of resistance #flag \n- 12:13 partial exit AAPL long @ 329.10, 1 share - this was an accidental exit intending to set a stop, but i am okay with taking the partial profits and swinging the rest\n- 12:21 banks strong - looks like a good time to enter if i wasn't already in JPM long #sector \n- 12:22 long JPM @ 344.99, 1 share - #ptrade , paper trade, very visible sector strength here",
+  "source_file": "C:\\Users\\Thaddeus\\OneDrive\\Desktop\\Vaulted\\!Journalit\\2026\\Q3\\07\\W30\\DRC-210726.md"
+}

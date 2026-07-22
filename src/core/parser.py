@@ -52,15 +52,23 @@ EXCLUDE_TICKERS = {
     "M5", "M15", "M30", "H1", "H4", "D1", "W1", "M1",
     "EMA", "SMA", "VWAP", "ATR", "RSI", "MACD", "BB",
     "PDH", "PDL", "HOD", "LOD", "AOD", "PWClose",
-    "EOD", "RS", "RW", "ATH", "ATL",  # Trading terms: End of Day, Relative Strength/Weakness, All Time High/Low
+    "EOD", "RS", "RW", "ATH", "ATL",  # Trading terms
     "FOMO", "LPTE", "HPTE", "RTH", "ETH",
     "HA", "CH", "ATRH", "ATRL",
-    "H+", "H-", "L+", "L-", "H", "L",  # Trendline levels (OneOption notation)
-    "I", "A", "AN", "IF", "OR", "ON", "AT", "TO", "BE", "BY", "DO", "GO", "HE", "ME", "MY", "NO", "OF", "UP", "US", "WE",  # Single letters and common words (S=SPY shorthand - removed as S is a valid ticker)
-    "HERE", "USING", "THEN", "THIS", "THAT", "THE", "AND", "BUT", "FOR", "NOT", "YOU", "ARE", "HAD", "HAS", "HIS", "HER", "ITS", "OUR", "OUT", "NOW", "NEW", "OLD", "ONE", "TWO", "WHO", "WHY", "HOW", "WHEN", "WHERE", "WHAT", "WHICH", "WILL", "WOULD", "COULD", "SHOULD", "MIGHT", "MAY", "CAN", "MUST", "NEED", "WANT", "LIKE", "JUST", "ONLY", "EVEN", "ALSO", "VERY", "MUCH", "MORE", "MOST", "LESS", "LEAST", "BEST", "LAST", "FIRST", "NEXT", "AFTER", "BEFORE", "DURING", "ABOUT", "ABOVE", "BELOW", "BETWEEN", "UNDER", "OVER", "AGAIN", "ONCE", "TWICE",  # Common English words that could be parsed as tickers
-    "MIGHT", "LOOKS", "BUT", "GREEN", "SCRATCH", "STILL", "STOCK", "LOOK", "GOOD", "DONT", "LIKE", "THAT", "THE", "LON", "LONG", "SHORT", "EXIT", "ENTRY", "TRADE", "FROM", "NOTES", "WHEN", "GOT", "THEN", "WOULD", "HAVE", "THIS", "CANDLE", "NICE", "CLOSE", "HIGH", "VOLUME", "BREAKDOWN", "SMALL", "POP", "WAIT", "FOR", "ADD", "ANOTHER", "SHARE", "IF", "IT", "CLOSES", "ITS", "REALLY", "SWINGING", "WILL", "OPEN", "SO", "CAN", "EITHER", "ENTER", "NOW", "TO", "OR", "BUT", "AND", "KKR", "CHASE",  # Common words from notes + KKR (not traded) + CHASE (bank name, not ticker; JPM is the ticker)
-    # Additional trading terms that might be parsed as tickers
-    "PBO", "VWAP", "HOD", "EOD", "RW", "RS"
+    "H+", "H-", "L+", "L-", "H", "L",
+    "I", "A", "AN", "IF", "OR", "ON", "AT", "TO", "BE", "BY", "DO", "GO", "HE", "ME", "MY", "NO", "OF", "UP", "US", "WE",
+    "HERE", "USING", "THEN", "THIS", "THAT", "THE", "AND", "BUT", "FOR", "NOT", "YOU", "ARE", "HAD", "HAS", "HIS", "HER", "ITS", "OUR", "OUT", "NOW", "NEW", "OLD", "ONE", "TWO", "WHO", "WHY", "HOW", "WHEN", "WHERE", "WHAT", "WHICH", "WILL", "WOULD", "COULD", "SHOULD", "MIGHT", "MAY", "CAN", "MUST", "NEED", "WANT", "LIKE", "JUST", "ONLY", "EVEN", "ALSO", "VERY", "MUCH", "MORE", "MOST", "LESS", "LEAST", "BEST", "LAST", "FIRST", "NEXT", "AFTER", "BEFORE", "DURING", "ABOUT", "ABOVE", "BELOW", "BETWEEN", "UNDER", "OVER", "AGAIN", "ONCE", "TWICE",
+    "MIGHT", "LOOKS", "BUT", "GREEN", "SCRATCH", "STILL", "STOCK", "LOOK", "GOOD", "DONT", "LIKE", "THAT", "THE", "LON", "LONG", "SHORT", "EXIT", "ENTRY", "TRADE", "FROM", "NOTES", "WHEN", "GOT", "THEN", "WOULD", "HAVE", "THIS", "CANDLE", "NICE", "CLOSE", "HIGH", "VOLUME", "BREAKDOWN", "SMALL", "POP", "WAIT", "FOR", "ADD", "ANOTHER", "SHARE", "IF", "IT", "CLOSES", "ITS", "REALLY", "SWINGING", "WILL", "OPEN", "SO", "CAN", "EITHER", "ENTER", "NOW", "TO", "OR", "BUT", "AND", "KKR", "CHASE",
+    "PBO", "VWAP", "HOD", "EOD", "RW", "RS",
+    # Common words in sentences that trigger false positives
+    "AS", "IS", "AM", "BE", "WAS", "WERE", "BEEN", "BEING", "DO", "DOES", "DID", "DOING", "HAVE", "HAS", "HAD", "HAVING",
+    "WILL", "WOULD", "SHALL", "SHOULD", "CAN", "COULD", "MAY", "MIGHT", "MUST", "OUGHT",
+    "THIS", "THAT", "THESE", "THOSE", "I", "YOU", "HE", "SHE", "WE", "THEY", "ME", "HIM", "HER", "US", "THEM",
+    "MY", "YOUR", "HIS", "HER", "ITS", "OUR", "THEIR", "MINE", "YOURS", "HERS", "OURS", "THEIRS",
+    "WHO", "WHOM", "WHOSE", "WHICH", "WHAT", "WHOEVER", "WHICHEVER", "WHATEVER",
+    "THERE", "HERE", "WHERE", "WHEN", "WHY", "HOW", "ALL", "ANY", "BOTH", "EACH", "FEW", "MANY", "MOST", "OTHER", "SOME", "SUCH",
+    "NO", "NOR", "NOT", "ONLY", "OWN", "SAME", "SO", "THAN", "TOO", "VERY", "S", "T", "CAN",
+    "DON", "DON'T", "SHOULD", "NOW", "D", "LL", "VE", "RE", "M", "S", "T",
 }
 
 
