@@ -881,22 +881,12 @@ def render_highlights_tab(report: DailyReport):
 
 
 def render_raw_market_notes_tab(report: DailyReport):
-    """Render the raw market notes section for copy-paste."""
-    st.markdown("**📋 Full Market Notes (Copy for Journalit)**")
-    st.caption("Copy the content below and paste into your Journalit daily note")
+    """Render the formatted market notes for Journalit."""
+    st.markdown("**📋 Full Market Notes**")
+    st.caption("Formatted version of your market notes")
 
     if report.raw_market_notes:
-        # Display in a text area for easy copying
-        st.text_area(
-            "Raw Market Notes",
-            value=report.raw_market_notes,
-            height=400,
-            label_visibility="collapsed",
-            key="raw_market_notes_copy"
-        )
-        # Also show as markdown for reading
-        with st.expander("📖 View formatted", expanded=False):
-            st.markdown(report.raw_market_notes)
+        st.markdown(report.raw_market_notes)
     else:
         st.info("No raw market notes available for this day.")
 
