@@ -115,9 +115,9 @@ TAG_EMOJI = {
 # Data Loading Functions
 # ================================
 
-@st.cache_data(ttl=300)
-def load_daily_reports() -> list[DailyReport]:
-    """Load all daily reports."""
+@st.cache_data(ttl=300, show_spinner="Loading daily reports…")
+def load_daily_reports(cache_version: int = 0) -> list[DailyReport]:
+    """Load all daily reports. Pass cache_version to bust cache."""
     reports = []
     for f in sorted(DAILY_DIR.glob("*.json")):
         # Skip pretty JSON files - they have a different structure
@@ -1429,9 +1429,11 @@ def render_sidebar():
     # Initialize SINGLE canonical date in session state
     if "selected_date" not in st.session_state:
         st.session_state.selected_date = None
+    if "cache_bust" not in st.session_state:
+        st.session_state.cache_bust = 0
 
     # Load all data needed for selectors
-    reports = load_daily_reports()
+    reports = load_daily_reports(st.session_state.cache_bust)
     daily_dates = sorted([r.date for r in reports])
 
     pre_markets = load_pre_market_list()
@@ -1887,7 +1889,7 @@ def page_pre_market(selected_date: date):
         while prior_date.weekday() >= 5:  # Skip weekends
             prior_date -= timedelta(days=1)
 
-        reports = load_daily_reports()
+        reports = load_daily_reports(st.session_state.get("cache_bust", 0))
         prior_report = next((r for r in reports if r.date == prior_date), None)
 
         if prior_report:
@@ -2184,7 +2186,10 @@ def page_settings():
     with col3:
         if st.button("🔄 Reload Data", help="Clear all cached data and reload from JSON files", use_container_width=False, key="qa_reload"):
             st.cache_data.clear()
+            st.session_state.cache_bust += 1
+            st.session_state.selected_date = None  # Force re-pick latest date
             st.success("Cache cleared!")
+            st.rerun()
 
     st.markdown("---")
 
@@ -2192,7 +2197,7 @@ def page_settings():
 
     # --- Daily Reports ---
     st.markdown("**Daily Reports**")
-    reports = load_daily_reports()
+    reports = load_daily_reports(st.session_state.get("cache_bust", 0))
     if reports:
         # Reverse chronological - newest first
         available_dates = sorted([r.date for r in reports], reverse=True)

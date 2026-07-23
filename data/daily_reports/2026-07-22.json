@@ -1,0 +1,129 @@
+{
+  "date": "2026-07-22",
+  "organized_notes": [
+    {
+      "timestamp": "10:34",
+      "text": " nice early rally on SPY but this is relatively strong pullback to below VWAP-",
+      "tickers": [],
+      "category": "observation",
+      "key_levels_mentioned": [
+        "VWAP",
+        "VWAP+",
+        "VWAP-"
+      ],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "10:36",
+      "text": " AAPL looking weak here, testing the 8 EMA rn",
+      "tickers": [
+        "AAPL"
+      ],
+      "category": "observation",
+      "key_levels_mentioned": [
+        "D1 8 EMA"
+      ],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "10:43",
+      "text": " banks nice follow thru from yesterday's strength, RS today too",
+      "tickers": [],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "11:13",
+      "text": " long JPM @ 346.32, 3 shares - strong today, above PDH, SPY may not provide much tailwind but this is a nice RS stock and not too extended from support at VWAP [TRADE: long JPM @ 346.32 x3]",
+      "tickers": [
+        "JPM"
+      ],
+      "category": "entry",
+      "key_levels_mentioned": [
+        "VWAP",
+        "VWAP+",
+        "PDH"
+      ],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "11:26",
+      "text": " partial exit JPM long @ 347.86, 1 share - trimming position here as JPM hits a H+ and could pullback [TRADE: exit JPM long @ 347.86 x1]",
+      "tickers": [
+        "JPM"
+      ],
+      "category": "exit",
+      "key_levels_mentioned": [],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "11:27",
+      "text": " looks like SPY and JPM are going strong, but remember that SPY had a deep pullback earlier - unlikely for it to rally off without a pullback eventually",
+      "tickers": [
+        "JPM"
+      ],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "11:30",
+      "text": " partial exit JPM long @ , 1 share - 3 long stacked greens, JPM is quite extended at this point - chances of pullback are high, take some risk off",
+      "tickers": [
+        "JPM"
+      ],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": [],
+      "flag_context": 0
+    },
+    {
+      "timestamp": "12:09",
+      "text": " I wanted to take JPM long at this level but held back as this market is hard to trust",
+      "tickers": [
+        "JPM"
+      ],
+      "category": "observation",
+      "key_levels_mentioned": [],
+      "tags": [],
+      "flag_context": 0
+    }
+  ],
+  "trades": [
+    {
+      "timestamp": "11:13",
+      "direction": "long",
+      "ticker": "JPM",
+      "price": 346.32,
+      "size": 3,
+      "reason": "strong today, above PDH, SPY may not provide much tailwind but this is a nice RS stock and not too extended from support at VWAP [TRADE: long JPM @ 346.32 x3]",
+      "outcome": "closed",
+      "exit_timestamp": "11:26",
+      "exit_price": 347.86,
+      "exit_reason": "trimming position here as JPM hits a H+ and could pullback [TRADE: exit JPM long @ 347.86 x1]",
+      "exited_direction": null
+    }
+  ],
+  "highlights_for_carry_forward": [],
+  "market_bias": {
+    "direction": "bullish",
+    "confidence": "medium",
+    "regime": "transitional",
+    "key_levels": [
+      "D1 8 EMA",
+      "PDH",
+      "VWAP",
+      "VWAP+",
+      "VWAP-"
+    ]
+  },
+  "raw_market_notes": "- 10:34 nice early rally on SPY but this is relatively strong pullback to below VWAP- \n- 10:36 AAPL looking weak here, testing the 8 EMA rn \n- 10:43 banks nice follow thru from yesterday's strength, RS today too \n- 11:13 long JPM @ 346.32, 3 shares - strong today, above PDH, SPY may not provide much tailwind but this is a nice RS stock and not too extended from support at VWAP\n- 11:26 partial exit JPM long @ 347.86, 1 share - trimming position here as JPM hits a H+ and could pullback \n- 11:27 looks like SPY and JPM are going strong, but remember that SPY had a deep pullback earlier - unlikely for it to rally off without a pullback eventually \n- 11:30 partial exit JPM long @ , 1 share - 3 long stacked greens, JPM is quite extended at this point - chances of pullback are high, take some risk off \n- 12:09 I wanted to take JPM long at this level but held back as this market is hard to trust",
+  "source_file": "C:\\Users\\Thaddeus\\OneDrive\\Desktop\\Vaulted\\!Journalit\\2026\\Q3\\07\\W30\\DRC-220726.md"
+}
