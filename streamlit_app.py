@@ -247,12 +247,13 @@ def render_daily_report(report: DailyReport):
     highlights_count = len(report.highlights_for_carry_forward)
     pred_count = sum(1 for n in report.organized_notes if 'gold' in (getattr(n, 'tags', []) or []) or 'ptrade' in (getattr(n, 'tags', []) or []))
 
-    tab1, tab2, tab3, tab4, tab5 = st.tabs([
+    tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
         f"📝 Notes ({notes_count})",
         f"🏷️ Tags ({tags_count})",
         f"💰 Trades ({trades_count})",
         f"🎯 Highlights ({highlights_count})",
-        f"📊 Scorecard ({pred_count})"
+        f"📊 Scorecard ({pred_count})",
+        f"📋 Raw Notes"
     ])
 
     with tab1:
@@ -269,6 +270,9 @@ def render_daily_report(report: DailyReport):
 
     with tab5:
         render_prediction_scorecard_daily(report)
+
+    with tab6:
+        render_raw_market_notes_tab(report)
 
 
 def render_tags_tab(report: DailyReport):
@@ -874,6 +878,27 @@ def render_highlights_tab(report: DailyReport):
             st.markdown(f"📜 **Rule:** {h[5:]}")
         else:
             st.markdown(f"• {h}")
+
+
+def render_raw_market_notes_tab(report: DailyReport):
+    """Render the raw market notes section for copy-paste."""
+    st.markdown("**📋 Full Market Notes (Copy for Journalit)**")
+    st.caption("Copy the content below and paste into your Journalit daily note")
+
+    if report.raw_market_notes:
+        # Display in a text area for easy copying
+        st.text_area(
+            "Raw Market Notes",
+            value=report.raw_market_notes,
+            height=400,
+            label_visibility="collapsed",
+            key="raw_market_notes_copy"
+        )
+        # Also show as markdown for reading
+        with st.expander("📖 View formatted", expanded=False):
+            st.markdown(report.raw_market_notes)
+    else:
+        st.info("No raw market notes available for this day.")
 
 
 def render_pre_market(pre: PreMarketNotes):
