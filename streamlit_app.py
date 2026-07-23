@@ -840,7 +840,7 @@ def render_trades_tab(report: DailyReport):
             wins = sum(1 for t in closed if t.exit_price and t.price > 0 and
                        ((t.direction == TradeDirection.LONG and t.exit_price > t.price) or
                         (t.direction == TradeDirection.SHORT and t.exit_price < t.price)))
-            st.metric("Win Rate", f"{wins}/{len(closed)} ({wins/len(closed)*100:.0f}%)", key=f"{key_prefix}_winrate")
+            st.metric("Win Rate", f"{wins}/{len(closed)} ({wins/len(closed)*100:.0f}%)")
 
     # Render regular trades first, then paper trades
     if regular_trades or paper_trades:
