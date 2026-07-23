@@ -250,3 +250,6 @@ class Settings(BaseModel):
     output_dir: Path = Path("data")
     cache_dir: Path = Path("data/cache/llm")
     prompts_dir: Path = Path("config/prompts")
+    fmp_api_key_env: str = "FMP_API_KEY"
+    alphavantage_api_key_env: str = "ALPHA_VANTAGE_API_KEY"
+    earnings_min_market_cap: int = 50_000_000_000

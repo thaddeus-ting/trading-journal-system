@@ -20,6 +20,7 @@ llm:
   timeout: 60
   max_retries: 3
 fmp_api_key_env: FMP_API_KEY
+alphavantage_api_key_env: ALPHAVANTAGE_API_KEY
 earnings_min_market_cap: 50000000000
 economic_calendar:
   events_2026_q3:
@@ -53,7 +54,42 @@ economic_calendar:
     time: 08:30
     event: Nonfarm Payrolls
     impact: HIGH
-  earnings_2026_q3: []
+  earnings_2026_q3:
+  - date: '2026-07-29'
+    symbol: MSFT
+    name: Microsoft Corporation
+    marketCap: 3200000000000
+    time: AMC
+  - date: '2026-07-29'
+    symbol: GOOGL
+    name: Alphabet Inc.
+    marketCap: 2100000000000
+    time: AMC
+  - date: '2026-07-29'
+    symbol: META
+    name: Meta Platforms Inc.
+    marketCap: 1300000000000
+    time: AMC
+  - date: '2026-08-01'
+    symbol: AAPL
+    name: Apple Inc.
+    marketCap: 3500000000000
+    time: AMC
+  - date: '2026-08-27'
+    symbol: NVDA
+    name: NVIDIA Corporation
+    marketCap: 3000000000000
+    time: AMC
+  - date: '2026-08-21'
+    symbol: TSLA
+    name: Tesla Inc.
+    marketCap: 800000000000
+    time: AMC
+  - date: '2026-09-01'
+    symbol: AMZN
+    name: Amazon.com Inc.
+    marketCap: 1900000000000
+    time: AMC
 metrics:
 - name: FOMO_frequency
   description: Number of FOMO entries per day
