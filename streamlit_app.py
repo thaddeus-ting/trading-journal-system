@@ -1676,8 +1676,11 @@ def create_daily_report(target_date: date):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(report.model_dump_json(indent=2), encoding="utf-8")
     st.sidebar.success(f"Created daily report for {target_date}")
-    # Clear cache so it reloads
+    # Clear cache AND bump version so sidebar reloads with new report
     load_daily_reports.clear()
+    st.session_state.cache_bust += 1
+    st.session_state.selected_date = target_date
+    st.rerun()
 
 
 def create_or_update_trade_file(trade: ExtractedTrade, target_date: date) -> Path:
@@ -1852,6 +1855,10 @@ def delete_daily_report(target_date: date):
         pretty_path.unlink()
     st.sidebar.success(f"Deleted daily report for {target_date}")
     load_daily_reports.clear()
+    st.session_state.cache_bust += 1
+    # Reset selected_date to force re-pick latest available
+    st.session_state.selected_date = None
+    st.rerun()
 
 
 def delete_pre_market(target_date: date):
