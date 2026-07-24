@@ -1856,8 +1856,12 @@ def delete_daily_report(target_date: date):
     st.sidebar.success(f"Deleted daily report for {target_date}")
     load_daily_reports.clear()
     st.session_state.cache_bust += 1
-    # Reset selected_date to force re-pick latest available
-    st.session_state.selected_date = None
+    # Find next available date instead of resetting to None
+    reports = load_daily_reports(st.session_state.cache_bust)
+    daily_dates = sorted([r.date for r in reports])
+    if daily_dates:
+        # Pick the latest available date
+        st.session_state.selected_date = daily_dates[-1]
     st.rerun()
 
 
@@ -2135,6 +2139,15 @@ def page_settings():
 
     st.markdown("<br>", unsafe_allow_html=True)
 
+    # Cache status indicator
+    cache_version = st.session_state.get("cache_bust", 0)
+    st.sidebar.caption(f"🔢 Cache version: {cache_version}")
+
+    # Show reload feedback if available
+    if "reload_feedback" in st.session_state:
+        st.sidebar.success(st.session_state["reload_feedback"])
+        del st.session_state["reload_feedback"]
+
     st.subheader("Quick Actions")
 
     # Use raw HTML buttons instead of st.columns to have full control
@@ -2193,9 +2206,12 @@ def page_settings():
     with col3:
         if st.button("🔄 Reload Data", help="Clear all cached data and reload from JSON files", use_container_width=False, key="qa_reload"):
             st.cache_data.clear()
+            # Preserve the current selected date instead of resetting to latest
+            current_date = st.session_state.get("selected_date")
             st.session_state.cache_bust += 1
-            st.session_state.selected_date = None  # Force re-pick latest date
-            st.success("Cache cleared!")
+            if current_date:
+                st.session_state.selected_date = current_date
+            st.session_state["reload_feedback"] = f"Cache cleared and reloaded at {datetime.now().strftime('%H:%M:%S')}"
             st.rerun()
 
     st.markdown("---")
@@ -2438,6 +2454,10 @@ def save_active_rules(rules: list[str]):
 
 # Render sidebar and get navigation
 page, selected_date, selected_week, reports, reviews = render_sidebar()
+
+# Show reload feedback if any (persists through rerun)
+if "reload_feedback" in st.session_state:
+    st.toast(st.session_state.pop("reload_feedback"), icon="🔄")
 
 # Route to pages
 if page == "Daily Report":
